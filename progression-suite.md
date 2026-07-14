@@ -107,3 +107,55 @@ _Point outillage — ESLint enfin branché (dette S40 soldée) :_
 - **Tic-Tac-Toe version finale** (currentMove, modulo, slice à arguments, 2e arg de map) : toujours en attente.
 
 **➡️ Prochaine session (demain, 2-3h selon motivation)** : **approfondissement `useEffect`** — exercices React + `useEffect`, dont `useEffect` **sans fetch** (autres usages, complexité croissante, demande de Fred). Bon terrain pour introduire la **fonction de nettoyage** (cleanup) en contexte listener/setTimeout.
+
+## Session 50 — useEffect : la fonction de nettoyage (cleanup) + setInterval + updater fonctionnel
+
+**Durée** : ~2h (matin, frais).
+**Thème** : la moitié manquante de `useEffect` — la fonction de nettoyage. Révélée d'abord sur un listener (facile), puis poussée sur un `setInterval` (dur, a fait remonter le piège de closure + l'updater fonctionnel).
+
+**Révision éclair S50 (valeur vs référence)** : `const copie = original; copie.prix = 200` → `original.prix` vaut **200** (la référence est copiée, pas le contenu → même tiroir partagé). Mécanisme **juste**. Lien React complété par moi : muter = même référence → React ne voit rien → pas de re-render ; le spread crée une nouvelle référence → re-render. (Ce lien ressert LITTÉRALEMENT dans le piège de closure du jour.)
+
+**Ce qui a été fait** :
+
+_Concept neuf — la fonction de nettoyage (cleanup) :_
+
+- **Le pourquoi** : certains effets « laissent une trace active » (`setInterval` qui tique, `addEventListener` qui écoute) — ≠ effets one-shot (`document.title`). Un composant peut se démonter ou l'effet se relancer → la trace reste → accumulation (2 écouteurs, puis 3…) → bugs fantômes + fuite mémoire.
+- **Le comment** : la fonction de l'effet peut **retourner une fonction** = le nettoyage. React l'exécute avant chaque relance ET au démontage. Symétrie « je démarre → je retourne la façon d'arrêter ».
+- **StrictMode enfin expliqué proprement** (évoqué 3× avant) : composant-emballage dans `main.jsx`, en DEV seulement, monte→démonte→remonte exprès et double les effets pour **débusquer les nettoyages manquants**. C'est lui qui doublait le fetch en S49. Détecteur, pas bug.
+- **`handleKey` clarifié** : pas un mot-clé, une **convention** — `handleXxx` = « la fonction qui gère l'événement Xxx » (handleClick, handleSubmit…). Nommée (pas fléchée inline) pour que `removeEventListener` puisse la cibler (la référence compte — écho révision éclair).
+
+_Exo 1 — `DerniereTouche` (guidé, 1 trou = le nettoyage) :_
+
+- `window.addEventListener("keydown", handleKey)` + `return () => window.removeEventListener("keydown", handleKey)`. **Nettoyage juste du premier coup.** Première fonction de nettoyage écrite. Vérifié en console : pas d'accumulation malgré StrictMode → preuve que le cleanup marche.
+
+_Exo 2 — `Minuteur`/`Chronometre` (idée de Fred, mode « consignes en français, zéro syntaxe donnée » à sa demande) :_
+
+- `setInterval`/`clearInterval` montrés d'abord **en JS pur** (à sa demande) : `const id = setInterval(...)` → `clearInterval(id)`, l'id = le « ticket » pour arrêter CE minuteur. Ponts posés avec `setTimeout` (S14) et avec la structure add/remove du matin.
+- Grosse difficulté, 3 accrocs traversés : (1) `() => previous` passait la fonction sans l'appeler (réf vs appel, S44) ; (2) **piège de closure** — `setSeconde(seconde - 1)` grave `10` (variable capturée figée), bloqué à 9 → **updater fonctionnel** `setSeconde((actuelle) => actuelle - 1)` (React fournit la valeur fraîche) ; (3) nettoyage mal placé (`if ... return clearInterval` dans le corps ≠ `return () => clearInterval(id)`).
+- Piège de closure « RIEN compris » au 1er passage → ré-expliqué SANS jargon (histoire du « 10 gravé dans le marbre » + les 2 `return` distincts JSX/nettoyage). **Correction demandée explicitement → donnée** (règle respectée). Compteur descend 1/s proprement ensuite.
+- **Question spontanée de Fred** : « pourquoi une flèche DANS le setter ? » → clarifié : forme A `setX(valeur)` vs forme B `setX((prev) => ...)` = passer une **fonction** que React appelle avec la valeur à jour, **exactement comme** `.map((m) => ...)` / `.filter((m) => ...)` (quelqu'un d'autre appelle ta flèche). Belle connexion.
+- **Arrêt à 0** (correction donnée) : le test `if (actuelle <= 1) { clearInterval(id); return 0; }` va DANS le callback du setInterval (là où la valeur bouge), pas dans le corps de l'effet (qui ne tourne qu'une fois). Son instinct (tester ===0 + clear) était juste, seul le placement était en cause — même leçon que le nettoyage.
+
+**Niveau estimé après session** :
+
+- **Fonction de nettoyage (cleanup) — cas listener** : 🟡→🟢 (DerniereTouche réussi seul du premier coup).
+- **Fonction de nettoyage — cas setInterval + le combo complet** : 🟡 neuf, dur, correction donnée → à recroiser absolument.
+- **`setInterval`/`clearInterval`** : 🟡 neuf (id à ranger, paire symétrique).
+- **Updater fonctionnel `setX((prev) => ...)`** : 🟡 neuf, gros morceau, arraché — à re-pratiquer (c'est LE point à consolider).
+- **Piège de closure dans un effet `[]`** : 🟡 compris après ré-explication imagée, fragile → à recroiser (relié à la révision éclair du jour).
+- **StrictMode / `handleKey`** : 🟢 clarifiés.
+- Recalibrage : a poussé un enchaînement très dense (cleanup + closure + updater) en une session — normal que la correction ait été demandée, ce n'est pas un recul.
+
+**⚠️ Dosage** : `Minuteur` combinait TROIS nouveautés d'un coup (setInterval + updater fonctionnel + cleanup). Dense mais assumé (concept relié). Pour la reconsolidation : les redécouper (un exo cleanup pur, un exo updater fonctionnel pur) avant de recombiner.
+
+**Restes / dettes** :
+
+- **`Minuteur` défi n°2** : rebrancher `document.title` au bon endroit (2e `useEffect` avec dépendance `[seconde]`) — non fait, à reprendre.
+- **Compte à rebours avec input** (idée de Fred) : la montée de difficulté suivante.
+- **Approche alternative du chrono via dépendance `[seconde]`** : à montrer (compare avec la version `[]` + updater).
+- **Updater fonctionnel + closure** : à reconsolider par exos dédiés séparés.
+- Version `.then` du fetch · `console.log(e)` jamais observé · JSON.stringify/parse jamais pratiqué · **TS des props (prioritaire)** · Tic-Tac-Toe version finale.
+
+**🗑️ Obsolète à signaler dans les instructions** : les mentions **« react.new / CodeSandbox »** (§5, §7, §8) sont caduques depuis le passage en **Vite local** (S47-48). L'environnement React actuel = projet Vite local `projet-vite-local`, multi-fichiers, Git.
+
+**➡️ Prochaine session** : reconsolider le combo `useEffect` avancé — d'abord updater fonctionnel + cleanup en exos **séparés** (dédensifier), puis finir le `Minuteur` (document.title + arrêt à 0 en autonomie) et attaquer le **compte à rebours avec input**. Continuer la série `useEffect` en difficulté croissante (demande de Fred).

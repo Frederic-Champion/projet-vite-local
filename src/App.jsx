@@ -2,13 +2,14 @@
 
 import GestionMontures from "./components-exercices/GestionMontures";
 import ListePays from "./components-exercices/Apprentissage-useEffect";
-import ListeArticles from "./components-exercices/Exercice-useEffect";
+import CompteurEssais from "./components-exercices/Exercice-useEffect";
+import Minuteur from "./components-exercices/Exercice-useEffect2";
 
 function App() {
   // return <GestionMontures />;
   // return <ListePays />;
-  return <ListeArticles />;
-  //   return <exercice 2 />
+  // return <CompteurEssais />;
+  return <Minuteur />;
   //   return <exercice 3 />
   //   ...
 }
