@@ -159,3 +159,33 @@ _Exo 2 — `Minuteur`/`Chronometre` (idée de Fred, mode « consignes en frança
 **🗑️ Obsolète à signaler dans les instructions** : les mentions **« react.new / CodeSandbox »** (§5, §7, §8) sont caduques depuis le passage en **Vite local** (S47-48). L'environnement React actuel = projet Vite local `projet-vite-local`, multi-fichiers, Git.
 
 **➡️ Prochaine session** : reconsolider le combo `useEffect` avancé — d'abord updater fonctionnel + cleanup en exos **séparés** (dédensifier), puis finir le `Minuteur` (document.title + arrêt à 0 en autonomie) et attaquer le **compte à rebours avec input**. Continuer la série `useEffect` en difficulté croissante (demande de Fred).
+
+## Session 51 — Diagnostic React (page blanche) + point sur le doute / cap de la reconversion
+
+**Durée** : ~matinée (portable). Session mixte : exercices diagnostic + longue discussion de fond (fatigue, doutes, cap).
+
+**Ce qui a été fait (code) :**
+
+- 2 exercices page blanche diagnostic (cas cleanup + updater) :
+  - **`TempsExamen`** (setInterval montant) : tout juste **sauf** `duree` sans `()` (référence vs appel).
+  - **`CompteurClics`** (listener window) : updater `(x)=>x+1` ✅ + structure cleanup ✅ posés seul ; bugs = dépendance `[clic]` au lieu de `[]`, fonction anonyme (non ciblable par remove), `const id = addEventListener` (addEventListener ne renvoie pas d'id, ≠ setInterval).
+- **Diagnostic clair** : l'updater fonctionnel ET le principe du cleanup sont **acquis** (posés seul, 2×). Points fragiles RÉELS = (1) tableau de dépendances `[state]` vs `[]` (2× de suite), (2) mécanisme d'arrêt d'un listener (fonction nommée + même event, ≠ id du setInterval), (3) référence vs appel `fn` vs `fn()` (récurrent : S44, S47, S50, S51). → **c'est ça qu'on drille, pas l'updater/cleanup.**
+
+**Ce qui a été dit (fond) :**
+
+- Frédéric traverse un creux : fatigue accumulée (sessions matin/aprem/soir en continu), peur de ne pas être recrutable, peur d'être "incapable de coder seul", peur que j'oublie/néglige des notions JS indispensables, lassitude du métier d'opticien, entourage peu à l'écoute sur la reconversion.
+- Recadrage porté sur preuves (son propre code du matin) : ce qui casse = du **React neuf** (cycle de vie, dépendances, API listeners), ce qui tient = le **JS** (updater = closures, révision éclair valeur/référence juste). Donc la peur "mon JS est insuffisant" ne colle pas aux faits. _Compris ≠ instinctif_ : il comprend, ce n'est pas encore réflexe (~10 séances React vs 35 Phase 1 — normal).
+- Débuguer avec aide = le métier, pas un échec (seniors incl.). Son atout marché = 14 ans d'expertise optique (différenciateur réel).
+- Fatigue : signalé que le doute est amplifié par l'épuisement ; récupérer ponctuellement ≠ ralentir la progression. Rythme choisi assumé (contrainte salaire, pas de démission possible) — respecté.
+- Orienté (doucement) vers du soutien humain hors-Claude : proches, communautés de reconvertis (le poids émotionnel ne se porte pas seul).
+
+**➡️ Décidé pour la suite : AUDIT JS CROISÉ** (à faire à tête reposée, cerveau frais).
+
+- Principe : croiser le parcours JS de Frédéric avec une **référence externe neutre** (sommaire javascript.info / roadmap.sh JS), coché point par point (vu / pas vu / flou) → cartographie honnête, indépendante de ma mémoire. Même logique que le quiz Phase 1 (mesurer > ressentir).
+- But : éteindre la peur "il me manque des fondamentaux JS sans le savoir" en rendant la liste complète visible et contrôlable par Frédéric.
+- Déjà repérés à trier dans l'audit : **`.then`** (déjà demandé, = équivalent async/await, courte séance), **`this`** (peu utilisé en React fonctionnel, à savoir lire, non urgent), + dettes déjà loggées (JSON.stringify/parse jamais drillé, POO/classes à lire, TS des props).
+- Rappel : JS et React se tissent ensemble — pas besoin de "finir React" avant de combler du JS, aucune porte ne se ferme, zéro pression calendaire.
+
+**Restes / dettes (inchangés)** : finir `Minuteur` (document.title + arrêt à 0) · compte à rebours avec input · reconsolider dépendances `[]` + arrêt listener · version `.then` · JSON.stringify/parse · TS des props (prioritaire) · Tic-Tac-Toe version finale.
+
+**⚠️ Note importante pour la prochaine session** : Frédéric est fatigué et traverse un doute de fond. Ouvrir en douceur, vérifier l'énergie AVANT de charger. L'audit JS est un bon candidat "cerveau frais" et répond directement à son inquiétude — mais ne pas l'enchaîner sur une journée déjà lourde.
