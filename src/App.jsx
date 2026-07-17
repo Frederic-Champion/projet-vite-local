@@ -4,12 +4,13 @@ import GestionMontures from "./components-exercices/GestionMontures";
 import ListePays from "./components-exercices/Apprentissage-useEffect";
 import CompteurEssais from "./components-exercices/Exercice-useEffect";
 import Minuteur from "./components-exercices/Exercice-useEffect2";
+import Minuteur2 from "./components-exercices/exercice-compteàrebour";
 
 function App() {
   // return <GestionMontures />;
   // return <ListePays />;
   // return <CompteurEssais />;
-  return <Minuteur />;
+  return <Minuteur2 />;
   //   return <exercice 3 />
   //   ...
 }
