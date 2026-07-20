@@ -207,3 +207,57 @@ _Famille fetch/Promise (multi-clôture, protocole proposé par Fred : page blanc
 **🗑️ Obsolète à signaler dans les instructions** : mentions **« react.new / CodeSandbox »** (§5, §7, §8) — caduques depuis Vite local (S47-48).
 
 **➡️ Prochaine session** : au choix — (1) **`Promise.all`** en ouverture (neuf, court) puis enchaîner ; (2) **TS des props** (gros cap prioritaire, début de séance frais) ; (3) **Tic-Tac-Toe version finale** (reprise au calme d'un concept mal digéré). Ouvrir en vérifiant l'énergie.
+
+## Session 56 — Dettes React : reduce objet (ré-entretien) + Promise.all + Tic-Tac-Toe version finale
+
+**Durée** : ~2h. Objectif tenu : clôturer des notions anciennes AVANT d'ouvrir du neuf (TS des props volontairement repoussé — règle "on ferme avant d'ouvrir", décision de Fred).
+**Thème** : réduction de dettes — poche `reduce` objet rouillée, puis `Promise.all` (neuf, enseigné), puis reprise au calme du "voyage dans le temps" du Tic-Tac-Toe (concept mal digéré depuis S46).
+
+**Révision éclair S56 (reduce accumulateur objet — poche 🔴 S54)** : sortie à froid encore cassée (`.map` au lieu de `reduce`, concaténation de texte au lieu de comptage). MAIS 2 réflexes revenus seuls : le `{}` en 2e arg et le `return acc`. Cours complet redonné en forme longue (`for` + `compteur[m.marque] = (compteur[m.marque] || 0) + 1`) puis replié en `reduce`. **Vrai déblocage = les crochets** : Fred butait sur `[m.marque]` → clarifié la confusion empilée `[index]` sur TABLEAU (position) vs `["clé"]` sur OBJET (nom de propriété calculé dynamiquement, = `objet.clé` mais avec une clé variable). Distinction actée nette. 🟡 poche réactivée, à recroiser 1×.
+
+**Ce qui a été fait** :
+
+_Promise.all (neuf, enseigné — pas de page blanche) :_
+
+- Le pourquoi : 3 fetchs séquentiels = somme des attentes (~600ms) ; en parallèle = le plus lent (~200ms). `await` attend sur place → le séquentiel fait la queue à 3 guichets pour rien.
+- Syntaxe : `const [a, b] = await Promise.all([fetch(...), fetch(...)])`. Bien séparé les 2 `[]` : à DROITE dans `Promise.all([...])` = tableau de promesses (argument unique) ; à GAUCHE = déstructuration par position. Résultats rendus dans l'ordre des promesses (garanti).
+- Pattern à 2 niveaux : 1er `Promise.all` pour les réponses, 2e pour les `.json()`.
+- Gestion d'erreur (question spontanée de Fred) : même try/catch/finally + `!res.ok`/throw que d'hab, mais tester le `.ok` de CHAQUE réponse. Point clé : `Promise.all` = "tout ou rien" (une seule échoue → saut au catch, aucun résultat). `fetch` ne voit pas un 404 comme une erreur → le `!ok`/throw reste à notre charge.
+- Exo guidé (1 trou) : structure juste. Doute levé : on ne nomme PAS dans le tableau de droite (`client = resClient.json()` ❌), le nommage se fait à gauche par position. Fred a flaggé lui-même le doute = bon instinct.
+- Questions de fond traitées : pourquoi `[]` dans les `()` (→ parenthèses = appel de fonction / crochets = l'argument est un tableau, contenant naturel d'un nombre variable d'éléments) ; `allSettled` vs `all` (→ dépendance : interdépendants = `all` tout-ou-rien / indépendants = `allSettled` attend tout le monde). `allSettled` juste de nom, non drillé.
+
+_Tic-Tac-Toe version finale (reprise concept, au calme) :_
+
+- Rappel acquis S46 : lifting state up déjà compris (state dans Game, Board reçoit le plateau en prop). Ce qui avait largué = la couche historique cliquable.
+- **Changement de mentalité** : on ne stocke plus "le plateau courant" mais `history` = TOUS les plateaux (tableau de tableaux). `useState([Array(9).fill(null)])`. Ajout immuable à chaque coup (`[...history, nouveau]`, pattern S43 avec des plateaux comme éléments).
+- **`currentMove` = curseur/marque-page** (un simple index, PAS un plateau). Image livre (history) + marque-page (currentMove) → passée nette. `currentSquares = history[currentMove]`.
+- **`xIsNext = currentMove % 2 === 0`** = donnée dérivée, PAS un state (rappel S45/S46 "ne pas stocker ce qui se recalcule"). `%` (modulo) = reste de division, `n % 2` vaut 0 (pair) ou 1 (impair) = test pair/impair standard. Avantage : se recorrige seul au voyage dans le temps (une seule source de vérité = currentMove).
+- **`slice(0, currentMove + 1)`** = LE morceau dur. `slice(début, fin)` avec fin EXCLUE → le `+1` compense pour inclure le plateau courant. Rôle : jeter le "futur périmé" quand on rejoue après un retour arrière (nouvelle branche). Bien distingué du `slice()` sans arg (copie, S46). Pourquoi slice et pas mutation : `history` est un state → slice fabrique un tableau neuf (jamais muter, rappel shallow S41). A demandé plusieurs passes + chiffres concrets ; erreur intermédiaire ("P2 remplacé" avec currentMove=1) recadrée → a fini par acter juste : currentMove pointe le plateau GARDÉ (inclus), tout ce qui suit est jeté.
+- **`jumpTo(move)` = `setCurrentMove(move)`** : voyager = juste déplacer le marque-page ; tout le reste (plateau affiché + tour) en découle.
+- **2e argument de `.map()`** : `history.map((squares, move) => ...)` → `move` = l'index. Ici on IGNORE l'élément (`squares`) et on se sert de l'index (position = n° de coup). Fred a trouvé le pourquoi seul. `onClick={() => jumpTo(move)}` (flèche inline transporte l'argument, S44). `key={move}` = cas légitime d'index en key (historique jamais réordonné, exception S53).
+
+**Niveau estimé après session** :
+
+- **`reduce` objet** : 🟡 poche réactivée (crochets dynamiques = le déblocage). À recroiser en révision éclair.
+- **Crochets `[index]` tableau vs `["clé"]` objet** : 🟢 distinction reposée nette.
+- **`Promise.all`** : 🟡 neuf, pattern compris (parallèle, tout-ou-rien, nommage à gauche). À recroiser, + emballage en composant complet un autre jour.
+- **`allSettled`** : connu de nom seulement.
+- **Tic-Tac-Toe / voyage dans le temps (`currentMove`, `%`, `slice` à args, 2e arg map)** : 🟡 concept enfin digéré (largué en S46). À recroiser — le `slice(0, move+1)` a demandé plusieurs passes, le recroiser en priorité.
+- Recalibrage vers le haut : a tenu 2 notions denses en 2h avec des questions de fond (les 2 `[]`, allSettled, borne exclue du slice) — se sous-note en fin de parcours (a trouvé le 2e arg de map seul mais dit "je ne sais pas").
+
+**🎹 Raccourci de la semaine** : `F12` (Aller à la définition) + `Alt+←` (revenir). Pertinent avec le multi-fichiers. `Ctrl+P` = acquis (retiré). App.css = nettoyé (retiré).
+
+**Restes / dettes (mises à jour)** :
+
+- ✅ Soldé/traité aujourd'hui : `Promise.all` (introduit), Tic-Tac-Toe version finale (concept repris), `reduce` objet (réactivé).
+- **TS des props** : 🔴 PRIORITAIRE — le prochain gros cap, notion neuve, début de séance frais dédié. Rebranche TypeScript (pas touché depuis S38).
+- **Audit JS croisé** (S51) : répond à la peur "oublier la moitié". Séance cerveau frais.
+- **Audit "exercice type"** (todo list…) : principe à expliquer (S53).
+- Poches à ré-entretenir : **`reduce` objet** (recroiser) · méthodes de tableau (rotation) · cohérence de type / objet-vs-tableau / throw-if (neufs S55).
+- `Promise.all` à recroiser (composant complet) · `slice` à args à recroiser en priorité.
+- Tier 2 non urgent : `this` · POO/classes JS (lire).
+- Micro-tâches : Tailwind dans Vite.
+
+**🗑️ Obsolète à signaler dans les instructions** : mentions **« react.new / CodeSandbox »** (§5, §7, §8) — caduques depuis Vite local (S47-48).
+
+**➡️ Prochaine session** : cap sur **TS des props** (gros morceau prioritaire, notion neuve, cerveau frais) OU **audit JS croisé** (répond à la peur de fond). Ouvrir en vérifiant l'énergie. Recroiser `slice(0, move+1)` et `reduce` objet en révision éclair quand l'occasion se présente.
