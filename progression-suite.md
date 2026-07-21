@@ -255,9 +255,14 @@ _Tic-Tac-Toe version finale (reprise concept, au calme) :_
 - **Audit "exercice type"** (todo list…) : principe à expliquer (S53).
 - Poches à ré-entretenir : **`reduce` objet** (recroiser) · méthodes de tableau (rotation) · cohérence de type / objet-vs-tableau / throw-if (neufs S55).
 - `Promise.all` à recroiser (composant complet) · `slice` à args à recroiser en priorité.
-- Tier 2 non urgent : `this` · POO/classes JS (lire).
+- Tier 2 non urgent : `this` · POO/classes JS (lire).**❌ Pas abordé** : `sort()` avec comparateur
 - Micro-tâches : Tailwind dans Vite.
 
 **🗑️ Obsolète à signaler dans les instructions** : mentions **« react.new / CodeSandbox »** (§5, §7, §8) — caduques depuis Vite local (S47-48).
 
 **➡️ Prochaine session** : cap sur **TS des props** (gros morceau prioritaire, notion neuve, cerveau frais) OU **audit JS croisé** (répond à la peur de fond). Ouvrir en vérifiant l'énergie. Recroiser `slice(0, move+1)` et `reduce` objet en révision éclair quand l'occasion se présente.
+
+## Session Mise à jour des instructions / fichiers (pas d'apprentissage, seulement de la gestion de projet)
+
+**mise à jour des instructions** : Avec l'aide de Claude. Intemporelle sauf §7.
+**création de fichier** : PDF roadmap, revision.md, ArchivePhase1.md et Liste des projets consultable au besoin.
