@@ -266,3 +266,44 @@ _Tic-Tac-Toe version finale (reprise concept, au calme) :_
 
 **mise à jour des instructions** : Avec l'aide de Claude. Intemporelle sauf §7.
 **création de fichier** : PDF roadmap, revision.md, ArchivePhase1.md et Liste des projets consultable au besoin.
+
+## Session 57 — Audit croisé + registre des dettes du socle
+
+**Durée** : ~1h. Séance de cartographie, pas de code.
+**Thème** : croiser le parcours réel avec des référentiels externes pour rendre la liste des manques finie et contrôlable.
+**Révision éclair** : fondue dans l'audit (auto-codage de 22 notions JS = récupération à froid).
+
+**Ce qui a été fait** :
+
+- 3 référentiels externes récupérés : javascript.info (Part 1), roadmap.sh JavaScript, roadmap.sh Full-Stack.
+- **Recadrage de Frédéric (juste)** : l'audit croisé, c'est à Claude de faire le rapprochement parcours ↔ référentiels, pas à lui de s'auto-coder ligne par ligne.
+- 2 livrables : `audit-croise.md` (profil complet) + `dettes-apprentissage-socle.md` (HTML/CSS/Tailwind/JS).
+
+**Ce que l'audit a révélé** :
+
+- Trous invisibles dans mon suivi : `switch`, `break`/`continue`, **hoisting** (symptôme connu, mécanisme jamais nommé), coercion.
+- **Notion neuve structurante — dette de type A (trou) vs type B (entretien)** : une notion apprise puis non réactivée redevient une dette invisible, le journal la garde marquée « acquise ».
+- **Dettes silencieuses révélées** : `fetch` POST + `FormData` (dernière activation S35, ~1 mois) · `IntersectionObserver` (S30) · `Object.values` / `for...in` / `toLocaleString` (blocs C-D).
+- **7 marqueurs « il sait »** : 6 manquent (tests, branches Git/PR, TS réel, a11y, sécurité, architecture/README) ; le 7e — expliquer ses choix — est déjà acquis et rare.
+
+**Top 3 dettes prioritaires** : (1) `reduce` objet — seule cassée 2× à froid ; (2) CSS Grid placement — la plus ancienne, 2 réactivations sans ancrage ; (3) `fetch` POST/`FormData`.
+
+**Vérification faite** : aucune dette du socle n'est un prérequis React (contrôlé ligne à ligne). Le Tier 1 fermé en S38 + 15 séances React le confirment.
+
+**Plan acté** : ~8h en 5 séances (micro-notions · projet CSS Grid · modèle mental JS · audit a11y · event loop), **à intercaler dans la Phase 2, jamais en bloc**. `this` + classes → avant Phase 3. Récursion → créneau algo. Dates + regex → tissés dans le SaaS.
+
+**📌 Gros trous du socle — séance dédiée à caler (en attente, sans urgence)**
+
+Trous de type A identifiés en S57, non intégrables en cours de séance : chacun demande un créneau à part.
+
+- **CSS Grid — placement** (~1 séance, idéalement un projet catalogue optique en Grid pur qui absorbe aussi `@keyframes`, `::before` et `rem`) — la dette la plus ancienne du socle (08/06), 2 réactivations sans ancrage.
+- **`@keyframes` / animations CSS** (~1 séance, ou fondu dans le projet Grid ci-dessus).
+- **Accessibilité** (~1h30, méthode audit : Lighthouse + navigation clavier sur le portfolio existant, pas un cours).
+- **Modèle mental JS : coercion + hoisting** (~1h30, méthode prédiction → exécution → explication de l'écart).
+- **Event loop** (~1h, à faire après la séance coercion/hoisting).
+- **Dates** (`Date`, formatage, calculs) (~1 séance) — remontera de toute façon avec le SaaS optique (ordonnances, commandes, garanties).
+- **Regex — bases** (~1 séance) — arrivera avec la validation de formulaires.
+- **`this` + classes JS** (~2 séances) — ⏳ à caler **avant la Phase 3 Python**, pas avant. Aucun impact sur React fonctionnel.
+  \_Total ~8h hors `this`/classes.
+
+**➡️ Prochaine session** : **TS des props** (cap inchangé). Alternative : salve micro-notions (~1h, solde 10 lignes du registre).
