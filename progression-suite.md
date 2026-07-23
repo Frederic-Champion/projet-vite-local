@@ -307,3 +307,63 @@ Trous de type A identifiés en S57, non intégrables en cours de séance : chacu
   \_Total ~8h hors `this`/classes.
 
 **➡️ Prochaine session** : **TS des props** (cap inchangé). Alternative : salve micro-notions (~1h, solde 10 lignes du registre).
+
+## Session 58 — Séance outillage : installation de TypeScript dans Vite (+ cours TS des props, non pratiqué)
+
+**Durée** : ~3h30. Séance qui a dérapé sur l'outillage : partie pour TS des props, terminée en installation TypeScript. Objectif initial NON atteint.
+**Thème** : cours théorique TS des props, puis installation de TypeScript dans `projet-vite-local` — qui a viré en apprentissage de la recherche de doc officielle.
+
+**Révision éclair S58 (`slice(0, currentMove + 1)` — Tic-Tac-Toe, 🔴 S56)** : **NON RECONSTRUIT**. Fred a signalé honnêtement ne pas avoir assez d'éléments. Ce qui tenait : `slice(départ, fin exclue)` ✅, structure de `history` ✅, l'existence d'un `length - 1` ✅. Ce qui était faux : « `currentMove` = index + 1 » → **non, `currentMove` EST l'index** ; le `+1` appartient uniquement au `slice` (compense la borne exclue). Deux notions fusionnées en une. Le `length - 1` appartient à `setCurrentMove(nextHistory.length - 1)` (ligne suivante) — bon morceau, mauvais endroit. → reste 🔴, remis en rotation, à recroiser à froid dans quelques séances.
+
+**Ce qui a été fait** :
+
+_Cours TS des props (théorie seule, AUCUN exercice) :_
+
+- Le pourquoi : 3 bugs invisibles en JS pur (faute de frappe sur un nom de prop → `undefined` silencieux ; mauvais type `prix="129"` → concaténation au lieu d'addition ; prop oubliée → crash runtime). TS les remonte à l'écriture. Bénéfice bonus = autocomplétion des props.
+- Syntaxe en 3 marches (méthode forme longue → DRY) : (1) `function C(props: { marque: string; prix: number })` = simple annotation de paramètre, rien de neuf vs S36 ; (2) type sorti en `interface CMonture Props` (convention `XProps`, PascalCase) ; (3) version finale `function C({ marque, prix }: CProps)`.
+- **Piège central signalé** : l'annotation se pose APRÈS l'accolade fermante, sur le paramètre entier. `{ marque: string }` ❌ = renommage de déstructuration (S37), pas du typage. Boussole = la position du `:`.
+- À savoir lire, pas écrire : `type Props = {}` et `React.FC<Props>` (obsolète).
+- ⚠️ **Statut : cours reçu, ZÉRO exercice → ne compte pas comme acquis.**
+
+_Installation TypeScript dans `projet-vite-local` (le vrai contenu de la séance) :_
+
+- `npm install -D typescript @types/react @types/react-dom` → 2 paquets ajoutés seulement (les `@types` étaient déjà posés par Vite même en template JS). `-D` justifié : outils d'atelier, absents du bundle envoyé au navigateur.
+- **Ce qu'installent réellement les `@types/`** : aucun code exécutable, uniquement des fichiers `.d.ts` = descriptions lisibles par la machine. Séparés du paquet React parce que React est écrit en JS ; une lib écrite en TS livre ses types directement.
+- **Les 3 `tsconfig` (découverte de la séance)** : `tsconfig.json` = aiguilleur quasi vide / `tsconfig.app.json` = le code de `src/` (tourne dans le NAVIGATEUR, a `document`/`window`) / `tsconfig.node.json` = les fichiers de config (tourne dans NODE). Deux mondes d'exécution ≠ un seul jeu de règles. Seul `tsconfig.app.json` compte au quotidien.
+- **Point Vite ancré** : Vite transpile les `.ts` mais ne VÉRIFIE PAS les types (page Features → TypeScript). Le rouge vient de VS Code, pas du serveur. D'où `tsc --noEmit` en complément, et d'où l'installation du paquet `typescript` (pour disposer de `tsc`).
+- Test de validation : `const prix: number = "129"` → `ts(2322) Type 'string' is not assignable to type 'number'` ✅ TS opérationnel.
+
+_🎯 LE VRAI APPRENTISSAGE — trouver et qualifier la doc officielle :_
+
+- **Erreur de ma part, à l'origine du dérapage** : j'ai livré un `tsconfig.json` complet **reconstruit de mémoire**, présenté comme une procédure établie, sans dire que ça ne venait d'aucune source. Fred a demandé 3× d'où ça sortait ; j'ai répondu par de nouvelles procédures au lieu de dire « de ma mémoire ». Il a cherché la source d'un texte qui n'en avait pas. **Bonus : ma version était périmée (1 fichier au lieu de 3) — c'est SA démarche qui m'a corrigé.**
+- **Répartition des docs comprise** : typescriptlang.org = le langage, option par option (dictionnaire, à consulter APRÈS) · react.dev = les paquets + 2 options obligatoires (`dom` dans `lib`, `jsx` défini) · vite.dev = ce que Vite fait/ne fait pas de tes `.ts`. **Aucune ne donne le `tsconfig` complet** — trou réel de l'écosystème, pas un échec de recherche.
+- **🆕 RÈGLE DE MÉTIER ANCRÉE : quand une doc renvoie vers son starter, le CODE du starter EST la documentation.** Source officielle du `tsconfig` = `github.com/vitejs/vite` → `packages/create-vite/template-react-ts/`. Lisible en ligne, versionné, à jour. Aller lire le code source officiel n'est pas un contournement.
+- Piège traversé : `awesome-vite` (liste communautaire de templates tiers) ≠ le dépôt `vitejs/vite`. Repère = l'URL + on navigue dans l'arborescence, pas dans un README. `Ctrl+F` inopérant sur GitHub (chargement dynamique) → utiliser la recherche du dépôt (touche `t`).
+- Confirmé : `npm create vite@latest` propose la variante TS **au démarrage seulement** ; aucune commande n'ajoute TS à un projet Vite existant → reconstitution manuelle obligatoire.
+
+**Ce qui a accroché** :
+
+- Séance vécue comme pénible et confuse (agacement légitime exprimé). **Cause = moi**, pas la difficulté : 3 méthodes contradictoires livrées en 3 messages sans jamais dire laquelle suivre, sur fond d'une info inventée présentée comme sourcée.
+- **Exigence reformulée par Fred, à respecter strictement** : « je veux savoir, pas recopier — être capable d'appliquer seul au besoin ». Corollaire opérationnel : **toujours annoncer la nature de ce que je livre** (source vérifiée vs reconstruction de mémoire).
+
+**Niveau estimé après session** :
+
+- **Installation TypeScript dans un projet Vite existant** : 🟢 faite et validée par test.
+- **Rôle des 3 `tsconfig` / `@types` / Vite ne vérifie pas les types** : 🟢 compris.
+- **Méthode « remonter à la doc officielle + qualifier la source »** : 🟢 acquis en conditions réelles et douloureuses — la vraie compétence de la journée, transférable à tout outil.
+- **TS des props** : 🔴 **INCHANGÉ** — cours théorique reçu, aucun exercice, aucune ligne écrite. Reste le cap n°1.
+- **`slice(0, move + 1)`** : 🔴 non reconstruit à froid, remis en rotation.
+- Recalibrage : a tenu 3h30 sur une séance frustrante sans lâcher, et a fini par trouver la source officielle par lui-même. La ténacité vaut la notion.
+
+**Restes / dettes (mises à jour)** :
+
+- 📌 **Commiter + pusher** l'installation TS (rituel deux machines — le fixe devra faire `git pull` + `npm install`).
+- **TS des props** : 🔴 PRIORITAIRE, en tête de pile depuis la S44 (~15 sessions). Cours fait, exercice à faire.
+- **Tailwind dans Vite** : programmé pour la prochaine séance (dette S48). ⚠️ Architecture `src/input.css` + `dist/output.css` de la Phase 1 **NON transposable** (c'était le mode CLI `--watch`) — l'intégration Vite passe par un plugin.
+- Poches à ré-entretenir : `slice(0, move+1)` 🔴 · `reduce` objet 🟡 · méthodes de tableau (rotation) · cohérence de type / objet-vs-tableau / throw-if (S55).
+- `Promise.all` en composant complet · Audit « exercice type » (S53) · Tier 2 non urgent : `this` · POO/classes.
+- Gros trous du socle (S57) : CSS Grid + `@keyframes` · a11y · coercion/hoisting · event loop · dates · regex.
+
+**🎹 Raccourci de la semaine** : `F12` (Go to Definition) + `Alt+←` (Go Back) — inchangé, non entraîné cette séance.
+
+**➡️ Prochaine session** : (1) **Tailwind dans Vite** en ouverture, en autonomie sur la doc officielle Tailwind — time-box 45 min, appeler à l'aide si ça déborde (piège de version probable) ; (2) **TS des props POUR DE VRAI** sur le reste de la séance : exercice guidé, squelette + un seul trou, univers optique. Ne pas enchaîner une 3e séance d'outillage d'affilée.
