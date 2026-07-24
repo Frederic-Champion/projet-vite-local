@@ -367,3 +367,77 @@ _🎯 LE VRAI APPRENTISSAGE — trouver et qualifier la doc officielle :_
 **🎹 Raccourci de la semaine** : `F12` (Go to Definition) + `Alt+←` (Go Back) — inchangé, non entraîné cette séance.
 
 **➡️ Prochaine session** : (1) **Tailwind dans Vite** en ouverture, en autonomie sur la doc officielle Tailwind — time-box 45 min, appeler à l'aide si ça déborde (piège de version probable) ; (2) **TS des props POUR DE VRAI** sur le reste de la séance : exercice guidé, squelette + un seul trou, univers optique. Ne pas enchaîner une 3e séance d'outillage d'affilée.
+
+## Session 59 — Tailwind dans Vite (dette S48 soldée) + Prettier/plugin Tailwind
+
+**Durée** : ~1h45 (pause midi, portable, énergie bonne). Séance courte et efficace, volontairement close après la dette outillage.
+**Thème** : installer Tailwind v4 dans `projet-vite-local` en autonomie sur la doc officielle, puis rebrancher Prettier + `prettier-plugin-tailwindcss`. Suite directe de la S58 : rejouer à 24h la compétence « remonter à la doc officielle », sur un cas où la doc est bonne.
+
+**Révision éclair S59 (fetch POST + FormData — dette silencieuse repérée à l'audit S57, dernière activation S35, ~2 mois)** :
+
+- **Structure POST** 🟡 : `method: "POST"` et `body: data` sortis seuls ✅. **`headers` non retrouvé** (Fred a signalé « un truc à saisir dont je ne me souviens pas » = honnête, bien calibré).
+- **`FormData`** 🟢 : rôle juste, et **l'attribut `name` sur l'`<input>` cité spontanément** (le détail sans lequel rien n'est ramassé). Précisé : `new FormData(e.target)` ramasse tout le formulaire d'un coup ; `new FormData()` crée un objet vide à remplir par `.append()`.
+- **Rôle de JSON** 🔴 **cadrage rétréci** : « JSON c'est pour un localStorage ». → recadré (rappel S37) : **localStorage ET le réseau ne transportent que du texte**. JSON = format d'échange universel, même rôle des deux côtés. Fred utilise déjà JSON en réseau à chaque fetch GET (`response.json()`) sans l'avoir rangé sous cette étiquette.
+- **Point pro ancré — le `Content-Type` selon le body** : avec `FormData` → **ne PAS l'écrire** (le navigateur pose l'en-tête + un séparateur technique indevinable ; l'écrire à la main casse la requête) ; avec JSON → `"application/json"` **obligatoire** (personne ne le fera à ta place).
+- → La dette silencieuse de l'audit est **confirmée par la mesure**. Reste en rotation.
+
+**Ce qui a été fait** :
+
+_Installation Tailwind v4 dans Vite (dette S48) :_
+
+- Doc officielle trouvée seul (tailwindcss.com → Getting started → Installation → Using Vite, v4.3). **Contraste assumé avec la S58** : 5 étapes numérotées, commandes fournies, rien à reconstituer. Enseignement de fond : **la qualité de la doc varie énormément d'un outil à l'autre** — savoir le repérer en 2 min fait gagner des heures.
+- `npm install tailwindcss @tailwindcss/vite` → 2 paquets : le moteur + la pièce de raccordement à Vite (même logique que TS hier).
+- **⚠️ Divergence n°1 (projet neuf vs existant) — `vite.config.js`** : la doc montre `plugins: [tailwindcss()]`. Copier tel quel **écrase** `react()` et casse la compilation du JSX. Le bon geste = **ajouter un élément au tableau**, pas le réécrire → `plugins: [react(), tailwindcss()]`. Fait juste du premier coup (import par défaut + tableau complété + parenthèses).
+- **Rappel S52 réinvesti en contexte neuf** : pourquoi `react()` et non `react` → ce sont des **fonctions-usines** qui RETOURNENT l'objet plugin ; ici on veut le résultat maintenant. « La parenthèse décide du moment », appliqué à un fichier de config.
+- **⚠️ Divergence n°2 — quel fichier CSS ?** Question posée avant d'agir, **répondue juste avec le bon raisonnement** (`index.css` = importé dans `main.jsx`, chargé en premier et inconditionnellement / `App.css` = plus importé du tout depuis S48 → l'y mettre n'aurait eu AUCUN effet). Précisé : les 2 fichiers ne diffèrent QUE par l'endroit où ils sont importés (le CSS reste global — S48).
+- **Preflight** expliqué : Tailwind injecte un reset (marges, titres, listes, boutons remis à zéro) pour une base identique partout. Conséquence : les `<h1>` « perdent » leur style → ce n'est PAS le CSS qui casse, c'est le défaut navigateur qui est effacé.
+- **Nettoyage `index.css`** : suppression du bloc de démonstration du scaffolding. Argument : code mort + **on a Git**, pas besoin de commenter « au cas où » (garder du code mort commenté = réflexe sanctionné en revue).
+- **Chargement du CSS avec un bundler (question spontanée « pas de `<link>` à saisir ? »)** : non — Phase 1 = `<link>` dans le HTML (mode CLI) / aujourd'hui = `import "./index.css"` dans `main.jsx`, présent depuis le scaffolding. **Le CSS fait partie du graphe de modules** : Vite suit la chaîne `index.html` → `main.jsx` → `index.css` et l'injecte. On importe une feuille de style comme un composant.
+- Test de validation : `text-3xl font-bold text-blue-500` → grand, gras, bleu ✅ **Installation validée.**
+
+_🎯 Grosse discussion de fond — `@theme` / `@apply` / CSS classique (initiée par Fred, très bonne série de questions) :_
+
+- **Distinction centrale posée** : `:root { --x }` = variable CSS **native**, Tailwind l'ignore, aucune classe générée / **`@theme { --color-x }` = on PARLE à Tailwind**, il **fabrique les classes** (`bg-x`, `text-x`, `hover:bg-x`, `md:text-x`…). Le préfixe `@` = instruction adressée à Tailwind, qui disparaît à la compilation.
+- **Réponse à « on peut tout faire en CSS classique ? »** : **oui pour `@apply`** (pur confort, tout le portfolio pouvait s'écrire à la main) / **NON pour `@theme`** (sans lui, `bg-accent` n'existe pas — il aurait fallu écrire `background: var(--color-accent)` en CSS). La vraie différence : CSS classique = **tu écris** chaque règle et chaque variante ; `@theme` = **tu déclares une valeur**, Tailwind génère toutes les combinaisons.
+- Confirmé : une classe `.badge` en CSS classique + `className="badge"` fonctionne parfaitement et cohabite (`className="badge text-3xl"`). Le coût = 2 systèmes en parallèle, 2 endroits où chercher.
+- **Point React majeur** : en React, `@apply` est souvent inutile — le **composant** (`<Badge>`) est un meilleur outil que la classe CSS (embarque style + structure, accepte des props, pas de fichier CSS parallèle). Le `.comp` du portfolio existait parce que c'était du HTML. `@apply` reste utile pour `@layer base` / typographie / markup non contrôlé.
+- **Échelle Tailwind ressortie rouillée** 🟡 : `py-4` pris pour 4px → c'est **1rem = 16px** (1 unité = 0.25rem). Dette d'entretien classique (type B), pas un trou. Aussi recadrés : `bg-crimson` n'existe pas (couleur CSS ≠ token Tailwind → `bg-red-600` ou `bg-[crimson]`) et `rounded-[999px]` → `rounded-full` (chercher le standard avant la valeur arbitraire).
+
+_Prettier + plugin Tailwind sur ce projet :_
+
+- `npm install -D prettier prettier-plugin-tailwindcss` — rappel S40 : **`node_modules` est local à chaque projet**, Prettier installé ailleurs n'existe pas ici (l'extension VS Code, elle, est globale).
+- `.prettierrc` recréé à la racine **en reprenant celui de `portfolio-fred` sur GitHub** (source fiable, écrite pour v4) — méthode S58 réappliquée : on va chercher la source, on ne se fie pas à la mémoire. Adaptation obligatoire : `tailwindStylesheet` pointé sur **`./src/index.css`** (et non `./src/input.css` = architecture CLI Phase 1, non transposable).
+- Test : classes en désordre → réordonnées au save ✅
+- **🆕 Lecture d'un rapport `npm audit`** (message `1 high severity vulnerability`) : format décodé (paquet + versions touchées, sévérité, nature, lien advisory, chemin). Cas rencontré = `postcss`, une **dépendance de dépendance** (jamais installée directement, utilisée sous le capot par Vite/Tailwind) → d'où l'intérêt du `package-lock.json` qui fige tout l'arbre. Décision raisonnée : devDependency + projet local non déployé = pas d'urgence. **⚠️ Piège pro signalé : `npm audit fix --force` peut installer des versions majeures et CASSER le projet — jamais par réflexe, on lit d'abord.**
+
+**Ce qui a accroché / à mon crédit** :
+
+- **Imprécision de ma part, corrigée par Fred** : j'ai affirmé que les variables de `index.css` n'étaient « utilisées par aucun composant » — faux. Elles étaient consommées **dans le même fichier** (`color: var(--text)` sur `:root`), d'où le fond visible sur les exercices. Fred l'a repéré en confrontant à ce qu'il voyait à l'écran. Bon réflexe : **vérifier l'affirmation contre le réel**.
+- Série de questions de fond de très bon niveau (pourquoi 2 fichiers CSS, `@theme` vs CSS natif, `.badge` en classique, pas de `<link>` ?) — chacune tapait sur un vrai point d'architecture.
+
+**Niveau estimé après session** :
+
+- **Installer Tailwind v4 dans un projet Vite existant** : 🟢 fait et validé, avec les 2 divergences projet-neuf/projet-existant identifiées et traitées.
+- **Distinction `@theme` (génère des classes) vs variable CSS native (n'en génère aucune)** : 🟢 point de fond enfin explicite — c'était flou depuis la Phase 1.
+- **Chargement du CSS par le bundler (import ≠ `<link>`)** : 🟢 compris.
+- **Preflight / reset Tailwind** : 🟢 compris.
+- **Prettier + plugin Tailwind par projet** : 🟢 rebranché en autonomie depuis la source.
+- **Lecture d'un `npm audit`** : 🟡 neuf, format compris.
+- **Échelle Tailwind (1 unité = 0.25rem)** : 🟡 rouillée, à recroiser.
+- **fetch POST / `Content-Type` / rôle de JSON en réseau** : 🟡🔴 dette silencieuse confirmée, en rotation.
+- Recalibrage : a mené l'installation quasi seul (doc trouvée seul, `vite.config` juste du premier coup, bon fichier CSS choisi avec le bon raisonnement) — mon rôle s'est limité à signaler les 2 pièges projet-existant.
+
+**Restes / dettes (mises à jour)** :
+
+- ✅ **Dette « Tailwind dans Vite » SOLDÉE** (traînait depuis S48) — à retirer du registre.
+- 📌 **Commiter + pusher** la séance (Tailwind + Prettier + `.prettierrc`). Rituel deux machines sur le fixe : `git pull` → `npm install` → `npm run dev`.
+- **TS des props** : 🔴 **PRIORITÉ ABSOLUE, cap de demain**. Cours reçu S58, **toujours zéro exercice**. En tête de pile depuis la S44 (~16 sessions). Ne plus repousser.
+- ⚠️ **Deux séances d'outillage d'affilée (S58 + S59) — la troisième est interdite.**
+- Poches à ré-entretenir : `slice(0, move+1)` 🔴 · `reduce` objet 🟡 · échelle Tailwind 🟡 (neuf) · fetch POST/JSON réseau 🟡 · méthodes de tableau (rotation) · cohérence de type / objet-vs-tableau / throw-if (S55).
+- `Promise.all` en composant complet · Audit « exercice type » (S53) · Tier 2 non urgent : `this` · POO/classes.
+- Gros trous du socle (S57) : CSS Grid + `@keyframes` · a11y · coercion/hoisting · event loop · dates · regex.
+- 💡 Opportunité notée : les exercices React ont perdu leur mise en forme (héritée de l'ancien `index.css`) → **terrain tout prêt pour du restylage Tailwind**, et éventuellement pour absorber la dette CSS Grid.
+
+**🎹 Raccourci de la semaine** : `F12` (Go to Definition) + `Alt+←` (Go Back) — toujours pas entraîné (2 séances d'outillage, peu de navigation entre fichiers). À relancer demain, le multi-fichiers TS s'y prêtera.
+
+**➡️ Prochaine session** : **TS DES PROPS, sans détour**. Cours déjà reçu (S58) → on attaque directement par l'**exercice guidé** (squelette + un seul trou, univers optique), puis montée : props optionnelles, valeurs par défaut. Aucun outillage. Ouvrir en vérifiant l'énergie.
