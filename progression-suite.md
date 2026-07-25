@@ -441,3 +441,97 @@ _Prettier + plugin Tailwind sur ce projet :_
 **🎹 Raccourci de la semaine** : `F12` (Go to Definition) + `Alt+←` (Go Back) — toujours pas entraîné (2 séances d'outillage, peu de navigation entre fichiers). À relancer demain, le multi-fichiers TS s'y prêtera.
 
 **➡️ Prochaine session** : **TS DES PROPS, sans détour**. Cours déjà reçu (S58) → on attaque directement par l'**exercice guidé** (squelette + un seul trou, univers optique), puis montée : props optionnelles, valeurs par défaut. Aucun outillage. Ouvrir en vérifiant l'énergie.
+
+## Session 60 — TS des props : cours de fond + première pratique réelle (dette S44 enfin entamée)
+
+**Durée** : ~1h30-2h (après-midi). Séance courte mais dense : la dette la plus ancienne de la pile est enfin passée du statut « cours reçu » à « code écrit ».
+**Thème** : typer les props d'un composant React. Cours détaillé redemandé par Fred (celui de la S58 avait été noyé dans une séance d'outillage confuse), puis mise en pratique réelle dans `projet-vite-local`.
+
+**Révision éclair S60 (`Object.values` / `for...in` — dette silencieuse S57, dernière activation bloc C le 09/06)** :
+
+- `Object.values(obj)` → rôle juste (récupère les valeurs dans un nouveau tableau), **mais retrouvé via MDN**, pas de mémoire. Dette d'entretien **confirmée par la mesure**, reste en rotation.
+- `for...in` → « tourne sur les clés » ✅ juste. Syntaxe complète non produite → complétée : `for (const marque in stock) { ... stock[marque] ... }`.
+- **🔗 Connexion majeure faite** : les crochets `stock[marque]` = **exactement** le déblocage du `reduce` objet de la S56 (`acc[clé]`). Accéder à une propriété dont le nom est dans une **variable**. Deux notes de la même dette, même mécanisme.
+- Mentionné pour lecture seule : `for (const [k, v] of Object.entries(obj))` (version moderne).
+
+**Ce qui a été fait** :
+
+_Setup / logistique (fait proprement, en autonomie) :_
+
+- `App.jsx` → **`App.tsx`**, `main.jsx` recâblé, système commenter/décommenter **intact** (question posée avant d'agir — bon réflexe).
+- Premier fichier `.tsx` créé (`BrouilleTSX.tsx`). Repère posé : **JSX + TS = extension `.tsx`**, jamais `.ts`.
+- **⚠️ Piège projet-existant traversé — `ts(7016)`** : un `.tsx` qui importe un `.jsx` déclenche `Could not find a declaration file ... implicitly has an 'any' type`. Mécanisme compris : par défaut TS n'accepte pas les fichiers JS dans un projet TS.
+- **✅ `"allowJs": true` ajouté dans `tsconfig.app.json`** (le fichier de `src/`, S58). Source qualifiée : `typescriptlang.org/tsconfig/allowJs.html` — option **conçue** pour la migration progressive JS→TS. Nuance ancrée : `allowJs` **accepte** les `.jsx` sans les **vérifier** (la vérification = `checkJs`, séparée, désactivée par défaut) → les 12 anciens exercices ne hurlent pas.
+- Hygiène : quand on commente un `return`, **commenter aussi l'import** (sinon `ts(6133)` + bruit dans PROBLEMS).
+
+_🎓 COURS DÉTAILLÉ — TS des props (le vrai, celui de la S58 n'était pas passé) :_
+
+- **🆕 LE POINT DE FOND, jamais explicité avant : React ne passe qu'UN SEUL argument à un composant — un objet.** `<Carte marque="X" prix={149} />` → React exécute `Carte({ marque: "X", prix: 149 })`. Conséquences déduites : l'ordre des attributs JSX n'a aucune importance (objet, pas tableau) ; un composant n'a qu'un paramètre ; **typer les props = typer un objet** → donc une `interface`. C'est la clé qui manquait, tout le reste en découle.
+- **Les 4 marches (méthode forme longue → DRY)** : 0. `function C(props)` + `props.marque` — JS pur, 15 séances de pratique
+  1. `function C(props: { marque: string; prix: number })` — simple annotation de paramètre (rien de neuf vs S36)
+  2. `interface CProps {...}` + `function C(props: CProps)` — le type sorti et nommé. **Le corps reste en `props.marque`**
+  3. `function C({ marque, prix }: CProps)` — déstructuration + annotation
+- **🧭 La boussole du `:`** : à l'**intérieur** d'une déstructuration, `:` = **renommage** JS (`{ marque: string }` ❌ = « appelle-la `string` », TS n'y voit rien) ; **après l'accolade fermante**, `:` = **annotation** TS sur le paramètre entier. Partout ailleurs, `:` = « est de type ».
+- **Ce que TS ne fait PAS** : disparaît à la compilation (S36) · Vite transpile sans vérifier (S58) · **ne valide pas les données d'API** (il te croit sur parole → c'est le rôle de Zod, fin de Phase 2).
+
+_Exercice 1 — guidé (1 trou), puis débordement positif :_
+
+- **Bug traversé, très instructif** : signature de la **marche 2** (`props: CProps`) + corps de la **marche 3** (`{marque}`) → `ts(2304) Cannot find name 'marque'` ×2 + `props declared but never read`. Point clé ancré : **l'interface décrit une forme, elle ne crée aucune variable.** Corrigé seul en marche 3.
+- **`ts(2739)` observé en direct** (`Type '{}' is missing the following properties: marque, prix`) sur un `<Brouillon2 />` sans props → **le « pourquoi » du cours vécu, pas récité** : la prop oubliée attrapée à l'écriture au lieu d'un `undefined` silencieux au runtime.
+- **🌟 Initiative non demandée — invention d'un composant-page** : plutôt que faire remonter les props jusqu'à `App` (ce qui aurait cassé le système commenter/décommenter — chaque exercice aurait exigé ses props dans `App`), Fred a créé un composant intermédiaire `Brouillon2` qui héberge la démo et fournit les données à `CarteMonture`. **C'est la hiérarchie des vraies applis** (App orchestrateur → Page assemble → Composant affiche), trouvée seul sur un problème pratique. Résultat : 0 erreur, 0 warning.
+
+_Points d'outillage et de vocabulaire clarifiés (questions de Fred) :_
+
+- **`tsc --noEmit` décodé** : `tsc` = le vrai compilateur TS (celui installé S58) ; `--noEmit` = « vérifie tout, n'écris aucun fichier » (Vite produit déjà les fichiers, on ne veut que la moitié qu'il ne fait pas). **CI** = serveur qui rejoue les vérifications à chaque push et refuse le code si ça casse. Rangé dans la grille existante : Prettier = la forme (save / `--check`) · ESLint = le fond (extension / `npm run lint`, S49) · **TS = les types (rouge VS Code / `tsc --noEmit`)**. Script `"typecheck": "tsc --noEmit"` à ajouter dans `package.json`.
+- **🆕 Vocabulaire : signature vs corps** — signature = la ligne de déclaration (nom, paramètres, types, retour) = le **contrat** ; corps = tout entre les `{ }` = le **travail**. Repère : l'accolade ouvrante de fin de ligne marque la frontière. **Enjeu réel : tout le neuf de TS vit dans la signature, le corps n'a pas changé d'un caractère depuis le JS pur.** + **paramètre** (le nom, dans la signature) vs **argument** (la valeur, à l'appel).
+
+_Micro-drill de fin (3 signatures, hors React, `.ts` pur) :_
+
+- `resumeClient` / `calculerRAC` / `afficherMonture` : **mécanisme `({ ... }: XProps)` juste 3 fois sur 3.**
+- Corrections : **PascalCase pour les interfaces** (`resumeClientProps` → `ResumeClientProps` — règle S36 : types/composants en PascalCase, variables/fonctions en camelCase) ; nuance de nommage donnée — le suffixe `Props` est une convention **React**, une fonction ordinaire nomme son interface d'après la **donnée** (`Client`, comme en S38) car c'est réutilisable.
+- 3 leviers d'assimilation posés (à sa demande — « je comprends mais je n'assimile pas ») : (1) la signature = **deux morceaux collés** qui ne se parlent pas, écrits sur 2 lignes ; (2) **test du cache-main** — masquer tout ce qui suit le `:` laisse du JS de la S37 ; (3) **sortir de React** — la syntaxe est identique sur `calculerDevis({ nom, mut }: Client)`, aucun composant nécessaire.
+
+**Niveau estimé après session** :
+
+- **Installation TS opérationnelle sur projet existant (`allowJs`, `.tsx`, `ts(7016)`)** : 🟢 — dette de logistique soldée.
+- **Concept « props = UN objet passé à une fonction »** : 🟢 — c'était le chaînon manquant, il est passé.
+- **TS des props, marche 3 (`{ a, b }: XProps`)** : 🟡 **compris, en cours d'ancrage** — écrit 1× en composant + 3× en drill, mais **le même jour que le cours**. ⚠️ **Ne pas surévaluer** : la vraie mesure est la récupération à froid demain. Fred l'a dit lui-même (« il faut pratiquer encore et encore »), calibrage juste.
+- **Boussole du `:` (renommage vs annotation)** : 🟡 comprise, à recroiser.
+- **`tsc --noEmit` / notion de filet CI** : 🟢 compris.
+- **Vocabulaire signature / corps / paramètre / argument** : 🟢 posé.
+- **PascalCase sur les types** : 🔴 à recroiser (erreur sur les 3 interfaces du drill).
+- Recalibrage vers le haut : a corrigé ses 3 erreurs seul, a inventé le pattern composant-page sans qu'on le lui demande, et a posé 3 questions de fond de bon niveau (logistique du système d'exercices, `tsc --noEmit`, assimilation de la signature). Séance courte mais pleine.
+
+**⚠️ Point de méthode (à mon crédit)** : « le filet CI c'est `tsc --noEmit` » — 3 notions empilées en 4 mots, non décodées. Fred a demandé. Rappel : ne pas balancer d'acronyme ou de commande sans le déplier, même en aparté.
+
+**📌 Logistique documents** : le registre des dettes présent dans les fichiers du projet est un **PDF scanné (images)** — illisible pour moi. Fred l'a collé en texte cette séance. **À reconvertir en `.md` ou en PDF texte** pour être exploitable automatiquement à chaque ouverture.
+
+**Restes / dettes (mises à jour)** :
+
+- ✅ **Soldé** : installation TS fonctionnelle + `allowJs` · vocabulaire signature/corps · `tsc --noEmit` compris · dette « TS des props » **entamée pour de vrai** (n'est plus 🔴 « zéro ligne écrite »).
+- 📌 **Commiter + pusher** S58 + S59 + S60 (TS, Tailwind, `.prettierrc`, `allowJs`, `App.tsx`). Rituel deux machines sur le fixe : `git pull` → `npm install` → `npm run dev`.
+- 📌 Ajouter le script `"typecheck": "tsc --noEmit"` dans `package.json` (non fait).
+- **⏭️ NON FAIT, reporté demain** : exercice page blanche `CarteVerre` (interface + marche 3 + composant-page + 2 tests d'erreur volontaires) · **props optionnelles `?` + valeur par défaut** (mécanisme neuf, cours court à donner AVANT tout exercice) · props tableau typé (`Monture[]`) · prop fonction (`onSupprimer: (id: string) => void`, neuf).
+- Poches à ré-entretenir : `Object.values` / `for...in` 🟡 (mesurées ce jour) · `reduce` objet 🔴 · `slice(0, move+1)` 🔴 · échelle Tailwind 🟡 · fetch POST/`Content-Type` 🟡 · PascalCase sur les types 🔴 (neuf).
+- `Promise.all` en composant complet · Audit « exercice type » (S53) · Tier 2 non urgent : `this` · POO/classes.
+- Gros trous du socle (S57) : CSS Grid + `@keyframes` · a11y · coercion/hoisting · event loop · dates · regex.
+- 💡 Opportunité toujours ouverte : les exercices React n'ont plus de mise en forme → terrain prêt pour du restylage Tailwind, et pour absorber la dette CSS Grid.
+
+**🗑️ Obsolète à signaler dans les instructions (§7)** :
+
+- Tailwind : « ❌ Pas abordé : **Tailwind avec React/Vite** (micro-tâche restante) » → **soldé S59**.
+- TypeScript : « TS des props 🔴 prochain gros cap, **pas pratiqué depuis l'intro** » → à requalifier en 🟡 (installé, cours donné, 1er composant écrit, drill fait).
+- §5 : le `.prettierrc` de `projet-vite-local` pointe sur **`./src/index.css`** (et non `./src/input.css`, qui était l'architecture CLI de la Phase 1, non transposable).
+
+**🎹 Raccourci de la semaine** : `F12` (Go to Definition) + `Alt+←` (Go Back) — **toujours pas entraîné**, 3 séances de suite. À forcer demain : le multi-fichiers `.tsx` avec interfaces s'y prête parfaitement (curseur sur un nom de type → `F12`).
+
+**➡️ Prochaine session (week-end, session longue)** : **TS des props, pratique intensive.**
+
+1. Ouverture : re-drill des 3 signatures **à froid** (mesure d'ancrage réelle) + révision éclair pondérée Phase 1.
+2. Exercice page blanche `CarteVerre` (reporté ce jour).
+3. Cours court **props optionnelles `?` + valeur par défaut**, puis exercice.
+4. Montée : **props tableau typé** (`Monture[]`) + interface imbriquée + `.map()`.
+5. Si l'énergie tient : **typer une prop fonction** (cours avant, pas de page blanche dessus).
+
+- Dettes glissables sans forcer dans les exos : **`toLocaleString`** (prix en euros 🟠) et **paramètres par défaut** (🟠, tombe seul avec les props optionnelles). `sort()` **interdit** en exercice — jamais enseigné.
+- Ouvrir en vérifiant l'énergie.
