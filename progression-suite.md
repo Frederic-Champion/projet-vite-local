@@ -535,3 +535,159 @@ _Micro-drill de fin (3 signatures, hors React, `.ts` pur) :_
 
 - Dettes glissables sans forcer dans les exos : **`toLocaleString`** (prix en euros 🟠) et **paramètres par défaut** (🟠, tombe seul avec les props optionnelles). `sort()` **interdit** en exercice — jamais enseigné.
 - Ouvrir en vérifiant l'énergie.
+
+## Session 61 — TS des props : pratique intensive (page blanche) + props optionnelles
+
+**Durée** : ~3h (samedi, session longue). Séance de pratique réelle : le cours de la S60 mis à l'épreuve du code écrit soi-même.
+**Thème** : reconstruction page blanche du typage de props, puis introduction des props optionnelles et des valeurs par défaut. Deux dettes du socle réactivées en cours de route.
+
+**Révision éclair S61 (`reduce` accumulateur objet — dette 🔴 n°1 du registre, cassée S54 et S56)** :
+
+- Sortie à froid **encore incomplète**, mais **net progrès mesuré** : bon outil (`reduce`), ordre `(acc, v)` juste, `{}` en 2ᵉ argument présent, et surtout **crochets dynamiques `acc[...]` sortis seuls** (c'était LE déblocage identifié en S56).
+- 3 bugs restants : `acc[marque]` au lieu de `acc[v.marque]` (nom non déclaré) · `return acc[...] = ...` (une assignation vaut la valeur assignée, pas l'objet → le carnet n'est pas rendu, **même bug qu'en S54**) · filet `|| 0` placé APRÈS l'addition au lieu d'avant (`undefined + 1` = `NaN`).
+- **🆕 Règle acquise** : dans un `reduce`, `return acc;` est **toujours** seul sur sa ligne, le travail se fait au-dessus. Repère à 3 mots : **filet, calcul, rendu**.
+- Réécrit juste après le cours, correct.
+
+**⚠️ RÈGLE DE MÉTHODE POSÉE PAR FRÉDÉRIC (à appliquer strictement)** :
+
+> « Les énigmes/questions pour faire réfléchir : très bien, j'approuve à 100 %, c'est mieux pour l'apprentissage dans la majorité des cas. **Mais quand je bugge 2-3 fois sur la même chose, stop les énigmes → cours détaillé.** Sinon ça m'énerve. »
+> Appliqué immédiatement (cours complet `reduce`), puis re-appliqué en S62. Bonne règle, elle rejoint le calibrage « l'effort est le signal ».
+
+**Ce qui a été fait** :
+
+_Bloc 1 — drill de signatures TS (mesure à froid, 24h après le cours) :_
+
+- 3 signatures neuves (`livrerCommande`, `CarteMutuelle`, `calculerRemise`) : **mécanisme `({ ... }: XProps)` juste 3/3**, sans hésitation.
+- **PascalCase corrigé sur les 3 interfaces** (erreur systématique la veille) → dette S60 soldée à froid.
+- Distinction composant (PascalCase) / fonction (camelCase) : passée.
+- 2 corrections : `payee: number` au lieu de `boolean` (erreur de lecture du contrat → **une interface fausse est pire qu'aucune interface**, elle donne une fausse sécurité) · suffixe `Props` mis sur des fonctions ordinaires → **règle posée : `XProps` = convention React uniquement ; une fonction ordinaire nomme son interface d'après la DONNÉE** (`Commande`, `Remise`) car c'est réutilisable.
+
+_Bloc 2 — `CarteVerre` (page blanche, 1er jet) :_
+
+- Interface + marche 3 + composant-page : écrits de mémoire, corrects.
+- `toLocaleString("fr-FR")` **sorti de mémoire** (dette 🟠 du registre, dernière activation 10/06) → réactivée.
+- Complété : **le 2ᵉ argument (objet d'options)** `{ style: "currency", currency: "EUR" }` → `259,00 €` avec symbole et décimales gérés automatiquement. Ne jamais écrire le `€` à la main (la position dépend de la locale).
+- **🆕 Patron reconnu — l'objet d'options** : `fetch(url, {...})`, `new IntersectionObserver(cb, {...})`, `toLocaleString(locale, {...})` = **une convention JS**, pas 3 syntaxes. 1er argument = quoi, objet = comment.
+- `ts(2739)` observé (props manquantes) — la famille « présence ».
+
+_🆕 Cours — `<div>` / `<section>` / `<article>` :_
+
+- Notion **jamais pratiquée** (vue une fois au bloc F le 12/06, notée 7/10, jamais écrite depuis). Cas d'école de dette type B.
+- **Le test** : si je détache ce bloc et le colle ailleurs, garde-t-il son sens ? oui → `<article>` (carte produit, commentaire, fiche client). Partie thématique d'un tout, avec titre → `<section>`. Rien à déclarer, juste de la mise en page → `<div>`.
+- Le HTML décrit du **sens**, pas de l'apparence : les 3 balises ont le même rendu. Publics concernés : lecteurs d'écran, moteurs de recherche, dev suivant.
+- Par défaut `<div>` ; on « monte » quand le sens est là. Un `<article>` doit contenir un titre.
+
+_🆕 Cours — props optionnelles + valeurs par défaut :_
+
+- `champ?: type` dans l'interface → prop facultative. Contrepartie : le type devient `T | undefined`, TS refuse l'usage direct (`ts(18048)`), narrowing obligatoire.
+- **3 façons de gérer** : rendu conditionnel `{x && <p/>}` · `{x ?? "défaut"}` · **valeur par défaut dans la déstructuration** `({ traitement = "aucun" })` → bouche le trou une fois à l'entrée, plus de `| undefined` dans le corps.
+- **Carte des symboles** : `?` (interface) = peut être absent · `=` (déstructuration) = valeur si absent · `??` (corps) = filet ponctuel. `?` et `=` vont ensemble.
+- Le défaut ne se déclenche que sur `undefined` (jamais sur `0`, `""`, `false`).
+- 🎁 **Dette soldée** : « paramètres par défaut `f(x = 0)` » (🟠) — même mécanisme sur un paramètre simple.
+- **Critère défaut vs conditionnel** : si l'absence doit _afficher autre chose_ → défaut. Si l'absence doit _faire disparaître_ → rendu conditionnel. (D'où : `traitement` a un défaut, `promo` non — « pas de promo » n'est pas une valeur, c'est rien à afficher.)
+
+_Bloc 3 — `CarteMonture` v2 : LE gros blocage de la séance (~45 min)_
+
+- Erreur : `Type 'Element' is not assignable to type 'number'. ts(2322)`
+- Cause : `let prixVente = prix;` (TS infère `number`, définitivement) puis `prixVente = (<>...</>)` dans un `if` → on met du JSX dans une variable typée nombre.
+- **🆕 Point de fond — une variable = un rôle = un type.** `prixVente` faisait deux métiers : une valeur (à calculer/formater) et un affichage (à rendre). D'où l'impossibilité d'appeler `.toLocaleString()` dessus. Même règle que la cohérence de type d'un state (S55), hors state.
+- **Point majeur observé** : erreur rouge ET l'app tourne. **Vite transpile, ne vérifie pas** — démonstration en direct que TS n'a aucun pouvoir à l'exécution.
+- 2ᵉ bug : `<p>{prixVente}</p>;` dans un `else`, sans `return` ni affectation → objet JSX fabriqué puis jeté. **Écrire du JSX ne l'affiche pas.**
+- Règle structurelle donnée : **le `if` est une instruction (agit, ne vaut rien) → interdit dans du JSX ; le ternaire est une expression (vaut quelque chose) → autorisé.**
+- Correction complète livrée à sa demande explicite : plus de variable intermédiaire, calcul inline dans le ternaire, `formatEuro` sortie en fonction utilitaire hors du composant.
+
+**Niveau estimé après session** :
+
+- **Signature TS `({ a, b }: XProps)`** : 🟢 — 3/3 à froid + reconstruite en page blanche. Le geste est acquis.
+- **PascalCase sur les types** : 🟢 (corrigé seul à froid).
+- **Nommage `XProps` vs nom de donnée** : 🟡 neuf.
+- **Props optionnelles `?` + défaut `=`** : 🟡 cours reçu + 1 application guidée.
+- **Critère défaut / rendu conditionnel** : 🟡 compris.
+- **`<article>` / `<section>` / `<div>`** : 🟡 enfin pratiqué.
+- **`toLocaleString` + objet d'options** : 🟡 réactivé (dette du registre).
+- **Une variable = un type** : 🟡 ancré par un vrai blocage de 45 min (le meilleur ancrage).
+- **`reduce` objet** : 🟡 progrès net (crochets acquis), assemblage encore fragile → reste en rotation.
+
+**⚠️ Erreur de ma part** : diagnostic livré en 3 hypothèses sur `prixVente` **sans avoir le code sous les yeux** — les 3 étaient fausses. Règle S58 : quand je n'ai pas la source, le dire au lieu de produire des pistes plausibles.
+
+---
+
+## Session 62 — Reconstruction page blanche + rendu conditionnel (`&&` vs ternaire)
+
+**Durée** : ~2h (dimanche). Bilan d'ouverture posé par Frédéric : « il faut encore de la pratique » — séance 100 % reconstruction, aucun concept neuf avant la fin.
+
+**Révision éclair S62 (`slice(0, currentMove + 1)` — 2ᵉ échec à froid)** :
+
+- Réponse : `setHistory(...history, currentMove + 1)`. Les **pièces** sont là (setter, spread, `+1`), l'**assemblage** non : pas de `slice`, pas de crochets `[ ]`, spread dans un appel de fonction au lieu d'un tableau, et le nouveau plateau absent.
+- Règle des 2 échecs appliquée → cours complet donné.
+- **🆕 Distinction posée (jamais faite avant)** : `[...tab, x]` = spread dans un **tableau** (construit un tableau) ≠ `f(...tab)` = spread dans un **appel** (étale en arguments séparés).
+- Le `+1` : **il appartient au `slice`, pas à `currentMove`** — il compense uniquement la borne de fin exclue. `currentMove` EST l'index. Formule générale : **pour inclure l'index `n`, écrire `slice(0, n + 1)`**.
+
+**🗑️ DÉCISION DE FRÉDÉRIC — Tic-Tac-Toe retiré définitivement** : exercice jugé sans intérêt, à ne plus jamais proposer. Retiré de la rotation et du suivi. `slice(0, n)` reste une notion à entretenir mais **dans un contexte neutre** (pagination, « les N derniers », troncature), jamais via ce tuto.
+
+**Ce qui a été fait** :
+
+_Bloc 2 — `CarteMonture` v2 reconstruite page blanche (24h après la correction reçue) :_
+
+- **Sortis seuls** : `?` dans l'interface (pas dans la déstructuration) · `traitement = "aucun"` dans la signature · `formatEuro` hors du composant, paramètre annoté · **ternaire dans le JSX** (le point qui avait cassé la veille) · fragment `<>` pour grouper la branche promo · `<article>` · calcul de remise juste.
+- **0 problems**, affichage correct. Seul doute signalé : la syntaxe de `toLocaleString`.
+- Réponse donnée : **personne ne l'écrit de mémoire** — c'est précisément le rôle d'une fonction utilitaire. **Une fonction utilitaire = un endroit où ranger ce qu'on refuse de mémoriser.**
+- Confirmé : `{formatEuro(prix)}` directement dans le JSX est correct — les accolades acceptent toute **expression**, et un appel de fonction en est une. Piège associé : `{formatEuro}` (sans parenthèses) injecte la fonction elle-même.
+
+_Refactor — fonction utilitaire externalisée :_
+
+- Créé `src/utils/format.ts` avec `export function formatEuro`. **Extension `.ts` et non `.tsx`** : aucun JSX dedans.
+- **Export nommé** (pas `default`) : un fichier utilitaire contient souvent plusieurs fonctions.
+- **🆕 Règle pro donnée — dossiers en minuscules, en anglais** (`utils/`, pas `Utilitaires/`) : Windows ignore la casse, **Linux non**, et Vercel construit sous Linux → un import à la mauvaise casse marche en local et casse au déploiement (`Cannot find module`). Enjeu réel pour le livrable Phase 2.
+
+_Bloc 3 — `FicheDevis` (page blanche, contexte neuf) — LE cœur de la séance :_
+
+- Interface + marche 3 + `import { formatEuro }` : posés seuls.
+- **Blocage principal, bien diagnostiqué par Frédéric lui-même** : « mutuelle vaut soit une string soit "aucune", donc le système du ternaire ne fonctionne pas ». Exact — **une prop qui a une valeur par défaut ne peut plus jamais être testée pour son absence** (le défaut bouche le trou avant le test). Défaut et rendu conditionnel sont **exclusifs**.
+- Bug visible : `RAC : NaN €` (montant × `undefined`, coercion).
+- **🆕 Règle centrale ancrée — le narrowing ne protège que la variable testée.** Tester `mutuelle` ne dit rien à TS sur `tauxRmb` → `ts(18048) 'tauxRmb' is possibly 'undefined'`. TS a raison : rien dans l'interface ne lie les deux props, `<FicheDevis mutuelle="X" />` sans taux est autorisé par le contrat. **On teste la variable qu'on utilise.**
+- Contournement trouvé seul (`mutuelle !== "aucune"`) puis abandonné après démonstration du cas « Paul » (mutuelle sans taux → `NaN` de retour) + fragilité du texte-sentinelle.
+- Structure finale : **une ligne = une condition = sa propre donnée**. Prix TTC (aucune condition) · Mutuelle (`mutuelle !== "aucune"`) · taux + RAC (`tauxRmb &&`).
+
+_🆕 Cours — `&&` vs ternaire en JSX (demande explicite de Frédéric) :_
+
+- Les accolades JSX attendent **une valeur** → pas de `if`. Deux outils seulement.
+- **Ternaire = 2 branches obligatoires.** Quand il n'y a rien à afficher en branche 2 : **`null`** (façon officielle de dire « ne rends rien »).
+- **`cond && <p/>` est strictement l'écriture compressée de `cond ? <p/> : null`.**
+- **Point qui a fait tilt — `&&` ne renvoie pas un booléen, il renvoie une des deux opérandes** : gauche falsy → renvoie la gauche et s'arrête ; sinon → renvoie la droite. C'est l'**évaluation court-circuit**. Le « et » logique est le _résultat_, pas le _mécanisme_. Frédéric croyait `&&` = booléen pur (« je croyais que && voulait dire et ») → clarifié, et ça a débloqué la compréhension du pattern JSX.
+- Même logique pour `||` → d'où son usage en valeur par défaut (`(acc[x] || 0) + 1`).
+- React n'affiche rien pour `false`, `null`, `undefined` — **mais affiche `0` et `""`**. Piège réel : `{tauxRmb && ...}` avec un taux à 0 % afficherait un `0` parasite. Parade : `{tauxRmb !== undefined && ...}`.
+- Choix : afficher A **ou** B → ternaire · afficher A **ou rien** → `&&`.
+- Refactor final appliqué : `urgent` gardé en `&&` (rien à afficher sinon), blocs mutuelle et taux séparés, Prix TTC sorti de toute condition.
+
+**Niveau estimé après session** :
+
+- **TS des props (interface + marche 3 + optionnelles + défaut)** : 🟢 — **deux reconstructions page blanche réussies en contextes différents**, la seconde sans aucune référence. Le cap prioritaire ouvert depuis la S44 est franchi.
+- **Rendu conditionnel `&&` / ternaire / `null`** : 🟡→🟢 — mécanisme du court-circuit compris en profondeur, appliqué et refactoré seul.
+- **Narrowing : tester la variable qu'on utilise** : 🟡 neuf, ancré par un vrai bug.
+- **Défaut et rendu conditionnel sont exclusifs** : 🟢 — diagnostiqué seul.
+- **Fonction utilitaire externalisée (`utils/format.ts`, export nommé, `.ts` vs `.tsx`)** : 🟢.
+- **`slice(0, n + 1)`** : 🔴 → **retiré de la rotation sous cette forme** (voir décision Tic-Tac-Toe). À recroiser dans un contexte neutre.
+- Recalibrage : deux reconstructions page blanche en 2h, un diagnostic de bug posé seul avant moi (le conflit défaut/ternaire), et une règle de méthode formulée clairement. Se sous-note toujours.
+
+**📌 RÈGLE DE COMMUNICATION POSÉE PAR FRÉDÉRIC (importante, à appliquer strictement)** :
+
+> « Je ne souhaite pas discuter en abrégé, je veux du détail, de la précision et des explications complètes. **MAIS pas de blabla à côté.** L'essentiel, mais complet et détaillé. »
+> Ce qu'il faut **garder** : le cours complet, le pourquoi, la forme longue avant la version compressée, les exemples concrets numérotés.
+> Ce qu'il faut **couper** : les renvois systématiques aux sessions passées (« comme en S41, exercice 5 »), les félicitations détaillées et tableaux de progression, les récapitulatifs de ce qu'il vient de bien faire, l'empilement de remarques secondaires après la réponse principale.
+> **Le problème n'est pas la longueur, c'est le ratio.** Une réponse = un sujet. Les renvois aux sessions passées uniquement quand le lien change la compréhension du problème.
+
+**Restes / dettes (mises à jour)** :
+
+- ✅ **Dette « TS des props » SOLDÉE** — ouverte en S44, cours S58/S60, pratiquée S60→S62, deux page blanche réussies. Passe en mode entretien.
+- ✅ Soldé aussi : paramètres par défaut (🟠) · `<article>`/`<section>`/`<div>` pratiqué · `toLocaleString` réactivé (🟠) · script `typecheck` (à vérifier s'il a été ajouté).
+- 🗑️ **Retiré définitivement** : Tic-Tac-Toe (décision Frédéric).
+- 📌 **Commiter + pusher** S61 + S62.
+- ⏭️ **Non fait, reporté** : **props tableau typé (`Monture[]`)** + interface imbriquée + `.map()` typé — c'était le bloc 4 des deux séances, jamais atteint. **C'est le prochain cap.** Puis : typer une **prop fonction** (`onSupprimer: (id: string) => void`, neuf, cours avant exercice).
+- Poches à ré-entretenir : `reduce` objet 🟡 (progrès net, assemblage à confirmer) · `slice(0, n)` en contexte neutre · échelle Tailwind 🟡 · fetch POST/`Content-Type` 🟡 · `Object.values`/`for...in` 🟡 · nommage `XProps` vs donnée 🟡.
+- Gros trous du socle (S57) : CSS Grid + `@keyframes` · a11y · **coercion/hoisting** (croisée 2× ce week-end via `NaN`) · event loop · dates · regex.
+- Tier 2 non urgent : `this` · POO/classes.
+
+**🎹 Raccourci de la semaine** : `F12` / `Alt+←` — **toujours pas entraîné, 5 séances**. À forcer : maintenant qu'il y a un `import` depuis `utils/format`, `F12` fait changer de fichier, c'est le cas d'usage idéal.
+
+**➡️ Prochaine session** : **props tableau typé** — `montures: Monture[]` en prop, interface imbriquée, `.map()` typé. C'est le passage des données écrites à la main dans le JSX à une vraie liste. Puis prop fonction si l'énergie tient. Ouvrir en vérifiant l'énergie.

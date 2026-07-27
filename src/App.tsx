@@ -1,7 +1,7 @@
 // Section exercices à importer et commenter/décommenter dès que l'on souhaite afficher le composant avec App()
 
 // import Brouillon from "./components-exercices/Brouillon-exercice";
-import Brouillon2 from "./components-exercices/BrouilleTSX";
+import Brouillon2 from "./components-exercices/Brouillon-TSX";
 
 function App() {
   // return <GestionMontures />;
