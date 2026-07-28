@@ -550,7 +550,7 @@ _Micro-drill de fin (3 signatures, hors React, `.ts` pur) :_
 
 **⚠️ RÈGLE DE MÉTHODE POSÉE PAR FRÉDÉRIC (à appliquer strictement)** :
 
-> « Les énigmes/questions pour faire réfléchir : très bien, j'approuve à 100 %, c'est mieux pour l'apprentissage dans la majorité des cas. **Mais quand je bugge 2-3 fois sur la même chose, stop les énigmes → cours détaillé.** Sinon ça m'énerve. »
+> « Les énigmes/questions pour faire réfléchir : très bien, j'approuve à 100 %, c'est mieux pour l'apprentissage dans la majorité des cas. **Mais quand je bugge 3 fois sur la même chose, stop les énigmes → cours détaillé.** Sinon ça m'énerve. »
 > Appliqué immédiatement (cours complet `reduce`), puis re-appliqué en S62. Bonne règle, elle rejoint le calibrage « l'effort est le signal ».
 
 **Ce qui a été fait** :
@@ -691,3 +691,58 @@ _🆕 Cours — `&&` vs ternaire en JSX (demande explicite de Frédéric) :_
 **🎹 Raccourci de la semaine** : `F12` / `Alt+←` — **toujours pas entraîné, 5 séances**. À forcer : maintenant qu'il y a un `import` depuis `utils/format`, `F12` fait changer de fichier, c'est le cas d'usage idéal.
 
 **➡️ Prochaine session** : **props tableau typé** — `montures: Monture[]` en prop, interface imbriquée, `.map()` typé. C'est le passage des données écrites à la main dans le JSX à une vraie liste. Puis prop fonction si l'énergie tient. Ouvrir en vérifiant l'énergie.
+
+## Session 63 — Props tableau typé : `Monture[]`, interface imbriquée, `.map()` typé
+
+**Durée** : ~2h (énergie bonne). Cap tenu : le bloc 4 reporté 3 fois est traité.
+**Logistique** : commit/push S61-S62 faits sur les deux machines. ✅
+
+**🎹 Raccourci** : `F12`/`Alt+←` était marqué « non entraîné » à tort — pratiqué quotidiennement, je ne l'avais jamais demandé. → **Toujours demander avant de reconduire.** Nouveau : **`Ctrl+.` (Quick Fix)**, sur AZERTY = `Ctrl+Shift+;`. Testé en séance.
+
+**Révision éclair S63 (`IntersectionObserver` — dette S57, dernière activation S30, ~7 semaines)** :
+
+- Les 3 étapes restituées justes de mémoire (callback, `new IntersectionObserver()`, `.observe()`), avec `isIntersecting` et `target`.
+- **Erreur unique** : le callback reçoit un **tableau d'entrées**, pas l'élément. Une entrée décrit l'élément, elle ne le remplace pas → `entries.forEach(...)` obligatoire même avec un seul élément observé.
+- Complément : 2ᵉ argument = objet d'options (`{ threshold: 0.5 }`).
+- → 🟡, moins lourde que prévu. Reste en rotation.
+
+**Ce qui a été fait** :
+
+- **Cours props tableau** : `[]` derrière un type = « des » ; une interface est un type comme un autre. **Deux interfaces, deux rôles** : `Monture` = la donnée (réutilisable partout) / `ListeMonturesProps` = le contrat d'un composant (jamais réutilisé).
+- **Exo 1 (guidé, 1 trou)** : `montures: Monture[]` juste.
+- **Test d'erreur A** : `ts(2551)` sur `m.marqu` — le typage du tableau remonte jusque dans le `.map()`. **Piège du Quick Fix ancré** : les 3 propositions font disparaître le rouge, mais deux modifient le **contrat** au lieu de réparer l'**usage** (« Add index signature » désactive la vérification). → lire avant de valider.
+- **Test B non joué** (donnée invalide) : à rejouer. Le rouge se pose au **point de raccordement** (`montures={CATALOGUE}`), pas sur le tableau.
+- **Exo 2 — `ListeClients` (page blanche, interface imbriquée)** : ✅ les deux interfaces de données sorties seules, dont `mutuelle?: Mutuelle`. ❌ Trois blocages (détaillés ci-dessous).
+- **Fin de séance** : `{" "}` (JSX supprime les espaces en début/fin de ligne) et narrowing via `&&` confirmé en situation (accès sans `?.`, aucun rouge).
+
+**Les 3 points cassés en page blanche (= le programme de demain)** :
+
+1. **Nommage de l'interface de props** : `interface Clients[]` écrit 2×. `[]` est un opérateur de type, jamais un caractère de nom → uniquement à **droite** d'un `:`. Règle : nom du composant + `Props` ; **type au singulier, variable au pluriel** (`clients: Client[]`).
+2. **`CLIENTS.map` au lieu de `clients.map`** — persisté après signalement. Bug invisible à l'écran mais le composant est soudé à une seule liste. **Tout entre par les props.**
+3. **`&&` + fragment** : `&&` n'a qu'une opérande à droite → emballer les 4 morceaux dans `<>...</>`. Correction donnée en entier.
+
+**Question de fond traitée** : `function` / `interface` / `class` — c'est le **mot-clé** qui décide, la casse indique seulement la famille. Une interface ne reçoit rien, n'existe pas à l'exécution. Le nombre de props se compte aux **clés**, pas aux éléments (200 montures = 1 prop).
+
+**Organisation actée** : un fichier = un exercice (composant + page de démo). La règle pro « 1 fichier = 1 composant » s'appliquera au SaaS.
+
+**Niveau estimé après session** :
+
+- **Interface imbriquée (`mutuelle?: Mutuelle`)** : 🟢 sortie seule.
+- **Type tableau dans une interface de props** : 🟡 — juste en guidé, cassé 2× en page blanche. ⚠️ Ne pas surévaluer.
+- **Lire depuis la prop, pas la constante globale** : 🔴 à recroiser en priorité.
+- **`&&` + fragment** : 🟡 neuf sous cette forme · **narrowing via `&&`** : 🟢 · **`{" "}`** : 🟡 · **piège Quick Fix** : 🟢.
+- Calibrage de Frédéric en clôture (« il faudra 1-2 pages blanches de plus ») : juste, c'est le plan.
+
+**⚠️ Erreurs de ma part** : question de vérification posée sur une interface sans le composant sous les yeux (confusion légitime) · raccourci reconduit 5 séances sans vérification.
+
+**Restes / dettes** :
+
+- ⏭️ Reporté : **prop fonction** (`onSupprimer: (id: string) => void`, neuf, cours avant exo) · test B à rejouer · script `"typecheck"` toujours non vérifié.
+- 📌 Commiter + pusher S63.
+- Poches : `IntersectionObserver` 🟡 (mesurée ce jour) · `reduce` objet 🟡 · `Object.values`/`for...in` 🟡 · échelle Tailwind 🟡 · fetch POST 🟡 · nommage `XProps` 🟡 · `slice(0, n)` en contexte neutre.
+- `Promise.all` en composant complet · audit « exercice type » · Tier 2 : `this` · POO/classes.
+- Gros trous du socle (S57) : CSS Grid + `@keyframes` · a11y · coercion/hoisting · event loop · dates · regex.
+
+**🗑️ Instructions (§7)** : TypeScript → ajouter props tableau typé + interface imbriquée (🟡). React → `.map()` typé et `&&` + fragment croisés.
+
+**➡️ Prochaine session** : **1 à 2 pages blanches sur les props tableau typé**, contextes neufs, ciblées sur les 3 points cassés. Puis cours **prop fonction** si l'ancrage est là. Vérifier l'énergie en ouverture.

@@ -1,36 +1,60 @@
+/* -- Résultat attendu --
+
+Dupont — 289,00 € — Harmonie (remboursé 173,40 €)
+Martin — 150,00 €
+Bernard — 420,00 € — MGEN (remboursé 168,00 €)
+
+*/
+
 import { formatEuro } from "../utils/format";
 
-interface FicheDevisProps {
+const CLIENTS = [
+  { id: "c1", nom: "Dupont", montant: 289, mutuelle: { nom: "Harmonie", tauxRmb: 0.6 } },
+  { id: "c2", nom: "Martin", montant: 150 },
+  { id: "c3", nom: "Bernard", montant: 420, mutuelle: { nom: "MGEN", tauxRmb: 0.4 } },
+];
+
+interface Mutuelle {
   nom: string;
-  montantVerres: number;
-  urgent: boolean;
-  mutuelle?: string;
-  tauxRmb?: number;
+  tauxRmb: number;
 }
 
-function FicheDevis({ nom, montantVerres, urgent, mutuelle = "aucune", tauxRmb }: FicheDevisProps) {
+interface Client {
+  id: string;
+  nom: string;
+  montant: number;
+  mutuelle?: Mutuelle;
+}
+
+interface ListeClientsProps {
+  clients: Client[];
+}
+
+function ListeClients({ clients }: ListeClientsProps) {
   return (
-    <article>
-      <h2>{nom}</h2>
-      {urgent && <p className="font-semibold text-red-500">Ça urge !!</p>}
-      <p>Prix TTC : {formatEuro(montantVerres)}</p>
-      {mutuelle !== "aucune" && <p>Mutuelle : {mutuelle}</p>}
-      {tauxRmb && (
-        <>
-          <p>taux de remboursement : {tauxRmb}</p>
-          <p>RAC : {formatEuro(montantVerres - (montantVerres * tauxRmb) / 100)}</p>
-        </>
-      )}
-    </article>
+    <ul>
+      {clients.map((c) => (
+        <li key={c.id}>
+          {c.nom} — {formatEuro(c.montant)}
+          {c.mutuelle && (
+            <>
+              {" "}
+              — {c.mutuelle.nom} (remboursé {formatEuro(c.montant * c.mutuelle.tauxRmb)})
+            </>
+          )}
+        </li>
+      ))}
+    </ul>
   );
 }
 
-export default function Brouillon2() {
+function PageClients() {
   return (
-    <>
-      <FicheDevis nom="David" montantVerres={300} urgent={false} mutuelle="MGEN" tauxRmb={60} />
-      <FicheDevis nom="Martine" montantVerres={400} urgent={true} />
-      <FicheDevis nom="Paul" montantVerres={200} urgent={false} mutuelle="Harmonie" />
-    </>
+    <section>
+      <h2>Clients</h2>
+      <ListeClients clients={CLIENTS} />
+    </section>
   );
 }
+
+export default PageClients;
