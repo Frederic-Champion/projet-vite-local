@@ -746,3 +746,83 @@ _🆕 Cours — `&&` vs ternaire en JSX (demande explicite de Frédéric) :_
 **🗑️ Instructions (§7)** : TypeScript → ajouter props tableau typé + interface imbriquée (🟡). React → `.map()` typé et `&&` + fragment croisés.
 
 **➡️ Prochaine session** : **1 à 2 pages blanches sur les props tableau typé**, contextes neufs, ciblées sur les 3 points cassés. Puis cours **prop fonction** si l'ancrage est là. Vérifier l'énergie en ouverture.
+
+## Session 64 — Prop fonction typée (`(id: string) => void`) + consolidation prop tableau
+
+**Durée** : ~2h30 (énergie bonne). Cap **TS des props fermé** : valeurs simples → optionnelles → tableau → imbriquée → fonction.
+**Logistique** : S63 commitée ✅. 🎹 `Ctrl+.` (Quick Fix) : entraîné depuis hier, on continue.
+
+**Révision éclair S64 (`position: fixed` + contexte parent — dette S57, dernière activation S29, ~2 mois, notée 65 %)** :
+
+- **Symptôme retenu** ✅ (un `transform` sur le parent fait scroller l'élément), **mécanisme inversé** ❌ : « fixed se positionne par rapport à son parent » → **non, par rapport au viewport**. C'est `absolute` qui vise l'ancêtre positionné.
+- Ce que fait le `transform` : il crée un nouveau bloc conteneur qui **capture** les descendants `fixed` → l'élément se comporte comme un `absolute` et défile. Déclencheurs : `transform`, `filter`, `perspective`, **`backdrop-filter`**, `will-change`, `contain`.
+- ⚠️ Alerte : `backdrop-filter` = glassmorphism → navbar en verre dépoli + élément fixed dedans = le bug. Parade : sortir l'élément fixe du parent transformé (enfant direct de `<body>` / racine de l'app).
+- → 🟡, reste en rotation.
+
+**Ce qui a été fait** :
+
+_Exo 1 — `ListeCommandes` (page blanche, reprise des 3 points cassés en S63)_ :
+
+- ✅ **Les trois points sont corrigés** : nommage `ListeCommandesProps` + singulier/pluriel, `.map()` branché sur la prop et non la constante, `&&` + fragment assemblés seuls. Interface imbriquée sortie seule.
+- Seul défaut : `key` oubliée sur le `<li>` (étourderie, présente la veille). **Réflexe à installer : la `key` s'écrit dans la foulée du `.map()`, avant le contenu.**
+- Nommage : `Urgent` (adjectif) → `Urgence`. Une interface décrit une chose, elle porte un nom, pas une qualité.
+
+_Cours — prop fonction_ :
+
+- Mécanisme déjà connu (S46, `onPlay` du Tic-Tac-Toe : « l'enfant signale, le parent détient et décide »). Le neuf = **le décrire dans une interface**.
+- Syntaxe : `onSupprimer: (id: string) => void` = « prend une chaîne, ne renvoie rien ». Le nom du paramètre ne fait **pas** partie du contrat (seuls le nombre d'arguments et leurs types) — il documente.
+- `void` = la fonction agit, ne calcule pas. Cas de la quasi-totalité des handlers. Sinon `=> number`, `=> boolean`.
+- **⚠️ Piège central — deux `=>` sans rapport** : dans une `interface`, il **décrit** (sépare ce qu'elle prend de ce qu'elle rend, rien ne s'exécute) ; dans du code, il **fabrique** une fonction. Boussole : suis-je entre les accolades d'une `interface` ? Même famille que la boussole du `:`.
+- Branchement JSX : `onClick={() => onSupprimer(m.id)}` — flèche inline obligatoire pour transporter l'argument (S44).
+
+_Exo 2 — `ListePrestations` (guidé, 2 trous)_ : signature et branchement justes du premier coup.
+
+_🎓 Question de fond posée par Frédéric — pourquoi la fonction vit dans le composant-page_ :
+
+- **Elle ne peut pas en sortir** : elle utilise `lignes` et `setLignes`, créés par `useState` **dans** le composant. Scope Phase 1 : l'intérieur voit l'extérieur, jamais l'inverse. (Même lien qu'il avait fait seul en S46 sur `setHistory`.) `formatEuro` a pu sortir dans `utils/` justement parce qu'elle ne touche à aucun state.
+- **L'intérêt** : l'enfant ignore qu'un state existe et ce que fait `onRetirer` → le même composant sert dans un devis (retire), un back-office (archive en base), une démo (ne fait rien). Le parent décide **quoi faire**, l'enfant **comment afficher**. C'est ce qui rend un composant déplaçable et réutilisable — le typage écrit le contrat de ce signal.
+
+_Exo 3 — `ListeStock` (page blanche, prop fonction à DEUX arguments)_ :
+
+- ✅ Sortis seuls : interface de la prop fonction `(id: string, x: number) => void`, branchement des deux boutons avec `-1` / `+1`, structure du ternaire, principe de la copie non mutante.
+- 🔴 **Blocage n°1 — la fonction du parent faisait le mauvais métier** : `return liste.map(...)` puis `setListe(quantite)` posé dans le corps. Recadrage : le contrat dit `void` → **le setter va DANS la fonction, le `return` disparaît**. (Le `setListe(...)` dans le corps = boucle infinie à chaque rendu.)
+- 🔴 **Blocage n°2 — les branches du `.map()`** : `o.stock + x` (un nombre) et `null` en branche faux. Un `.map()` sur des références doit rendre **des références** — même longueur, même forme. Branche vraie = copie + surcharge, branche fausse = l'objet tel quel.
+- 🔴 **Blocage n°3 — syntaxe de la surcharge** : `{...o, (o["stock"] + x)}` → un objet littéral ne contient **que des paires `clé: valeur`**. Correct : `{ ...o, stock: o.stock + x }`. Crochets rappelés : réservés à une clé **dans une variable**, pas à une clé fixe.
+
+_Micro-drill signatures (3, hors composant)_ : **3/3 justes**, y compris `onCalculerRAC: (montant: number, taux: number) => number` (celui qui changeait de forme).
+
+_Exo 4 — `ListeSav` (page blanche, fin de séance)_ :
+
+- ✅ **La fonction du parent est ressortie seule** (setter dedans, `.map()` + spread) — le morceau bloqué 20 min plus tôt.
+- ❌ **Argument superflu** : `(id, traite)` alors que la fonction lit `!l.traite` dans l'objet. **Règle : une fonction ne demande que ce qu'elle ne peut pas trouver seule.** (Différent de l'exo 3, où `x` portait l'info « quel bouton ».) + ordre inversé à l'appel.
+- ❌ **Condition inversée** : `{s.traite && <button>}` → aucun bouton au départ. `{!s.traite && ...}`.
+- ❌ Affichage manquant → **ternaire** ici, pas `&&` : deux branches à afficher (`✓ traité` OU le bouton). Critère S62 respecté.
+- Nommage : `interface sav` → `Sav` (PascalCase) · `function retirer` → `marquerTraite` (reste de copie) · `exportListe` → PascalCase pour un composant (seul endroit où la casse a un effet technique).
+
+**Niveau estimé après session** :
+
+- **Prop tableau typé + interface imbriquée** : 🟡→🟢 — les 3 points cassés en S63 corrigés en page blanche, contexte neuf.
+- **Signature de prop fonction** : 🟢 — 3/3 au drill, sortie seule sur 2 exercices dont un à deux arguments.
+- **Piège des deux `=>`** : 🟡 compris, à recroiser.
+- **Fonction de mise à jour dans le parent (setter dedans, `.map()` + spread)** : 🟡 — bloquée en exo 3, ressortie seule en exo 4. Ce n'est pas du TS mais du React de la S41, revenu fragile. **À recroiser en priorité.**
+- **Choix des arguments d'un handler** : 🟡 neuf, ancré par l'erreur de l'exo 4.
+- **`key` dans le `.map()`** : 🔴 oubliée 1× — réflexe à réinstaller.
+- **`position: fixed`** : 🟡 (voir révision éclair).
+- Recalibrage : sur l'exo 3, le mécanisme du jour (prop fonction) est sorti seul ; les déblocages portaient sur du React ancien et de la syntaxe d'objet.
+
+**📊 Bilan dettes depuis le registre S57 (demandé par Frédéric)** :
+
+- **Type A soldées : 2** — Tailwind dans Vite (S59) · paramètres par défaut (S61).
+- **Les 6 séances dédiées du plan : aucune faite** (CSS Grid, `@keyframes`, a11y, coercion/hoisting, event loop, `this`/classes). Normal : 7 séances absorbées par le cap TS des props.
+- **La partie « en continu » fonctionne** : 6 dettes type B mesurées en révision éclair depuis S57 (fetch POST, `Object.values`/`for...in`, `reduce` objet, `slice(0,n)`, `IntersectionObserver`, `position: fixed`). C'est le mécanisme que le registre désignait comme prioritaire.
+- **Recommandation** : le cap TS étant fermé, la **salve micro-notions** (~1h, solde ~10 lignes : `switch`, `sort()`, `Map`, `rem`/`px`, `::before`, `break`/`continue`, `use strict`) est le meilleur rapport temps/dette. Candidate pour une prochaine séance.
+
+**Restes / dettes** :
+
+- ✅ **Cap « TS des props » entièrement fermé** (ouvert S44). Passe en mode entretien.
+- 📌 Commiter + pusher S64. · Script `"typecheck": "tsc --noEmit"` toujours non vérifié. · Test B (donnée invalide au point de raccordement) toujours à rejouer.
+- Poches : `.map()` + spread de mise à jour 🟡 (neuf du jour) · `position: fixed` 🟡 · `IntersectionObserver` 🟡 · `reduce` objet 🟡 · `Object.values`/`for...in` 🟡 · échelle Tailwind 🟡 · fetch POST 🟡 · `slice(0, n)` en contexte neutre.
+- `Promise.all` en composant complet · audit « exercice type » · Tier 2 : `this` · POO/classes.
+- Gros trous du socle (S57) : CSS Grid + `@keyframes` · a11y · coercion/hoisting · event loop · dates · regex.
+
+**🗑️ Instructions (§7)** : TypeScript → props tableau, interface imbriquée et **prop fonction** croisés (🟢 signature, 🟡 assemblage). React → lifting state up recroisé

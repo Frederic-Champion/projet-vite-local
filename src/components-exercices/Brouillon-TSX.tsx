@@ -1,60 +1,51 @@
-/* -- Résultat attendu --
-
-Dupont — 289,00 € — Harmonie (remboursé 173,40 €)
-Martin — 150,00 €
-Bernard — 420,00 € — MGEN (remboursé 168,00 €)
-
+/*
+Monture cassée — Ray-Ban Aviator   [Traiter]
+Verres rayés — Persol 649          [Traiter]
+Branche tordue — Oakley Holbrook   [Traiter]
 */
 
-import { formatEuro } from "../utils/format";
+import { useState } from "react";
 
-const CLIENTS = [
-  { id: "c1", nom: "Dupont", montant: 289, mutuelle: { nom: "Harmonie", tauxRmb: 0.6 } },
-  { id: "c2", nom: "Martin", montant: 150 },
-  { id: "c3", nom: "Bernard", montant: 420, mutuelle: { nom: "MGEN", tauxRmb: 0.4 } },
+const SAV = [
+  { id: "s1", probleme: "Monture cassée", modele: "Ray-Ban Aviator", traite: false },
+  { id: "s2", probleme: "Verres rayés", modele: "Persol 649", traite: false },
+  { id: "s3", probleme: "Branche tordue", modele: "Oakley Holbrook", traite: false },
 ];
 
-interface Mutuelle {
-  nom: string;
-  tauxRmb: number;
-}
-
-interface Client {
+interface Sav {
   id: string;
-  nom: string;
-  montant: number;
-  mutuelle?: Mutuelle;
+  probleme: string;
+  modele: string;
+  traite: boolean;
 }
 
-interface ListeClientsProps {
-  clients: Client[];
+interface ListeSavProps {
+  savs: Sav[];
+  onTraiter: (id: string) => void;
 }
 
-function ListeClients({ clients }: ListeClientsProps) {
+function ListeSav({ savs, onTraiter }: ListeSavProps) {
   return (
     <ul>
-      {clients.map((c) => (
-        <li key={c.id}>
-          {c.nom} — {formatEuro(c.montant)}
-          {c.mutuelle && (
-            <>
-              {" "}
-              — {c.mutuelle.nom} (remboursé {formatEuro(c.montant * c.mutuelle.tauxRmb)})
-            </>
-          )}
+      {savs.map((s) => (
+        <li key={s.id}>
+          {s.probleme} — {s.modele}
+          {s.traite ? " ✓ traité" : <button onClick={() => onTraiter(s.id)}>Traiter</button>}
         </li>
       ))}
     </ul>
   );
 }
 
-function PageClients() {
-  return (
-    <section>
-      <h2>Clients</h2>
-      <ListeClients clients={CLIENTS} />
-    </section>
-  );
-}
+export default function ExportListeSav() {
+  const [liste, setListe] = useState(SAV);
 
-export default PageClients;
+  function retirer(id: string) {
+    setListe(
+      liste.map((l) => {
+        return l.id === id ? { ...l, traite: !l.traite } : l;
+      }),
+    );
+  }
+  return <ListeSav savs={liste} onTraiter={retirer} />;
+}
