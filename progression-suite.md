@@ -826,3 +826,44 @@ _Exo 4 — `ListeSav` (page blanche, fin de séance)_ :
 - Gros trous du socle (S57) : CSS Grid + `@keyframes` · a11y · coercion/hoisting · event loop · dates · regex.
 
 **🗑️ Instructions (§7)** : TypeScript → props tableau, interface imbriquée et **prop fonction** croisés (🟢 signature, 🟡 assemblage). React → lifting state up recroisé
+
+## Session 65 — Salve micro-notions (séance 1 du plan S57 soldée)
+
+**Durée** : ~2h30, énergie bonne. Première séance de remboursement du socle depuis S57, rendue possible par la clôture de TS des props en S64.
+
+**Révision éclair S65 (`slice`/`splice`)** : 3/3 juste de mémoire. Complété : `splice` renvoie les éléments **retirés**, pas le tableau modifié. → 🟢, sort de la rotation.
+
+**⚠️ Erreur de ma part — logistique** : j'ai redemandé commit/push et script `typecheck` alors que les deux étaient faits. Cause : les lignes « 📌 Commiter + pusher » sont écrites _avant_ l'action et rien ne les corrige ensuite ; je les relis comme un constat. Même schéma que `F12` reconduit 5 séances. **Correctif : demander avant de reconduire un item, jamais le déduire d'une ligne de todo.** Les deux items sortent de la liste.
+
+**⚠️ Erreur de dosage (récurrence §9)** : sur `sort()` puis sur `Map`, plusieurs nouveautés empilées en un message + exercice combinant du neuf. Frédéric a stoppé net sur `Map` (« je ne comprends rien, j'ai arrêté de lire ») — arrêt justifié. Reprise à zéro sur les 4 structures de données, qui a été le vrai contenu utile de la séance.
+
+**Les 8 notions de la salve — statuts** :
+
+- **`sort()`** 🟡 — comparateur, signe, mutation, `localeCompare`, sur objets. 3 passes pour y arriver (blocage : `sort(a.prix, b.prix)` sans la flèche). **À pratiquer pour mémoriser.**
+- **`switch`** 🟡 — piège du `break` (fall-through) compris. **À repratiquer.**
+- **`break`/`continue`** 🟢.
+- **Structures de données** (déviation demandée) : `Set` 🟢 rafraîchi · `Object.keys/values/entries` 🟢 rafraîchi · **`Map` 🟢 en lecture seule uniquement** — intérêt réel quasi nul pour lui, dit franchement (state React finit en JSON). Rapprochement `set`/`get` ↔ `localStorage` fait spontanément par Frédéric, exact.
+- **`rem`/`px`** 🟢 — **poche « échelle Tailwind » S59 fermée** (1 unité = 0.25rem = 4px, `py-4` = 16px).
+- **`::before`/`::after`** 🟢 — déblocage : `content: ""` sert à fabriquer une **boîte**, pas à afficher du texte.
+- **`use strict`** 🟢 — dette soldée par le fait que les modules ES sont déjà stricts.
+- **`data-*`** — **ni acquis ni dette**, sorti du registre à sa demande. Revu si le contexte le ramène.
+
+**Reclassement** : `switch` et `break`/`continue` étaient notés type A (jamais vu) → en réalité déjà croisés (article, Python). Le registre ne voit que ce qu'on fait ensemble.
+
+**Niveau / recalibrage** : a stoppé au bon moment plutôt que de subir, et ses questions ont produit le meilleur contenu du jour (à quoi sert un tri · d'où sortent `set`/`get` · pourquoi `content: ""`).
+
+**Restes / dettes** :
+
+- ✅ **Séance 1 du plan S57 soldée** — 8 lignes retirées du registre.
+- 🆕 **`slice(0, n)` a enfin un contexte neutre** : `sort()` + `slice(0, 3)` = « top N ». Remplace définitivement le Tic-Tac-Toe.
+- 🔄 Rotation révision éclair : `sort()` 🟡 · `switch` 🟡 · `reduce` objet 🟡 · `Object.values`/`for...in` 🟡 · `IntersectionObserver` 🟡 · `position: fixed` 🟡 · fetch POST 🟡.
+- ✅ Sortis de la rotation : `slice`/`splice` · `rem`/`px` · échelle Tailwind.
+- ⏭️ **Reporté** : recroiser la **fonction de mise à jour dans le parent** (`setListe(liste.map(o => o.id === id ? {...o, champ} : o))`) — poche prioritaire S64, absorbée par la déviation du jour.
+- Plan S57 restant : projet CSS Grid (~3h) · coercion/hoisting · a11y · event loop · dates · regex · `this`/classes (avant Phase 3).
+- `Promise.all` en composant complet · audit « exercice type ».
+
+**🎹 Raccourci** : `Ctrl+.` — encore une séance et c'est acquis.
+
+**🗑️ Instructions (§7)** : JS → retirer `sort()` de « pas abordé » (🟡), ajouter `switch`, `break`/`continue`, `Map` (lecture), `data-*` (croisé). CSS → retirer `rem`/`px` et `::before`/`::after` de « pas abordé ». Tailwind → échelle 🟢.
+
+**➡️ Prochaine session** : recroiser la fonction de mise à jour dans le parent (page blanche courte), puis reprise du fil Phase 2 — **React Router**. Vérifier l'énergie.
