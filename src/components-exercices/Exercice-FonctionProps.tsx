@@ -30,7 +30,7 @@ function ListePrestations({ prestations, onRetirer }: ListePrestationsProps) {
   );
 }
 
-function PageDevis() {
+function ExercicePageDevis() {
   const [lignes, setLignes] = useState(PRESTATIONS);
 
   function retirer(id: string) {
@@ -45,7 +45,7 @@ function PageDevis() {
   );
 }
 
-export default PageDevis;
+export default ExercicePageDevis;
 
 /* Résultat attendu
 

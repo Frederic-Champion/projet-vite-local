@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function RechercheServeur() {
+function ExerciceFetchSearch() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
   const [chargement, setChargement] = useState(false);
@@ -48,9 +48,11 @@ function RechercheServeur() {
   );
 }
 
-export default RechercheServeur;
+export default ExerciceFetchSearch;
 
 //test en version .then
+
+/*
 
 useEffect(() => {
   function brouillon() {
@@ -65,3 +67,5 @@ useEffect(() => {
   }
   brouillon();
 }, [search]);
+
+*/

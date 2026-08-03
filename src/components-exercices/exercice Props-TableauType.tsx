@@ -48,7 +48,7 @@ function ListeClients({ clients }: ListeClientsProps) {
   );
 }
 
-function PageClients() {
+function ExercicePropsTableauType() {
   return (
     <section>
       <h2>Clients</h2>
@@ -57,7 +57,7 @@ function PageClients() {
   );
 }
 
-export default PageClients;
+export default ExercicePropsTableauType;
 
 /*  Résultat attendu
 

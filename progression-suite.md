@@ -48,3 +48,51 @@
 2. Menu de navigation vers les exercices (idée de Frédéric) — consolide le point 1 par la pratique.
 3. Puis paramètres d'URL (`/sav/A12`) : liste → fiche, motif de base des apps de gestion.
 4. En attente : projet CSS Grid (dette n°1 du socle).
+
+## Session 68 — React Router : menu de navigation + layout Grid
+
+**Durée** : ~3h (dimanche, fixe). Énergie bonne au départ, séance dégradée par mes erreurs de construction.
+
+**Rituel** : `npm install` lancé dans `mon-premier-projet` (pas de `package.json` → `ENOENT`). Rappel : le rituel s'applique **par projet**, `npm install` n'a de sens que là où il y a un `package.json`.
+
+**Révision éclair (`reduce` objet — 4ᵉ passage)** 🔴 : structure entièrement juste (outil, ordre `(acc, m)`, `{}` en 2ᵉ argument, crochets dynamiques, `return acc`). Cassé sur **clé vs valeur** : `m.prix` utilisé comme clé. Puis blocage sur le sens de `=` en JS (« qu'est-ce que `m.prix` vient faire dans `acc[m.marque]` ») → cours donné sur l'assignation (`=` = flèche, pas égalité ; la droite s'évalue d'abord ; `x = x + 1`).
+**🗑️ DÉCISION : `reduce` objet sort de la rotation de révision éclair.** 4 passages à froid, aucun ancrage, et un coût moral réel. Cette notion ne s'apprend pas hors sol — elle reviendra quand un exercice produira un vrai chiffre à l'écran.
+
+**⚠️ Mes erreurs de construction (les 3, à ne pas reproduire)** :
+
+1. **Page blanche demandée 24h après le premier contact** avec React Router. Trop tôt — Frédéric n'a pas pu commencer et a dû regarder ses fichiers. Repris en exercice à trous, qui a bien fonctionné.
+2. **`reduce` tiré en révision** alors qu'il est démontré qu'il ne s'ancre pas par répétition espacée.
+3. **`useParams` enseigné sur un terrain où il ne sert à rien** (15 exercices connus et fixes), avec un **argument DRY faux** : la table de correspondance remplace 15 `<Route>` par 15 entrées d'objet — aucun gain. Frédéric a demandé la justification, le décompte lui a donné raison. Bloc abandonné, retour à la version en dur.
+
+**Exercice à trous — montage React Router** 🟡 : **toute la structure sortie de mémoire** (imports nommés, `BrowserRouter` dans `StrictMode`, `Routes` autour des `Route`, `Link` dans un `nav` hors de `Routes`).
+**🔴 Seul point cassé, 2 fois : `path` rempli avec un chemin de fichier** (`./components-exercices/PageSav`). Test donné : « est-ce que ça ressemble à une adresse de site web ? ». **Corrigé seul ensuite en contexte réel** — l'erreur n'est pas revenue sur les 4 routes du menu.
+
+**✅ Menu de navigation vers les exercices (son idée, S67) — livré et fonctionnel.** 4 exercices routés, URL en minuscules à tirets, liens stylés. Remplace le système commenter/décommenter.
+
+**✅ Layout Grid en contexte réel** — dette socle entamée. `grid min-h-screen grid-rows-[auto_1fr]`.
+
+- **Erreur puis correction : `grid-cols-2` au lieu de `grid-rows`.** Repère posé : _cols_ = colonnes = côte à côte ↔ / _rows_ = rangées = empilées ↕. Le mot décrit **la forme de la case**, pas le sens de progression.
+- `[auto_1fr]` expliqué deux fois (2ᵉ version par le calcul concret : écran − nav = reste). `auto` = la hauteur qu'il faut · `1fr` = tout le reste, calculé après les `auto` · underscore = contrainte Tailwind (pas d'espace dans un nom de classe).
+
+**Notions posées** :
+
+- **`<Routes>` n'accepte pas `className`** 🟢 — observé seul. Un composant qui ne produit pas de DOM ne peut pas être stylé. `<Link>` l'accepte (il fabrique un `<a>`).
+- **DRY en React = composant, pas `@apply`** 🟡 — `@apply` factorise des classes ; un composant factorise classes + balisage + comportement. `@apply` reste légitime pour du style de base sur balises nues (`@layer base`). `index.css` = CSS global (importé par `main.tsx`) ; `App.css` = résidu Vite, à supprimer.
+- **`children`** — montrée en passant, **non enseignée**. À poser proprement avant toute factorisation de `LienNav`.
+- **Emplacement d'un composant** 🟢 : même fichier tant qu'un seul l'utilise → fichier propre dans `components/` (≠ `components-exercices/`) dès qu'un second en a besoin.
+- **`useParams` / `path="/x/:id"`** 🔴 — mécanisme vu fonctionner, **non compris et non ancré**. Le critère, lui, est acquis : liste **fixe** connue à l'écriture → une `Route` par élément ; liste **variable** (API, base) → paramètre. **À recroiser uniquement sur un vrai cas API (liste → fiche), jamais à vide.**
+
+**Niveaux** : montage React Router 🟡 (structure sortie seule en guidé, pas encore en page blanche) · `Route`/`Link` en quantité 🟢 (4 écrites sans aide) · URL vs chemin de fichier 🟢 (corrigé en contexte réel) · Grid `rows`/`cols` 🟡 · `1fr` 🟡.
+
+**⚠️ Fin de séance difficile** : « ça a juste eu pour effet de me faire douter de mon niveau réel ». Le doute vient de la construction de la séance, pas du niveau. Points sortis sans aide dans la journée : diagnostic `grid-cols`, 4 routes complètes, layout Grid, observation sur `<Routes>`, et **détection que mon argument DRY était faux** (il a demandé la justification, le décompte lui a donné raison).
+
+---
+
+## 🏖️ CONSIGNE VACANCES — 3 semaines à partir du 04/08/2026
+
+**Instruction explicite de Frédéric, à respecter strictement.**
+
+- **Semaines 1 et 2 : AUCUNE notion nouvelle.** Ni React Router, ni Next.js, ni `children`, ni `useParams`, ni quoi que ce soit d'autre. **Consolidation uniquement.**
+- Objectif énoncé : _« me sentir plus solide sur mes appuis »_.
+- Sessions **irrégulières** : semaine 1 en déplacement familial (laptop emporté, sessions du soir seulement si tout le monde est couché et si l'énergie y est), semaine 2 à la maison. Ne pas présumer d'un rythme, ne pas relancer sur des sessions manquées.
+- Semaine 3 : à décider
