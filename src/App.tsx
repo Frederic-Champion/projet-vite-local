@@ -3,6 +3,7 @@ import Brouillon2 from "./components-exercices/Brouillon-TSX";
 import ExerciceFetchSearch from "./components-exercices/Exercice-fetch-search";
 import ExercicePropsTableauType from "./components-exercices/exercice Props-TableauType";
 import ExercicePageDevis from "./components-exercices/Exercice-FonctionProps";
+import LiftingStateUp from "./components-exercices/Exercice-Lifting state up";
 import { Route, Routes, Link } from "react-router";
 
 function App() {
@@ -23,6 +24,9 @@ function App() {
         <Link className="text-blue-600 hover:underline" to="/fetch-search">
           ExerciceFetchSearch
         </Link>
+        <Link className="text-blue-600 hover:underline" to="/lifting-state-up">
+          LiftingStateUp
+        </Link>
       </nav>
       <main className="p-4">
         <Routes>
@@ -30,6 +34,7 @@ function App() {
           <Route path="/page-devis" element={<ExercicePageDevis />} />
           <Route path="/props-tableau-type" element={<ExercicePropsTableauType />} />
           <Route path="/fetch-search" element={<ExerciceFetchSearch />} />
+          <Route path="/lifting-state-up" element={<LiftingStateUp />} />
         </Routes>
       </main>
     </div>
