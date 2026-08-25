@@ -849,4 +849,74 @@ J'ai recommandé A. **Frédéric a tranché pour B** après avoir vu des rendus 
 3. **Bloc 2** : état qui peut être absent (union de types).
 4. **Bloc 3** : generics, au moins `useState<T>()`.
 5. **Reprise du CV en design B** seulement après ces trois blocs.
-6. Toujours en attente : projet CSS Grid · `children` · `useParams` sur vrai cas API · `useRef` · `<table>` · types fonction avancés · hoisting.
+
+## Session 80 — Lifting state up : mesure + TypeScript + état absent
+
+**Durée** : ~2h (2 × 1h, coupées d'une pause). Énergie bonne, séance tenue sans accroc.
+
+**Révision éclair (`IntersectionObserver`)** 🟢 : squelette restitué juste de mémoire — constructeur avec callback + objet d'options, itération sur les entrées, test `isIntersecting`, appel à `observe`. Deux corrections : paramètre `entries` absent de la signature (même famille que le `(e)` d'un handler — c'est l'appelant qui fournit l'argument, mais il faut déclarer le tiroir) · `observe` prend **un** élément, donc boucle nécessaire sur une liste. **Sort de rotation.**
+
+**🎹 Raccourci** : `Ctrl+Espace` — non joué. À reconduire.
+
+---
+
+### 1. Lifting state up en `.jsx` — page blanche ✅
+
+Reproduit de mémoire 24h après le cours, **structure entièrement juste** : prop fonction, objet construit dans l'enfant, `recuperer` dans le parent, paramètre renommé librement (`info`). Le `envoyer;` sans parenthèses de la veille n'est pas revenu, et `preventDefault` a été placé dans la fonction plutôt qu'en flèche inline — plus propre que la version d'hier.
+
+**Une correction** : `useState("")` pour un état qui portera un objet. Le code tourne (`"".nom` = `undefined`) mais deux formes cohabitent dans une variable. Règle « une variable = un rôle = un type » réappliquée.
+
+**Questions posées** : `onInput` vs `onChange` (React aligne `onChange` sur le natif `input` — se déclenche à chaque frappe ; la distinction ne réapparaît que sur `select`/`checkbox`/`file`) · **convention `onXxx` vs `handleXxx`** (la prop décrit un moment, la fonction décrit une action).
+
+---
+
+### 2. Passage en `.tsx` ✅
+
+Les deux interfaces écrites seules, correctement distinguées (`Client` = la donnée / `SaisieClientProps` = le contrat du composant) après correction d'un premier nommage d'après la prop (`onEnvoyerProps`).
+
+**Trois erreurs TS, deux causes** — diagnostiquées et corrigées par lui :
+1. `const data: string = { ... }` → annotation contradictoire avec la valeur, propagée en cascade sur l'appel à `onEnvoyer`.
+2. `type="number"` sur le champ dossier vs `dossier: string` dans l'interface → a tranché seul pour la chaîne (un identifiant contenant une lettre n'est pas un nombre).
+
+**`React.SubmitEvent`** trouvé par le **geste outillé** (écrire inline, survoler, extraire) — pas par mémorisation. ⚠️ J'attendais `React.FormEvent` ; le nom qu'il a obtenu ne produit aucune erreur, **ma mémoire était incomplète, VS Code fait foi**.
+
+**Point posé** : l'inférence suffit tant que la valeur initiale décrit tous les états possibles. Cas du champ numérique déplié (`e.target.value` est **toujours** une chaîne quel que soit le `type` ; `Number()` à la frontière ; pièges `NaN` et `1e5`).
+
+---
+
+### 3. État qui peut être absent — union de types 🟡 (neuf)
+
+**Cours donné** : `{ nom: "", dossier: "" }` en valeur initiale est un mensonge utile — impossible de distinguer « pas encore saisi » de « saisi vide ». `null` dit explicitement « rien ». D'où l'union `Client | null`, et la contrepartie : TS **oblige** à tester avant d'accéder (`client is possibly null`), ce qui rend le `&&` obligatoire au lieu d'optionnel. Narrowing rappelé.
+
+Union sur des **valeurs** montrée au passage (`"vert" | "orange" | "rouge"`) : rend l'état illégal impossible à écrire.
+
+**Chevrons `useState<Client | null>(null)`** donnés comme règle pratique uniquement, avec consigne explicite de ne pas chercher à les comprendre aujourd'hui — **generics = bloc suivant, toujours dû.**
+
+**Exercice réussi du premier coup** : union, `null` initial, `&&` servant à la fois de garde et de narrowing.
+
+**🎓 Question de fond : « qu'est-ce qu'une machine à états ? »** — terme employé depuis plusieurs séances sans jamais avoir été défini. Cours donné : états / transitions / déclencheurs ; l'intérêt = rendre les combinaisons illégales non représentables (contre-exemple des trois booléens indépendants) ; sa calculatrice relue sous cet angle (`nouveauNombre` = état invisible qui change le comportement du visible) ; son exercice du jour identifié comme la plus petite machine à états possible.
+
+---
+
+### 4. Page blanche sur terrain neuf — `SaisieMonture` / `AjoutMonture` ✅
+
+**Demandé par lui** : exercice différent pour mobiliser la connaissance et non la mémoire de frappe. Excellent réflexe.
+
+**Sorti seul** : les deux interfaces, la prop fonction typée, la signature avec annotation, le handler et son type d'événement, l'état `Monture | null`, le rendu conditionnel. Trois champs au lieu de deux.
+**🌟 Le prix traité correctement sans consigne** : état en **chaîne** pendant la saisie, `Number()` à la validation — la solution de production, sur un cas seulement évoqué en discussion.
+
+**🔴 Bug unique** : `onSubmit` posé sur le `<div>` intérieur au lieu du `<form>`. Aucune erreur, aucun warning — exactement le piège qu'il avait lui-même identifié la veille (attribut sur balise minuscule = contrainte DOM, échec silencieux).
+
+**Nommage** — question posée par lui (« j'en fais trop ? ») : oui, d'un cran. `onEnvoyerMonture` répète ce que le contexte dit déjà · `handleSendMonture`/`handleGetMonture` mélangent français et anglais et `Get` suggère une récupération là où la fonction reçoit. Principe posé : un nom dit ce qu'on ne devine pas du contexte, et **une seule langue par projet**. `on` sur les props et `handle` sur les fonctions étaient corrects.
+
+---
+
+**Niveaux** : **lifting state up avec objet 🟢 — reproduit en page blanche deux fois, dont une sur terrain neuf** · interfaces donnée vs props 🟢 · annotation de handler + geste outillé 🟢 · union de types 🟡 (neuf, juste du premier coup) · narrowing par `&&` 🟢 · conversion aux frontières (`Number()` à la validation) 🟢 · machine à états — définition 🟢 · handler sur balise minuscule 🟡 (compris hier, rechute aujourd'hui) · `IntersectionObserver` 🟢.
+
+**🆕 Dette confirmée** : **generics `useState<T>()`** — servis une fois de plus comme règle pratique, toujours pas enseignés. Due depuis S67. **C'est le prochain bloc.**
+
+**⏭️ Prochaine étape**
+
+1. **Bloc generics** — `useState<T>()` au minimum. Dernier prérequis avant la reprise du CV.
+2. **Reprise de CV Application en design B** : aperçu à droite, trois sections qui remontent leurs données. `InfosGenerales` est déjà écrit et fonctionnel, il ne manque que le branchement.
+3. Toujours en attente : projet CSS Grid · `children` · `useParams` sur vrai cas API · `useRef` · `<table>` · types fonction avancés · hoisting · propagation des événements (`target`/`currentTarget`).

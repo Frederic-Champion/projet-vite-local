@@ -4,6 +4,8 @@ import ExerciceFetchSearch from "./components-exercices/Exercice-fetch-search";
 import ExercicePropsTableauType from "./components-exercices/exercice Props-TableauType";
 import ExercicePageDevis from "./components-exercices/Exercice-FonctionProps";
 import LiftingStateUp from "./components-exercices/Exercice-Lifting state up";
+import LiftingStateUpTS from "./components-exercices/Exercice-LiftingStateUp";
+import LiftingStateUpTS2 from "./components-exercices/Exercice-LiftingStateUp2";
 import { Route, Routes, Link } from "react-router";
 
 function App() {
@@ -27,6 +29,12 @@ function App() {
         <Link className="text-blue-600 hover:underline" to="/lifting-state-up">
           LiftingStateUp
         </Link>
+        <Link className="text-blue-600 hover:underline" to="/lifting-state-up-ts">
+          LiftingStateUpTS
+        </Link>
+        <Link className="text-blue-600 hover:underline" to="/lifting-state-up-ts-2">
+          LiftingStateUpTS
+        </Link>
       </nav>
       <main className="p-4">
         <Routes>
@@ -35,6 +43,8 @@ function App() {
           <Route path="/props-tableau-type" element={<ExercicePropsTableauType />} />
           <Route path="/fetch-search" element={<ExerciceFetchSearch />} />
           <Route path="/lifting-state-up" element={<LiftingStateUp />} />
+          <Route path="/lifting-state-up-ts" element={<LiftingStateUpTS />} />
+          <Route path="/lifting-state-up-ts-2" element={<LiftingStateUpTS2 />} />
         </Routes>
       </main>
     </div>
