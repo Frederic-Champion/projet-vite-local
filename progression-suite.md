@@ -920,3 +920,596 @@ Union sur des **valeurs** montrée au passage (`"vert" | "orange" | "rouge"`) : 
 1. **Bloc generics** — `useState<T>()` au minimum. Dernier prérequis avant la reprise du CV.
 2. **Reprise de CV Application en design B** : aperçu à droite, trois sections qui remontent leurs données. `InfosGenerales` est déjà écrit et fonctionnel, il ne manque que le branchement.
 3. Toujours en attente : projet CSS Grid · `children` · `useParams` sur vrai cas API · `useRef` · `<table>` · types fonction avancés · hoisting · propagation des événements (`target`/`currentTarget`).
+
+## Session 81 — Bloc generics soldé + branchement du CV (design B)
+
+**Durée** : ~3h (mercredi, reprise après vacances). Énergie bonne, séance tenue sans accroc.
+
+**Révision éclair (top 3 des moins chères)** 🟡 : `filter` proposé d'abord (sélection par critère) au lieu d'un tri + coupe — la distinction critère/rang n'était pas faite. Comparateur ensuite **juste et sans hésitation** (2ᵉ passage à froid propre). Deux corrections après indice : `sort` mute l'original (oublié, `[...tab]` ajouté ensuite) · `splice` écrit à la place de `slice` alors qu'il avait annoncé `slice` à l'oral. Restitution finale correcte, y compris l'explication `const` / référence constante.
+
+**🎹 Raccourci** : `Ctrl+Espace` — jamais connu, expliqué (forcer l'autocomplétion : catalogue de méthodes, liste refermée, positions où VS Code ne propose rien spontanément — notamment `className` Tailwind). **Non joué, à reconduire.**
+
+---
+
+### 1. ✅ Bloc generics — dette S67 soldée
+
+Enseigné après 3 récurrences de generics servis sans cours (S67, S74, S79).
+
+**Chemin qui a fonctionné** : le problème (fonctions identiques dont seul un mot change) → la fausse solution (`any`) → le tiroir à types. **La formulation « un tiroir vide qui contient un type au lieu d'une valeur » est celle qui a débloqué**, après un premier passage entièrement incompris.
+
+**Questions posées, toutes traitées** :
+- **`: T` après les parenthèses** — n'avait jamais identifié l'annotation de retour comme distincte de l'annotation de paramètre. Cours donné (entre / sort, indépendants, facultative quand TS déduit, obligatoire dans une interface faute de corps à inspecter).
+- **Puis, seul** : « TS ne le devine pas ? » — oui. A identifié de lui-même que `: T` est redondant. Confirmé, avec la nuance du contrat volontaire sur une fonction exportée.
+- **`useState(0)` et l'absence de « vide » pour un nombre** — cours donné : tous les nombres sont des valeurs légitimes, `0` entre en collision avec une vraie donnée. D'où `number | null` et le test `!== null` (piège du falsy, S62).
+
+**Exercice `auHasard`** : signature écrite **de mémoire et juste**, avant de comprendre ce qu'il écrivait (dit explicitement). Bug unique : `* (length + 1)` — borne de `Math.random()` exclue, le `+1` fait sortir du tableau. Même famille que le `+1` du `slice`, en miroir.
+
+**Exercice `useState` (4 cas)** — ⚠️ **ma consigne empilait les 4 d'un coup, incomprise**. Repris un par un, résolu. Les deux formes retenues :
+`useState<Monture[]>([])` (plusieurs, vide) vs `useState<Monture | null>(null)` (une seule, absente).
+
+**Question posée** : « faut-il connaître contraintes / `<T, U>` / generics d'interface / utility types pour être recrutable junior ? » Réponse cadrée : utility types et generics d'interface **en lecture** avant candidature ; contraintes et paramètres multiples relèvent de l'écriture d'abstractions, hors périmètre junior.
+
+---
+
+### 2. CV Application (Odin, design B) — branchement fait
+
+**Écrit seul avant toute aide** : les deux interfaces `Infos` / `InfosGeneralesProps`, la prop fonction typée, l'objet construit dans l'enfant, `useState<Infos | null>(null)` dans le parent avec ses chevrons, le handler parent, le passage de la prop dans les deux sens. Le motif de la S80 reproduit sur un terrain plus gros, sans modèle.
+
+**Trois points signalés sans réponse, deux corrigés seul** :
+1. `handleEnvoyerInfos;` sans parenthèses dans le `onSubmit` — corrigé immédiatement.
+2. `valide` faisant doublon avec `infos !== null` — supprimé, ainsi que l'aperçu local devenu échafaudage.
+3. **🔴 `PagePresentation({ infos }: Infos)`** — interface de donnée utilisée comme interface de contrat. **Non résolu, réponse donnée.** Le concept « React ne passe qu'un objet » est connu et correctement appliqué juste au-dessus (`InfosGeneralesProps`) ; l'obstacle était la collision `infos: Infos` (clé vs type, même mot). **Repère donné : une interface de props liste les attributs JSX, un par ligne.**
+
+**Décisions prises** :
+- **Un seul fichier** pour tout le CV, conforme à la convention d'apprentissage. Découpage plus tard, sur code fonctionnel.
+- **`PagePresentation` conservée** malgré la possibilité d'écrire l'aperçu dans `CvApplication` : orchestrer ≠ afficher. Distinction séparation des responsabilités / DRY posée — deux principes différents.
+
+**Nommage** — validé comme conforme aux usages pro. Convention complétée : une prop qui transporte une **donnée** ne porte ni `on` ni `handle`, juste le nom de la chose, généralement identique à la variable du parent. Booléen = affirmation (`estValide`). **Shorthand d'objet** (`{ nom, email }`) donné et appliqué.
+
+---
+
+**Niveaux** : generics — mécanisme du tiroir 🟢 · `useState<T>()` règle pratique 🟢 · annotation de retour 🟢 · `any` vs generic 🟢 · écriture d'une fonction générique 🟡 (une seule, avec bug de borne) · lifting state up sur terrain plus gros 🟢 · interface de props vs interface de donnée 🟡 — **appliquée juste sur un cas, cassée sur l'autre dans le même fichier** · `sort` mutant 🟡 · `slice`/`splice` 🟢 · `fn` vs `fn()` 🟡 (rechute en position `onSubmit`, corrigée seule).
+
+**🆕 Dette différée (pas un trou)** : utility types `Partial` / `Pick` / `Omit` / `Record` + generics sur interface — **en lecture uniquement, avant la phase de candidature**.
+
+**⚠️ Mes erreurs** : premier cours generics entièrement incompris (parti sur la syntaxe avant d'avoir posé « un tiroir qui contient un type ») · consigne des 4 `useState` empilée en un message · lui avoir fait corriger `useState<Monture | null>(null)` sans dire que la ligne resservirait au besoin suivant, ce qui a brouillé la suite.
+
+**📌 Roadmap — point ouvert, à trancher en fin de Phase 2** (soulevé par lui, reporté d'un commun accord) : cible « recrutable junior++ au mois 7 ». Points posés — le mois 7 doit être une date de **dépôt**, production finie fin de mois 6 · un SaaS optique crédible vaut mieux que trois projets moyens · GitHub public + LinkedIn à activer **avant** le dépôt, pas pendant · **Git branches + Pull Request** (❌ depuis le début) non négociable avant candidature.
+
+**⏭️ Prochaine étape**
+
+1. **Suite du CV** : `Formations` et `Experiences` — même motif, mais **listes** (plusieurs entrées) → `useState<Formation[]>([])`, terrain direct pour les chevrons du jour.
+2. Puis habillage design B.
+3. Toujours en attente : projet CSS Grid · `children` · `useParams` sur vrai cas API · `useRef` · `<table>` · types fonction avancés · hoisting · propagation des événements.
+
+## Session 82 — CV Application : section Formations (liste + lifting state up)
+
+**Durée** : ~3h (jeudi). Énergie bonne.
+
+**Révision éclair (inline vs block)** 🟡 : distinction `span`/`a` inline vs `div` block **juste et sans hésitation**, comportement du block correctement décrit. **Cassé sur les conséquences pratiques** : a annoncé qu'un inline avec `width` et `padding` « prendrait davantage » — or un inline **ignore `width`** et n'applique le `padding` vertical qu'en peinture (peint, ne pousse pas, le texte se chevauche). Tableau des 3 comportements donné, `inline-block` rattaché à son lien home. **C'est exactement le blocage `<Link>`/`block` de la S75-77, dont la règle n'était pas généralisée. Entre en rotation.**
+
+**🎹 Raccourci** : `Ctrl+Espace` — testé mais pas utilisé en contexte. Reconduit.
+
+---
+
+### Section Formations — livrée et fonctionnelle
+
+**✅ Sorti seul, sans modèle** : le formulaire complet à 5 champs contrôlés (dont `type="month"`, choisi seul) · `ajouterDiplome` construisant l'objet et le remontant · `setFormations((prev) => [...prev, formation])` — **updater fonctionnel écrit spontanément après une seule mention** · le `.map()` avec déstructuration dans le callback et `key` posée d'emblée, **dans les deux composants** · le circuit de suppression complet (fonction parent, 2ᵉ prop fonction typée, branchement du bouton, passage dans le JSX) écrit en une fois sans erreur · `crypto.randomUUID()` et le champ `id` ajoutés à l'interface après signalement du problème d'unicité.
+
+**🔴 Le blocage central — donnée détenue à deux endroits.** Avait écrit `liste` dans `AfficherFormations` **et** `formations` dans `CvApplication`. Conséquence directe : `onEnvoyerFormations(liste)` juste après son setter → le parent recevait systématiquement la liste d'avant l'ajout (photo figée du rendu).
+
+**Désaccord exprimé et traité** : « pas d'accord, la liste est aux deux endroits, synthétique à gauche et propre à droite ». **Sa lecture du besoin était juste** — ce sont bien deux affichages. Ce qui manquait : deux *affichages* ≠ deux *propriétaires*. Une fois posé « le parent détient, les deux enfants reçoivent », la refonte a été faite proprement.
+
+**⚠️ Ma faute sur ce point** : j'ai demandé « qui doit détenir la liste ? » sans expliquer d'abord que les deux affichages restaient possibles. Il a entendu qu'il fallait choisir entre les deux vues. **Réponse donnée directement à sa demande explicite, puis découpage en 6 étapes numérotées — c'est ce format qui a débloqué.**
+
+**🔴 Récurrence tableau vs élément unique, 3 occurrences dans le même fichier** : `useState<Formation>([])` · `formations: Formation | null` dans les props de `PagePresentation` · `formations.diplome` sur un tableau. La distinction `useState<T[]>([])` vs `useState<T | null>(null)` est comprise à l'oral mais **ne se déclenche pas encore à l'écriture**. Repère redonné : une liste n'est jamais absente, elle est vide.
+
+**Trois bugs de branchement d'`id`** (filtre sur `f.diplome`, `key={diplome}`, `{id}` affiché à l'écran) : le champ avait été ajouté partout mais pas branché. Corrigés après signalement.
+
+**Nommage** : convention complétée — `handleXxx` côté parent uniformément (`handleSupprimerFormation`), une seule dénomination par concept (`Formation`, pas `Diplome`). Collision `interface Formations` / `function Formations` corrigée : **type au singulier, composant renommé** `AfficherFormations`.
+
+**Réinitialisation des champs** — question posée : 5 × `setX("")` est bien le standard avec des states séparés. Alternative « un state objet » montrée et **écartée avec justification** (gain sur une ligne, coût sur cinq `onChange`). `useReducer` et `form.reset()` mentionnés comme hors périmètre.
+
+---
+
+### DRY — trois niveaux posés, décision prise
+
+1. **Composant `Champ`** (label + input) — zéro neuf, motif `Touche` de la calculatrice.
+2. **Formulaire piloté par un tableau** + `.map()` — motif `touches`. **Reconnu seul comme identique à la calculatrice.**
+3. **Composant de section générique** servant Formations et Expériences.
+
+**Distinction posée** : 1 et 2 factorisent *dans* un composant (DRY mécanique) · 3 factorise *entre* composants, ce qui affirme que deux choses sont la même — un pari sur l'avenir. Règle donnée : **on factorise ce qui changera ensemble, pas ce qui se ressemble** ; attendre la 3ᵉ occurrence.
+
+**Décision** : `Experiences` sera écrit **en dur** d'abord. Le niveau 3 ne sera évalué qu'ensuite, sur du code réel.
+
+---
+
+**Niveaux** : lifting state up sur une **liste** 🟢 (circuit ajout + suppression complet) · updater fonctionnel `(prev) => [...prev, x]` 🟢 · deux props fonction sur un même composant 🟢 · `key` 🟢 (posée d'emblée, 2 composants) · identifiant stable vs champ de saisie 🟢 (compris immédiatement) · **un seul propriétaire par donnée 🟡 — enseigné ce jour, refonte guidée en 6 étapes** · `T[]` vs `T | null` à l'écriture 🔴 — **3 erreurs dans un fichier, la règle est sue mais ne se déclenche pas** · inline vs block 🟡 · state non à jour après son setter 🟡 (piège retombé, sur le même motif qu'en S71).
+
+**⏭️ Prochaine étape**
+
+1. **`Experiences`** — même motif que Formations, écrit en dur. Terrain de mesure directe pour `T[]` vs `T | null` et pour le circuit complet.
+2. Puis **DRY niveaux 1 et 2** : composant `Champ`, puis formulaire piloté par tableau.
+3. Puis habillage design B (deux colonnes, aperçu de CV présentable).
+4. Toujours en attente : projet CSS Grid · `children` · `useParams` sur vrai cas API · `useRef` · `<table>` · types fonction avancés · hoisting · utility types (lecture, avant candidature).
+
+## Session 83 — CV Application : composant `Champ` + section Expériences
+
+**Durée** : ~2h (vendredi). Énergie bonne, séance sans accroc.
+
+**Révision éclair (`Object.entries`)** 🟡 : squelette JSX juste — outil identifié, `.map()`, `key` posée d'emblée. **Cassé sur la forme produite, 3ᵉ fois** : déstructuration par accolades `({marque, quantite})` au lieu de crochets. `Object.entries` renvoie un tableau **de paires**, donc déstructuration par **position**. Repère redonné : entries = paires = position = crochets. **Reste en rotation.**
+
+**🎹 Raccourci** : `Ctrl+Espace` acté (connu, peu utile dans son usage) et sorti de rotation. Nouveau : `Alt+↑/↓` (déplacer une ligne/sélection). Redonnés à sa demande : `Ctrl+Maj+O` (symboles du fichier, `:` pour grouper par catégorie) et `Ctrl+T` (symboles du projet) — utiles sur un fichier CV devenu long.
+
+---
+
+### 1. Composant `Champ` — écrit seul avant la séance
+
+**✅ Sorti seul** : les 6 props, la déstructuration, `htmlFor`/`id` appariés, `value`/`onChange` branchés.
+
+**Trois corrections** :
+1. **`onChange: () => void`** — le contrat décrit ce que l'**appelant** fournit ; ici c'est l'`<input>`, qui passe toujours l'événement. Type obtenu par geste outillé puis complété : `React.ChangeEvent<HTMLInputElement>` — **sans le chevron, TS retombe sur `Element` qui n'a pas de `.value`**.
+2. **`value` disparue de l'interface**, remplacée par `value={id}` sur l'`<input>` → champ contrôlé impossible à remplir. Distinction posée : `id` = chaîne en dur pour apparier le label · `value` = le state.
+3. Valeur par défaut déplacée du JSX (`type ? type : "text"`) vers la déstructuration (`type = "text"`), motif `className = ""` de `Touche`.
+
+**🎓 Question de conception posée par lui** : `<Champ />` à la main ou tableau + `.map()` comme la calculatrice ? **A tranché juste, seul** — le tableau ne convient pas ici. Critère posé : le `.map()` se justifie quand les éléments ne diffèrent que par des **données** ; dès que chaque champ traîne son propre `useState` et son propre setter, le tableau ne fait que déplacer le problème (décompte identique + une indirection). Le gain réel de `Champ` est ailleurs : la structure et la future chaîne Tailwind vivent à un seul endroit.
+
+**Migration effectuée** : 9 blocs `div/label/input` remplacés par `<Champ />` dans `InfosGenerales` et `AfficherFormations`. `<textarea>` laissé en dur — balise différente, attributs différents, un seul cas.
+
+---
+
+### 2. Section Expériences — circuit complet, page blanche
+
+**✅ Écrit sans aide et sans erreur** : interface `Experience` avec `id` · `AfficherExperiencesProps` avec ses trois props · handler qui construit, remonte et vide les 5 champs · `.map()` d'affichage avec `key` et bouton supprimer · côté parent, state + deux handlers + branchement dans les deux sens.
+
+**🎯 Mesure de la dette S82 — `T[]` vs `T | null` : soldée 🟢.** Les 3 erreurs de la veille ne sont pas revenues. `useState<Experience[]>([])`, `experiences: Experience[]` dans les props, `.map()` sur un tableau : la distinction s'est déclenchée à l'écriture, sans rappel.
+
+**Corrections de nommage** (résidus de la veille) : `experience` portant une liste → pluriel partout · `AfficherExperienceProps` → nom exact du composant + `Props` · `onSupprimerDiplome` renommé `onSupprimerFormation`, ce qui a supprimé l'alias de déstructuration · `ajouterDiplome` → `ajouterFormation` · `xp` → `experience`.
+
+**Point ancré sur `F2`** : après un renommage global, relire la ligne d'origine — `onSupprimerFormation: onSupprimerFormation` était devenu un renommage vers lui-même.
+
+**Nettoyage** : `<div>` racines sans style remplacés par des fragments · `htmlFor` du `<textarea>` sans `id` correspondant · `type="button"` sur le bouton supprimer.
+
+---
+
+**⚠️ Mon erreur — `React.SubmitEvent`** : j'ai affirmé que ce type n'existait pas et donné `React.FormEvent` à la place. **Faux** — capture VS Code à l'appui, le survol affiche `React.SubmitEvent<HTMLFormElement>`, aucun rouge. Ma mémoire des noms de types React ne fait pas le poids contre les `@types/react` installés. **2ᵉ fois sur ce type précis, dans le sens inverse de la S80 : je l'ai fait corriger dans un sens puis dans l'autre. Le geste outillé fait foi.**
+
+**Recadrage juste de sa part** : ma remarque sémantique (`<section>` + titres) présentée comme du structurel alors qu'il applique « d'abord ça marche, ensuite c'est beau » — règle que j'avais donnée moi-même. Reporté à la phase design.
+
+---
+
+**Niveaux** : composant `Champ` + prop optionnelle avec défaut 🟢 · typage d'événement avec chevron 🟡 (obtenu par geste outillé, pas de mémoire) · `id` vs `value` sur un champ contrôlé 🟢 · critère « composant vs tableau + map » 🟢 (tranché seul) · circuit lifting state up complet ajout+suppression 🟢 (2ᵉ section, en une fois) · **`T[]` vs `T | null` à l'écriture 🟢 (dette S82 soldée)** · nommage des interfaces et des handlers 🟢 · `Object.entries` 🟡.
+
+**⏭️ Prochaine étape — cap posé, cherché par lui demain**
+
+1. **Bouton Modifier** — manquant, et explicitement demandé par l'énoncé Odin (edit mode / submit mode). Zéro syntaxe neuve, c'est une **machine à états** : le même formulaire et le même bouton font deux choses selon l'état. Deux questions posées en fin de séance, laissées ouvertes : où va la donnée au clic sur Modifier (les champs ont chacun leur `useState` local) · comment le submit sait s'il ajoute ou remplace.
+2. À traiter aussi : `InfosGenerales` n'a ni suppression ni édition — une faute de frappe est irrattrapable une fois validée.
+3. **Puis habillage design B** (deux colonnes, aperçu présentable) — après l'édition, pour ne pas habiller une structure qui bouge encore.
+4. Toujours en attente : projet CSS Grid · `children` · `useParams` sur vrai cas API · `useRef` · `<table>` · types fonction avancés · hoisting · utility types (lecture, avant candidature).
+
+## Session 84 — CV Application : mode édition (machine à états) + upsert
+
+**Durée** : ~2h30 (samedi). Énergie bonne.
+
+**Pas de révision éclair** — séance ouverte directement sur le blocage en cours (20 min de recherche autonome avant contact).
+
+---
+
+### Mode édition des formations — livré et fonctionnel
+
+**✅ Modélisation trouvée seule** : a identifié qu'il fallait un état supplémentaire pour « une entrée est en cours d'édition », et l'a typé `Formation | null` d'emblée. La bonne intuition, sur la bonne notion.
+
+**🔴 Premier blocage — setters dans le corps du composant.** Bloc `if (modification !== null) { setDiplome(...) ... }` écrit hors de toute fonction événementielle → boucle infinie de rendu. **Famille du contrat `void` / setter mal placé, 5ᵉ occurrence (S64, S67, S71, S74).** Cette fois la cause était différente : pas un `return` de trop, mais l'absence de déclencheur. Point redonné : un setter est toujours appelé par un événement.
+
+**✅ Débloqué seul après une seule question** (« la donnée a-t-elle besoin de monter au parent pour redescendre ? ») : a compris que le clic, la liste et les cinq `useState` vivent dans le même composant, et a branché `onClick={() => modifierFormation(f)}` en local. **Aucune prop supplémentaire pour le remplissage.**
+
+**Fonctions internes superflues** : première version enveloppait les cinq setters dans une fonction déclarée puis appelée immédiatement une seule fois, plus un test `!== null` sur un paramètre typé non-null. Supprimés après signalement.
+
+**Première solution proposée — supprimer puis réajouter.** Fonctionne, et n'est pas absurde. Écartée après exposition des trois conséquences : disparition de la ligne dans l'aperçu pendant l'édition · perte de la donnée si l'utilisateur abandonne · changement d'ordre dans la liste.
+
+**🔴 Blocage de compréhension, arrêt demandé** (« je ne comprends pas correctement, sois plus clair ») : cherchait une comparaison d'id **dans le formulaire**. Repris à zéro avec un tableau des valeurs successives de l'état, et le point qui débloque : **le formulaire ne pose qu'une question — `null` ou pas ? La comparaison d'id a lieu chez le parent, qui détient la liste.** Compris immédiatement une fois séparé.
+
+**Choix `string | null` plutôt que `Formation | null`** : tranché seul et justifié — les cinq valeurs à jour sont déjà dans les `useState` du formulaire, l'objet complet serait une duplication.
+
+---
+
+### 🌟 Upsert — conception proposée par lui
+
+Plutôt que d'ajouter une 3ᵉ prop fonction `onRemplacerFormation` (ce que j'allais faire écrire), a proposé de faire porter la décision au parent :
+
+```ts
+if (formations.some((f) => f.id === formation.id)) { /* remplace */ } else { /* ajoute */ }
+```
+
+**Meilleur que ma version** : l'enfant envoie une formation et ne sait pas ce qu'il advient d'elle ; le parent, qui détient la liste, en tire les conséquences. Une prop de moins. Terme donné : **upsert**.
+
+---
+
+### `(prev) =>` — cours donné à sa demande
+
+Les deux formes du setter (valeur / fonction), `prev` comme paramètre fourni par React (même famille que le `e` d'un handler, l'`entries` d'un observer), le cas des deux setters successifs lisant la même photo figée.
+
+**Règle retenue** : la nouvelle valeur se calcule à partir de l'ancienne → forme fonction, systématiquement. Sinon forme valeur.
+
+**Question posée derrière** : « pourquoi ne pas l'utiliser tout le temps ? » — oui, c'est la réponse. Forme bloc `(prev) => { ... return x; }` montrée au passage, avec le piège du `return` oublié.
+
+**Montré, non retenu** : version en passe unique avec drapeau (`some` + `map` traverse deux fois). Sans intérêt à cette échelle, signalé pour information seulement.
+
+**`??`** appliqué : `id: idEnEdition ?? crypto.randomUUID()` — supprime le `if/else` et l'UUID généré pour rien.
+
+---
+
+**Autres corrections** : mode édition qui ne se refermait pas (`setIdEnEdition(null)` manquant → la formation suivante aurait écrasé la précédente) · libellé du bouton en ternaire · renommages (`handleEnregistrerFormation`, booléen affirmatif).
+
+---
+
+**Niveaux** : identifier l'état nécessaire à un mode édition 🟢 (trouvé seul) · setter dans le corps du composant 🔴 — **5ᵉ occurrence de la famille, cause nouvelle (absence de déclencheur)** · « le formulaire teste, le parent compare » 🟡 (débloqué après reprise à zéro) · upsert 🟢 (**conçu seul, meilleur que ma proposition**) · `(prev) =>` — mécanisme et règle d'usage 🟢 · `??` 🟢 · machine à états mode ajout/édition 🟢 · fonctions internes superflues 🟡.
+
+**📌 Reste sur le fichier** :
+- Les deux `handleSupprimer` lisent encore le state directement → à passer en `prev`.
+- **`AfficherExperiences` n'a pas de bouton Modifier.** Réplication pure du motif formations, aucune décision à reprendre. **Décidé : le refaire de mémoire en prochaine séance, sans regarder `AfficherFormations`** — devient une mesure du motif plutôt qu'un copier-adapter.
+- `InfosGenerales` n'a ni suppression ni édition.
+
+**⏭️ Prochaine étape**
+
+1. **Mode édition des expériences, de mémoire** — mesure du motif du jour.
+2. Puis **habillage design B** (deux colonnes, aperçu de CV présentable).
+3. Toujours en attente : projet CSS Grid · `children` · `useParams` sur vrai cas API · `useRef` · `<table>` · types fonction avancés · hoisting · utility types (lecture, avant candidature).
+
+## Session 85 — State objet unique + fin du mode édition
+
+**Durée** : ~4h30 (dimanche, 2h + 2h30 coupées d'une pause). Énergie bonne sur toute la séance.
+
+**Révision éclair (`IntersectionObserver` monté dans un `useEffect`)** 🔴 : squelette sorti de mémoire (constructeur + objet d'options, `forEach` sur les entrées, test `isIntersecting`, `observe`), **mais quatre points cassés** — aucune variable déclarée (le paramètre `entries` du callback manquant, 2ᵉ occurrence), sélection DOM absente, `observe` sur une liste au lieu d'un élément, **aucune fonction de nettoyage**. Diagnostic posé par lui : les deux notions séparément passent, la combinaison casse. **Reste en rotation.**
+
+Correction complète donnée. `disconnect()` découvert (méthode du navigateur, pas de React : `observe` / `unobserve` / `disconnect`) — sans elle, l'observer garde des références vers des nœuds démontés = fuite mémoire. Pendant exact de `removeEventListener`.
+
+**Point posé — DOM vanilla dans React** : possible, mais c'est modifier le DOM dans le dos de React, qui peut l'écraser au rendu suivant. La version React passe par un state pour la classe et `useRef` pour la référence. **`useRef` + observer version React = bon candidat pour une séance dédiée.**
+
+**🎹 Raccourci** : `Alt+↑/↓` acté 🟢, sorti de rotation. Nouveau : `Ctrl+Maj+K`.
+
+---
+
+### 1. `findIndex` — exploré puis écarté (30 min autonomes en ouverture)
+
+Cherchait à remplacer `some` + `map` par une version en un seul parcours. Cours complet donné sur `findIndex` (position vs élément, retour `-1`, **piège : `-1` est truthy**, tableau comparatif `find`/`findIndex`/`some`).
+
+**🎓 Question posée après avoir vu le code : « je ne vois pas comment ça peut me servir mieux qu'un map avec un ternaire. »** Juste. Version `findIndex` écrite (correcte : test explicite du `-1`, early return, copie avant mutation), puis comparée — 5 lignes contre 3, une mutation à surveiller, un `-1` à décoder, et le `[...prev]` reparcourt de toute façon.
+
+**Conclusion actée : `some` + `map` était la bonne réponse**, l'optimisation ne se paie pas à cette échelle. `findIndex` reste acquis pour les cas où la **position** sert (insérer avant, déplacer, premier/dernier).
+
+**⚠️ Correction de ma part** : j'avais laissé passer l'idée que `findIndex` faisait un seul parcours. Faux — le spread en fait un second. La vraie différence est que `findIndex` s'arrête au premier match.
+
+---
+
+### 2. Mode édition des expériences — reproduit de mémoire ✅
+
+Motif complet sorti sans regarder `AfficherFormations` : state `idSelect`, fonction de remplissage, `?? crypto.randomUUID()`, bouton Modifier dans le `.map()`, ternaire du libellé, remise à `null`. **La mesure du motif de la S84 est concluante.**
+
+---
+
+### 3. 🎯 State objet unique — le cap de la séance
+
+**Question posée par lui** : « certains sites ont 15 champs, faut-il 15 states ? Il n'existe pas une méthode plus pro ? » Excellente question, arrivée d'elle-même.
+
+**Trois niveaux donnés** : state objet + `name` + crochets dynamiques (à sa portée) · `useReducer` (nommé, hors périmètre) · React Hook Form + Zod (standard au-delà de ~10 champs, Phase 2).
+
+**Cours donné** : forme longue → clé dynamique → `name`. Points d'appui explicites sur ce qu'il connaît déjà — `[e.target.name]` = le même mécanisme que `acc[v.marque]` du `reduce` objet · l'attribut `name` retrouve un usage après la S79 · ⚠️ **parenthèses obligatoires autour de l'accolade** dans `(prev) => ({...})`, sinon lu comme un corps de fonction.
+
+**✅ `InfosGenerales` converti du premier coup** : constante hors composant, state objet, handler générique, `name` ajouté à `ChampProps`. Deux simplifications signalées ensuite (ligne intermédiaire devenue inutile, second argument de type superflu).
+
+**Deux questions de fond posées, toutes deux traitées** :
+- *Pourquoi la constante hors du composant ?* → le corps se réexécute à chaque rendu, l'objet serait recréé (nouvelle référence à contenu identique). Sans conséquence ici, mais deviendrait un bug s'il servait de dépendance à un `useEffect`. Même arbitrage que `EXERCICES` vs `touches`.
+- *Pourquoi les crochets, peut-on faire autrement ?* → à gauche d'un `:` dans un littéral, le mot est du texte, jamais une variable. Forme longue en deux temps montrée. Aucune autre syntaxe n'existe.
+- *Peut-on demander à `useState` « toutes les clés de `Infos` à `""` » ?* → non, une interface ne crée aucune valeur (règle S60). D'où la constante réutilisable.
+
+**✅ `AfficherFormations` converti** — 5 champs. `modifierFormation` réduite à deux lignes, **rest en déstructuration sorti seul** pour exclure l'`id`.
+
+**🎓 Choix de conception tranché (réponse donnée après une première question mal comprise)** : le formulaire ne porte **pas** l'`id`. Il collecte ce que l'utilisateur tape ; l'`id` est déjà dans `idEnEdition`. Question posée par lui : « pourquoi pas `id?: string` ? » → parce que dans la liste, toute formation a un id ; affaiblir le contrat de la donnée principale pour arranger un cas de saisie produit une **interface fausse** (règle S61), et force à tester une absence qui n'arrive jamais.
+
+**🆕 `Omit<Formation, "id">` donné comme outil**, sans cours. **Frédéric a explicitement demandé que le cours complet sur les utility types soit dû** — accepté, c'est une dette nommée, pas une ligne d'attente.
+
+---
+
+### 4. `InfosGenerales` — bouton Modifier tranché sans code
+
+Point posé : ce n'est **pas** le même motif que les listes. Une seule donnée, rien à sélectionner. Comportement des vrais générateurs de CV : les champs restent remplis, libellé fixe « Enregistrer », pas de ternaire (il n'annonce rien puisque le comportement ne change pas). Deux lignes modifiées, zéro state ajouté.
+
+---
+
+**Habillage** : formulaires (fond, arrondi, ombre), titres de section, boutons avec `transition-colors` (convention rappelée : fond/bordure/élévation plutôt que taille de texte — **une boîte se calcule d'après son contenu, agrandir le texte agrandit le bouton**). Feuille A4 posée : `min-h-[297mm] w-[210mm] p-[15mm]`, ratio et unités physiques expliqués.
+
+---
+
+**Niveaux** : state objet + `[e.target.name]` + `name` 🟢 (converti sur deux formulaires le jour même) · constante hors composant 🟢 · parenthèses autour de l'objet en flèche 🟢 · rest pour exclure une clé 🟢 (sorti seul) · type de saisie vs type de donnée 🟡 (tranché après explication) · `Omit` — **utilisé, non enseigné, cours dû** · `findIndex` 🟡 (appris puis écarté à raison) · mode édition reproduit de mémoire 🟢 · `IntersectionObserver` dans `useEffect` 🔴 · `disconnect()` 🟡.
+
+**📌 Reste sur le fichier** :
+- **`AfficherExperiences` non converti** en state objet — dernier des trois. Difficulté supplémentaire : le `<textarea>` n'est pas un `<Champ>` et son événement n'est pas un `HTMLInputElement`.
+- `name` passera en obligatoire une fois les trois formulaires convertis.
+- Feuille A4 : `w-[210mm]` déborde en demi-colonne. **Test `scale` + `<nav>` fixe** à faire (bloc conteneur, S76).
+
+**⏭️ Prochaine étape**
+
+1. Convertir `AfficherExperiences` en state objet (+ le cas `<textarea>`).
+2. Passer `name` en obligatoire.
+3. Habillage design B : feuille A4 et son adaptation à la largeur.
+4. **Cours dû, demandé explicitement : utility types** (`Omit`, `Pick`, `Partial`, `Record`) — cours complet + exercices.
+5. Candidat séance dédiée : `useRef` + `IntersectionObserver` en version React.
+6. Toujours en attente : projet CSS Grid · `children` · `useParams` sur vrai cas API · `<table>` · `useReducer` · types fonction avancés · hoisting.
+
+## Session 86 — Utility types : cours complet + `AfficherExperiences` converti
+
+**Durée** : ~2h (mardi soir). Énergie bonne, séance tenue jusqu'à minuit.
+
+**Révision éclair (inline vs block)** 🟢 : `w-full` identifiée comme ignorée, `inline-block` donné en solution. Une imprécision corrigée sur le padding vertical (il est **peint** mais ne pousse pas les voisins — d'où le chevauchement). Le point cassé en S82 est ressorti juste. **Sort de rotation.**
+
+**🎹 Raccourci** : `Ctrl+Maj+K` — peu utilisé, réflexes souris encore dominants. Reconduit.
+
+---
+
+### 1. `AfficherExperiences` — converti au state objet ✅
+
+**Écrit seul avant la séance**, complet et fonctionnel : state objet, `handleChange` générique avec déstructuration de `e.target`, `EXP_VIDE` typé `Omit<Experience, "id">`, mode édition avec rest en déstructuration.
+
+**Question posée : pourquoi `{ ...saisie, id }` et non `{ saisie, id }`** → un littéral ne contient que des paires ; `{ saisie, id }` produit un objet à deux clés dont l'une imbrique la saisie. Forme longue donnée (les 5 recopies à la main) avant la version spread.
+
+**Union sur un type d'élément** : `React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>` — le nom de l'outil n'était plus en tête, la notion oui. `handleChange` mutualisé, `onChange` inline du `<textarea>` supprimé (il refaisait le même travail avec la clé en dur), annotation fautive à deux paramètres de type retirée.
+
+**🌟 A tranché seul** de ne pas élargir `ChampProps` : `Champ` ne rend qu'un `<input>`, son contrat doit rester exact. Point complété : un fournisseur peut accepter plus large que le contrat, jamais plus étroit.
+
+**Points de la todo S85 vérifiés et déjà soldés** : `name` obligatoire dans `ChampProps` ✅ · préfixes d'`id` sans collision ✅ (j'avais reconduit ce point sans vérifier — récurrence de §9 bis).
+
+---
+
+### 2. Utility types — cours dû livré
+
+**`Omit`** posé par le problème qu'il résout : deux interfaces décrivant la même donnée à un champ près se désynchronisent silencieusement. `Omit` rend la dérivation explicite et automatique. Rattaché aux generics (S81) : un outil livré avec TS, qui tourne dans le canal des types.
+
+**🎓 Question de fond : « à quel moment on met `<>` ? »** — cours donné, point qui structurait tout le reste. **`: Type` = annoter** (attacher un type à une chose qui existe) · **`<Type>` = remplir un tiroir** (fournir un type comme argument à un outil générique). Repère décisif : ce n'est pas toi qui décides, c'est l'outil qui impose. Test au survol VS Code — `type Omit<T, K>` a des tiroirs, `interface Formation` n'en a pas.
+
+**🎓 Question : `interface` vs `type`** — `interface` ne sait décrire qu'une forme d'objet ; `type` nomme n'importe quel type (union, alias, résultat d'utility type). Convention actée pour le projet : `interface` pour les formes d'objet, `type` pour le reste. C'est déjà ce qu'il fait.
+
+**🔴 Blocage sur `|` dans un contexte de clés** : lu comme une alternative (« soit id, soit description ») dans `Omit<Experience, "id" | "description">`. **Ma faute** — j'ai d'abord expliqué que le `|` s'y lisait « comme une liste », ce qui est faux et a brouillé la notion d'union. Repris : `|` = « ou », toujours ; ce qui change est l'usage du type obtenu.
+
+**Question posée derrière : pourquoi pas `&` ?** Excellente. Réponse : `&` existe, il produit une **intersection**. Sur des littéraux, `"id" & "description"` = `never`. Sur des objets, `&` fusionne deux formes — c'est l'usage réel, réactivé plus tard dans la séance.
+
+**🔴 `Record` — deux explications échouées avant la bonne.** Mes deux premiers passages partaient de l'exemple à clés fermées, hors besoin. Débloqué en partant de son `reduce` objet : `{ Rayban: 2, Persol: 1 }` ne peut pas être typé par une interface puisque les clés viennent des données. `Record<string, number>` écrit la **règle** au lieu de la liste.
+
+**Question posée : « il en existe beaucoup plus dans la doc, pourquoi ces 4 ? »** — cadrage donné : ces quatre couvrent les manipulations CRUD courantes ; le reste se range en trois familles (chaînes, types de fonctions type `ReturnType`/`Awaited` — utiles avec Prisma —, filtrage d'unions). Tous fonctionnent pareil, donc lisibles sans cours. Position S81 réaffirmée : utility types **en lecture** avant candidature.
+
+---
+
+### 3. Exercices
+
+**🔴 Mon premier exercice était infaisable** : il demandait de combiner `Partial` + `Omit` + `Pick` + `&` alors que les trois outils venaient d'être vus et que `&` avait été explicitement écarté (« pas aujourd'hui »). Consigne également trop vague — aucun contexte d'appel fourni. Recadré par lui : « ta consigne n'était pas claire, il faut que tu travailles ça ». **Correctif retenu : un exercice = un outil, la combinaison seulement quand chaque brique est sortie seule ; et toujours donner le code appelant avec des valeurs concrètes avant de demander un type.**
+
+**Repris en 4 micro-exercices, un outil chacun — 4/4 justes** : `Pick<Formation, "ville">` · `Partial<Formation>` · `Omit<Formation, "fin">` · `Record<string, number>`. Syntaxe, PascalCase et choix `type` corrects.
+
+**`Record` à clés fermées** ensuite, compris et vérifié (`Record<Statut, number>` restitué juste).
+
+**✅ Combinaison réussie en fin de séance**, avec contexte d'appel fourni cette fois (appels qui doivent passer / être refusés) :
+```ts
+Partial<Omit<Formation, "id" | "diplome">> & Pick<Formation, "id" | "diplome">
+```
+Écrit seul, du premier coup — soit exactement ce qui avait bloqué 20 min plus tôt. La variante courte `Partial<Formation> & Pick<...>` donnée en complément (la contrainte la plus stricte gagne dans une intersection). Seule remarque : nom du type non descriptif.
+
+---
+
+**Niveaux** : state objet sur les 3 formulaires 🟢 (converti seul) · union sur type d'élément d'événement 🟢 · contrat exact vs fournisseur plus large 🟢 · **`: Type` vs `<Type>` 🟢 — c'était le chaînon manquant** · `interface` vs `type` 🟢 · `Omit` 🟢 · `Pick` 🟢 · `Partial` 🟢 · `Record<string, T>` 🟡 (3 explications nécessaires) · `Record<Union, T>` 🟡 · `&` sur objets 🟡 · combinaison d'utility types 🟡 (réussie une fois, guidée par un énoncé très cadré) · `|` sur littéraux 🟡 · inline vs block 🟢.
+
+**🆕 Demande explicite de Frédéric** : **pratiquer et développer les types TS pour perfectionner son usage.** Ce n'est pas une dette à solder mais un axe de travail continu — prévoir des exercices de typage réguliers, y compris hors CV.
+
+**⚠️ Mes erreurs** :
+1. Exercice combinant 3 outils neufs + un opérateur annoncé comme hors périmètre. Récurrence §9.
+2. Consignes d'exercice sans contexte d'appel — « je ne comprends pas, il faut que je type quoi ? ».
+3. `Record` expliqué deux fois par le cas particulier avant le cas général.
+4. Point des préfixes `id` reconduit depuis la todo S85 sans vérifier qu'il était déjà réglé.
+
+**⏭️ Prochaine étape**
+
+1. **Test `scale` de la feuille A4 avec la `<nav>` fixe** — en attente depuis S85 (`w-[210mm]` déborde en demi-colonne ; `transform` sur un ancêtre capture les `fixed`, S76).
+2. **Habillage design B** — deux colonnes, aperçu de CV présentable.
+3. Exercices de typage réguliers (demande du jour), sur terrain varié.
+4. Toujours en attente : projet CSS Grid · `children` · `useParams` sur vrai cas API · `useRef` (+ `IntersectionObserver` version React) · `<table>` · `useReducer` · types fonction avancés · hoisting.
+
+## Session 87 — Feuille A4 responsive + `<details>` natif + habillage des listes
+
+**Durée** : ~2h (mercredi). Énergie bonne.
+
+**Révision éclair (top 3 des moins chères)** 🟡 : comparateur `(a, b) => a.prix - b.prix` et `slice(0, 3)` justes et sans hésitation. **Cassé sur la mutation de `sort`, 2ᵉ fois** (S81 déjà, après indice) — `montures` réordonné sans que rien ne le demande, et `monturesTrie` qui n'est pas une copie mais le même tableau. `[...tab].sort()` redonné, avec le contraste : spread indispensable devant `sort`, superflu devant `map`/`filter`. **Reste en rotation.**
+
+**🎹 Raccourci** : `Ctrl+Maj+K` jamais adopté (« je n'y pense pas ») → **abandonné**. Remplacé par **Emmet Wrap with Abbreviation**, demandé par lui en cours de séance (« comment envelopper une sélection sans couper/coller la balise fermante ? »). Assigné à `Alt+M` immédiatement et utilisé dans la foulée. Besoin réel exprimé par lui = bon terrain d'ancrage.
+
+---
+
+### 1. Feuille A4 — dette S85 soldée
+
+**`scale` testé et écarté.** Point posé : un `transform` s'applique **après** le calcul de la mise en page — l'élément est peint plus petit mais réserve toujours sa place. Ne résout pas un débordement.
+
+**`aspect-ratio` — notion neuve** 🟢 : impose un **rapport**, jamais une taille ; la hauteur devient une conséquence de la largeur. `aspect-[210/297]`.
+
+**🎓 Question posée : « aspect peut-il être limité dans sa taille ? »** — oui, il se combine avec toutes les contraintes. Point de fond donné : le ratio est appliqué **après** résolution de la largeur, et une contrainte de taille explicite gagne toujours contre lui.
+
+Version retenue : `aspect-[210/297] w-full max-w-[210mm] p-[5%]`. Format A4 réel quand la place existe, rétrécissement proportionnel sinon. Arbitrage tranché par lui en connaissance de cause : le contenu long sortira du cadre au lieu d'allonger la feuille. Padding en `%` retenu, avec la particularité CSS signalée (un padding en pourcentage se calcule sur la **largeur**, y compris verticalement).
+
+---
+
+### 2. `<details>` / `<summary>` — notion neuve
+
+**Besoin exprimé par lui** (capture d'un CV generator à l'appui) : replier la liste des formations enregistrées.
+
+Deux implémentations comparées, **native retenue** : `<details>` gère le clic, le clavier, l'état et l'accessibilité sans une ligne de JS. Le state React ne se justifierait que pour piloter l'ouverture depuis le code (fermer après ajout, une seule section ouverte). Règle « solution native avant contournement » appliquée.
+
+Points posés : attribut `open` = état **initial** uniquement · `<summary>` est en `display: list-item`, il faut lui remettre `flex` explicitement (même famille que `flex-col` sans `flex`) · `cursor-pointer` non fourni par défaut.
+
+**`group` / `group-open`** 🟡 — deux mécanismes distincts, empilés par moi puis dépliés à sa demande. `open:` cible l'élément lui-même · `group` marque un parent pour permettre à un enfant de réagir à son état, ce que le CSS ne sait pas faire seul. Second exemple donné (`group-hover` sur une carte entière). `peer` mentionné pour les voisins, non enseigné.
+
+**✅ Implémenté seul sur les deux sections**, avec `<article>`, hiérarchie `h3`/`p`, `justify-between` contenu/actions, icônes Lucide et `aria-label` sur le chevron seul (réflexe correct — aucun texte visible ne porte l'information).
+
+---
+
+### 3. Structure sémantique de l'aperçu
+
+**Question posée par moi, répondue juste avant tout code** : `<article>` pour chaque entrée (test S61 « détaché, garde-t-il son sens ? »), `<section>` pour le bloc thématique. Précision ajoutée : les deux sont **imbriqués**, pas alternatifs. Nuance `<h3>` (sens, navigable au lecteur d'écran) vs `font-bold` (apparence).
+
+`<section>` posées sur les trois composants dans la foulée.
+
+---
+
+### 4. Retour à la ligne — diagnostic
+
+Description sur une seule ligne interminable. **Cause : chaîne sans espaces** — le navigateur cherche un espace pour couper, n'en trouve aucun, laisse déborder. `whitespace-pre-line` ne traite pas ce cas.
+
+Donné : `break-words` (coupe dans un mot seulement s'il ne rentre pas) + `whitespace-pre-line` (conserve les retours tapés) · `break-all` déconseillé · `min-w-0` sur l'enfant flex si le débordement persiste (`min-width: auto` par défaut empêche un enfant flex de rétrécir sous son contenu). **Non encore appliqué, à vérifier en ouverture.**
+
+---
+
+**⚠️ Mes erreurs** :
+
+1. **Deux affirmations fausses sur son propre code** : `<nav>` inexistante dans `App.tsx` (elle y est), et diagnostic de débordement construit sur deux captures que j'ai lues comme un avant/après alors qu'il s'agissait du même code dans deux fenêtres de tailles différentes. Recadré par lui. **Même famille que S69 — ne pas trancher sur une capture, demander.**
+2. **`marker:content-none` donné de mémoire — n'existe pas.** Il a cherché la doc et n'a rien trouvé. La classe correcte est `list-none`. **Récurrence de « qualifier la source » (§9 bis).**
+3. **`split` et `new Date` servis dans une fonction de formatage sans cours**, tous deux ❌ au §7 (dates jamais abordées). Signalé par lui. **Récurrence §9 vigilance n°1**, en fin de séance de surcroît.
+
+---
+
+**Niveaux** : `aspect-ratio` + `max-w` 🟢 · padding en `%` 🟡 · `scale` = peinture, pas layout 🟢 · `<details>`/`<summary>` 🟢 (implémenté seul sur 2 sections) · `group` / `group-open` 🟡 (neuf, expliqué en deux temps) · `<article>` dans `<section>` 🟢 · `break-words` vs `whitespace-pre-line` 🟡 (posé, non appliqué) · mutation de `sort` 🔴 (2ᵉ échec).
+
+**🆕 Dettes ouvertes ce jour** :
+- **`split()`** — utilisé, non enseigné. Rapide.
+- **`new Date` / objet Date** — utilisé, non enseigné. Les dates sont ❌ au §7. Nécessaire pour formater `type="month"` (`"2008-09"` → « septembre 2008 »), et le piège des mois indexés à 0 va avec.
+- `peer` — mentionné, non enseigné.
+
+**⏭️ Prochaine étape**
+
+1. **`split` et `new Date`** si le créneau le permet — sinon reporté.
+2. **Habillage de `PagePresentation`** : c'est le dernier bloc non traité du design B. La colonne de gauche est habillée, l'aperçu affiche encore des données brutes séparées par des tirets.
+3. Toujours en attente : projet CSS Grid · `children` · `useParams` sur vrai cas API · `useRef` (+ `IntersectionObserver` version React) · `<table>` · `useReducer` · types fonction avancés · hoisting · exercices de typage réguliers (demande S86).
+
+## Session 88 — `split` / `new Date` + habillage de l'aperçu CV
+
+**Durée** : ~2h (jeudi midi). Énergie bonne.
+
+**Révision éclair (le plus cher, sans muter la source)** 🟢 : `[...montures].sort((a, b) => b.prix - a.prix)[0]` écrit sans hésitation, **spread posé d'emblée sans rappel**. Le point cassé en S81 et en S87 est ressorti seul. **Sort de rotation.** Corrections de nommage seulement : PascalCase sur une variable ordinaire · nom décrivant le contenu (`monturesTriees`) plutôt que la nouveauté.
+
+**🎹 Raccourci** : Emmet Wrap (`Alt+M`) — utilisé, jugé très pratique, **reconduit à sa demande** avant rotation.
+
+**Vérification d'ouverture** : `break-words` + `whitespace-pre-line` appliqués, débordement résolu ✅.
+
+---
+
+### 1. Dettes S87 soldées — `split` et `new Date`
+
+**`split()`** 🟢 : cours donné (le séparateur disparaît, le retour est **toujours** un tableau même sans coupure, `split("")` découpe caractère par caractère, `join()` en inverse). Deux micro-exercices justes.
+
+**Point réactivé au passage — déstructuration de tableau** 🟡 : a écrit deux `split` successifs avec accès par index plutôt que `const [annee, mois] = ...`. La notion est connue (il l'utilise dans chaque `useState`) mais ne s'est pas déclenchée. Repère redonné : accolades = objet, par **nom** · crochets = tableau, par **position**. Rattaché à `useState` et à `Object.entries`.
+
+**`new Date`** 🟡 : cours limité à ce que le CV exige (représentation en millisecondes, trois formes de construction, **mois indexés à 0**, `toLocaleDateString` avec objet d'options). Le piège des mois est présenté comme à retenir, pas à comprendre.
+
+**Écriture de `formaterMois` — 4 points cassés** :
+1. **La fonction lisait la constante globale `date` au lieu de son paramètre `valeur`** — récurrence directe du `CLIENTS.map` de la S63. 🔴
+2. **Aucun `return`** : résultat calculé puis jeté, `alert` de l'objet `Date` brut. ⚠️ **Ma consigne était ambiguë** (« doit ressortir X » sans préciser la forme) — signalé par lui, à raison. Point de fond maintenu : une fonction utilitaire renvoie, elle n'affiche pas ; c'est ce qui la rend réutilisable.
+3. **Pas de `Number()`** aux frontières — `split` renvoie des chaînes, `new Date` attend des nombres. Acquis sur la calculatrice, non transféré. 🔴
+4. Garde manquant sur chaîne vide (`NaN` → « Invalid Date »).
+
+---
+
+### 2. Habillage de `PagePresentation`
+
+**🎓 Deux questions posées avant de coder, toutes deux pertinentes** :
+
+- *Faut-il un bouton télécharger/imprimer, et est-ce dans mes cordes ?* → oui aux deux. `window.print()` ouvre la boîte native qui propose l'export PDF ; le travail réel est le CSS d'impression (`@media print`, variant Tailwind `print:hidden`). Bloc de ~30 min, **écarté par lui pour un autre projet**. Décision assumée.
+- *Un CV sans couleur, juste du gras et de la marge ?* → ma consigne était trop stricte. Reformulée : la couleur **accompagne** la hiérarchie, elle ne la porte pas ; le test est qu'un CV reste lisible en noir et blanc. Règle donnée : une couleur d'accent, trois usages maximum.
+
+**Question posée : quel est le souligné le plus pro ?** → `border-b` (standard, une propriété, aucun élément en plus, suit la largeur du bloc) · `<hr>` réservé aux séparateurs sémantiques entre blocs · `::after` seulement pour ce que `border-b` ne fait pas (trait partiel, couleur indépendante) · **une `<div>` vide pour faire un trait : jamais**.
+
+**Première version — deux erreurs bloquantes** :
+1. **`<p>` imbriqué dans un `<p>`** — interdit en HTML, le navigateur ferme le premier de force.
+2. **Séparateur conditionné sur `length > 1`** — condition identique pour toutes les entrées, donc un trait après la dernière. Corrigé avec l'index.
+
+**Deuxième paramètre de `.map()`** 🟢 — expliqué à sa demande (« je le connais mais jamais utilisé seul »). Trois arguments fournis, on ne déclare que ce qu'on veut ; même famille que le `e` d'un handler. `length - 1` = index du dernier, conséquence de l'indexation à 0.
+
+**✅ Prop `obligatoire?: boolean` avec défaut `true`** — motif de la prop optionnelle sorti sans aide, **3ᵉ fois** après `type` et `className`. Appliqué aux deux champs « date de fin ».
+
+**Corrections appliquées** : `<section>`/`<article>` à la place des `<div>` · `justify-between` + `items-baseline` pour les dates alignées à droite · ternaire `fin` propagé dans l'aperçu · formulations de CV allégées.
+
+**Décision de Frédéric, juste** : l'habillage s'arrête là. L'énoncé Odin porte sur la mécanique (lifting state up, mode édition), pas sur la maquette.
+
+---
+
+**Niveaux** : `split` 🟢 · déstructuration de tableau 🟡 (connue, non déclenchée) · `new Date` + mois indexés à 0 🟡 · conversions aux frontières 🔴 (acquises ailleurs, non transférées) · lire le paramètre et non la globale 🔴 (récurrence S63) · fonction utilitaire qui renvoie 🟡 · 2ᵉ paramètre de `.map()` 🟢 · `border-b` vs `<hr>` vs `::after` 🟢 · prop optionnelle avec défaut 🟢 · `<p>` non imbricable 🟢 · `sort` non mutant 🟢.
+
+**📌 Reste sur le fichier** (mineur, non bloquant) : `break-words` / `whitespace-pre-line` absents de la description dans l'aperçu · le bloc d'en-tête serait plutôt un `<header>`.
+
+**✅ CV Application terminé** côté énoncé Odin. `InfosGenerales` sans bouton Modifier : conforme à la décision S85 (une seule donnée, champs qui restent remplis, libellé fixe).
+
+**⏭️ Prochaine étape — décision à prendre en ouverture**
+
+Le CV est fini, et la consolidation dure depuis la S70 alors que les vacances sont terminées depuis deux semaines. Deux directions :
+
+1. **Reprendre l'axe Phase 2** (recommandé) : approfondissement **React Router Declarative**, demandé explicitement en S69 et jamais ouvert · **`useParams` sur un vrai cas API** liste → fiche, en attente depuis S68 — c'est le motif central des apps de gestion, donc du futur SaaS optique.
+2. **Poursuivre la famille logique pure** : Quiz (zéro neuf), puis Memory Card (mélange de tableau), puis jeu de paires.
+
+Toujours en attente : projet CSS Grid · `children` · `useRef` (+ `IntersectionObserver` version React) · `<table>` · `useReducer` · types fonction avancés · hoisting · `peer` · exercices de typage réguliers (demande S86).
+
+## Session 89 — `useParams` et route paramétrée
+
+**Durée** : ~2h (vendredi). Énergie bonne. Reprise de l'axe Phase 2 après la consolidation ouverte en S70.
+
+**Révision éclair (`Object.entries`)** 🟢 : `.map()` complet écrit sans hésitation, déstructuration par **crochets** posée d'emblée — le point cassé trois fois (jusqu'en S83) est ressorti seul. **Sort de rotation.** Seule remarque : `<p>` répétés là où le résultat attendu était une liste (`<ul>`/`<li>`).
+
+**🎹 Raccourci** : Emmet Wrap (`Alt+M`) acté 🟢, très utilisé, sorti de rotation. Nouveau : `Ctrl+Maj+F` (recherche projet) — **non joué cette séance.**
+
+---
+
+### 1. Organisation des dépôts — tranchée par Frédéric
+
+J'avais recommandé de tout regrouper dans `projet-examen-blanc`. **Il a maintenu une autre répartition, meilleure, à retenir** :
+
+- **`projet-examen-blanc`** = exercices canoniques / projets aboutis, dépôt vitrine.
+- **`projet-vite-local`** = atelier d'apprentissage, petits exercices, noms de fichiers descriptifs pour la relecture.
+
+Accueil de `projet-vite-local` refait sur le modèle de l'autre projet — remplace définitivement le système commenter/décommenter.
+
+---
+
+### 2. Cours `useParams` + segment paramétré
+
+Segment `:id` comme joker, nom inventé librement, correspondance stricte du nombre de segments. `useParams()` renvoie **un objet** dont les clés sont les noms écrits après les `:` → déstructuration par accolades, par nom.
+
+**Point de fond posé** : un composant monté par une route n'a **pas de parent qui lui passe des props** — c'est le routeur qui l'affiche en lisant l'URL. D'où la nécessité d'un hook pour aller chercher la donnée. Deux conséquences : la valeur est **toujours une chaîne**, et son type est `string | undefined` (l'assertion `!` est illégitime ici, la valeur vient de l'utilisateur).
+
+**🔴 Premier exercice (`Catalogue`) non produit** — « je ne comprends pas ce que je dois faire ». Code donné en entier puis commenté ligne par ligne. Deux causes distinctes : **ma consigne initiale était dispersée** (reformulée ensuite en livrable explicite, ce qui a débloqué la partie liste), et le mécanisme était neuf.
+
+Erreurs corrigées avant le blocage : `<Link>` auto-fermant (lien vide, contenu à côté et non dedans — récurrence du point zone cliquable S75-77) · marque et prix affichés dans la liste, ce qui vidait la fiche de son intérêt · `path="/fiche-monture"` **fixe au lieu de paramétré**, donc aucune correspondance avec les `<Link>` générés et `useParams` renvoyant un objet vide.
+
+**Question posée : export nommé vs `export default`** — cours donné (un seul défaut, autant de nommés ; le défaut n'a pas de nom donc l'importateur le choisit ; accolades = même syntaxe que la déstructuration, renommage possible avec `as`). Convention dominante = nommé partout. Rattaché à `{ createRoot }`.
+**Vocabulaire corrigé** : accolades `{}`, pas crochets.
+
+---
+
+### 3. Exercice `Clients` / `FicheClient` — page blanche ✅
+
+Motif complet reproduit sans modèle 20 min après avoir reçu le code : route paramétrée dans le bon ordre, `to` construit en template literal, `useParams()` déstructuré, `find` + test, deux exports nommés, entrée d'accueil.
+
+**Trois corrections** :
+
+1. **🔴 `if (!client) return;` — `return` nu.** React accepte `undefined` : page **vide** sans message ni erreur sur une URL invalide. Le cas d'erreur n'est pas traité, il est silencieux. **Récurrence directe du `return` nu de `arrondir` (S78)** — une fonction doit produire quelque chose dans toutes ses branches.
+2. Nommage `clientExiste` pour une variable portant un objet — annonce un booléen (sa propre convention, S81). La variable **porte** le client, le test d'existence est une conséquence.
+3. `€` collé à la date, résidu du copier de `Catalogue`.
+
+**Question de fond posée en fin de séance : pourquoi `:id` dans le `path` et pas dans le `to` ?** Réponse : `path` décrit un **motif** écrit une seule fois, il ne peut pas nommer une valeur qu'il ignore · `to` est réévalué dans le `.map()` avec la donnée sous la main et produit une **adresse réelle**. Test réappliqué : « est-ce que ça ressemble à une adresse de site web ? »
+
+---
+
+**Niveaux** : route paramétrée `:id` 🟢 · `useParams` + déstructuration par nom 🟡 — **code donné sur le 1er exercice, reproduit seul sur le 2e ; un seul passage autonome, ne pas surévaluer** · correspondance `to` ↔ `path` 🟢 · `find` + test d'existence 🟢 · `return` nu dans une branche 🔴 (récurrence S78) · export nommé vs défaut 🟢 · `<Link>` enveloppant son contenu 🟡 (rechute) · `Object.entries` 🟢.
+
+**⚠️ Mes erreurs** :
+1. **Consigne du 1er exercice dispersée** — livrable pas énoncé clairement, ce qui a pesé sur un mécanisme déjà neuf. Reformulée en « voici les deux composants à produire, voici le résultat attendu », efficace immédiatement.
+2. **Annonce d'un exercice à deux paramètres** puis retrait — j'allais ajouter du neuf alors que le premier exercice n'avait pas été produit seul.
+3. Recommandation d'organisation des dépôts moins bonne que la sienne.
+
+**⏭️ Prochaine étape — décidée pour demain, séance fraîche**
+
+1. **Liste → fiche sur une vraie API** : deux `fetch` (liste et fiche), avec chargement et erreur **dans le composant monté par la route** — jamais fait. C'est ce que `useParams` sert réellement, et le motif du futur SaaS optique. Bonne révision du socle `useEffect`/`fetch` au passage. ~1h.
+2. Puis : approfondissement React Router Declarative (demandé S69, jamais ouvert).
+3. Toujours en attente : projet CSS Grid · `children` · `useRef` (+ `IntersectionObserver` version React) · `<table>` · `useReducer` · types fonction avancés · hoisting · `peer` · exercices de typage réguliers (demande S86).
