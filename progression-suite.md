@@ -1513,3 +1513,85 @@ Motif complet reproduit sans modèle 20 min après avoir reçu le code : route p
 1. **Liste → fiche sur une vraie API** : deux `fetch` (liste et fiche), avec chargement et erreur **dans le composant monté par la route** — jamais fait. C'est ce que `useParams` sert réellement, et le motif du futur SaaS optique. Bonne révision du socle `useEffect`/`fetch` au passage. ~1h.
 2. Puis : approfondissement React Router Declarative (demandé S69, jamais ouvert).
 3. Toujours en attente : projet CSS Grid · `children` · `useRef` (+ `IntersectionObserver` version React) · `<table>` · `useReducer` · types fonction avancés · hoisting · `peer` · exercices de typage réguliers (demande S86).
+
+## Session 90 — `useParams` sur API réelle : liste → fiche
+
+**Durée** : ~3h (samedi). Énergie bonne au départ, agacement en milieu de séance sur le blocage `useParams`.
+
+**Révision éclair (inline vs block)** 🟡 : `flex flex-col` proposé, solution qui **fonctionne** (un enfant de flex n'est plus inline, `width` et padding vertical redeviennent effectifs). **Mais le diagnostic n'est pas venu** — l'énoncé mentionnait explicitement la largeur ignorée et le chevauchement, deux symptômes non traités dans la réponse. Le réflexe est là, le raisonnement non. **Reste en rotation.**
+
+**🎹 Raccourci** : `Ctrl+Maj+F` — non utilisé, reconduit.
+
+---
+
+### 1. Rafraîchissement — recadré par lui
+
+J'ai commencé par rappeler le motif `useEffect`/`fetch`. **Il a stoppé : ce n'est pas lui qui avait besoin d'être rafraîchi, c'est `useParams`.** Juste — le fetch est verrouillé depuis la S55, `useParams` datait de la veille. Rappel refait sur la bonne notion.
+
+**Question posée en ouverture** : `useParams` vient-il de React ou de React Router ? → React Router. React ne fournit que les hooks d'état et de cycle de vie ; tout ce qui touche à l'URL appartient au routeur (conséquence directe du point S67).
+
+---
+
+### 2. `ListeMonture` — page blanche ✅
+
+API DummyJSON, catégorie sunglasses. **Le socle fetch est intact** : structure `useEffect` + fonction interne async, `res.ok` + `throw`, `finally`, `setErreur(null)` avant chaque appel, early returns dans le corps du composant. Écrit seul, sans aide.
+
+**🌟 `donnee?.products ?? []`** posé spontanément — garantit un tableau, donc un `.map()` toujours sûr.
+
+**Corrections** : message d'erreur construit puis **jeté** au profit d'un texte générique (même famille que le `return` nu de la S89 — le travail est fait, le résultat n'arrive pas à l'écran) · garde `donnee !== null` en doublon du `??` · `String(d.id)` superflu dans un template literal · nommage `Donnee`/`Data` (deux langues, aucune ne dit ce qu'elle décrit) → `Monture` / `ReponseFetch`.
+
+**`catch (e: unknown)` + `e instanceof Error ? e.message : "..."`** — trouvé par lui via Quick Fix, question posée derrière. Cours donné : un `catch` type en `unknown` parce qu'on peut `throw` n'importe quoi ; `instanceof` est un test à l'exécution que TS lit comme du **narrowing**. C'est le standard, pas un contournement. `: unknown` superflu (type par défaut).
+**🆕 Notions neuves signalées, non enseignées** : `unknown` et `instanceof`.
+
+---
+
+### 3. 🔴 `FicheMonture` — blocage, code donné
+
+**Deux demandes d'aide successives, puis « correction ça me soule ».** Choix proposé (code commenté / arrêt de séance), il a pris le code.
+
+**Ce qui bloquait, identifié seulement après coup** : pas le fetch, pas le typage — **le trajet de la donnée**. Sa question, textuelle : « comment `if (!id)` est testé ? comment il récupère le nombre cliqué ». Il cherchait un mécanisme actif de récupération là où la valeur est déjà présente.
+
+**Déblocage** par le déroulé complet en 6 étapes : `to` fabrique une adresse figée dans le DOM → `<Link>` pousse l'URL sans recharger → `<Routes>` compare les motifs → le routeur note ce qu'il y avait à la position du joker → monte le composant → `useParams` lit ce qui a été rangé. **Reformulation juste de sa part immédiatement après** (« la donnée voyage par l'URL, donc l'URL fournit elle-même l'id »), avec une seule correction : ce n'est pas `App.tsx` qui importe selon l'URL — les imports sont statiques, `<Routes>` choisit lequel de ses enfants **monter**.
+
+**Point posé** : `if (!id)` n'attrape presque jamais rien en pratique. Il existe pour convaincre TS, qui ne sait pas depuis quelle route un composant est monté.
+
+**Cours donné au passage — règle des hooks** : pas d'early return avant un `useEffect` (un hook doit être appelé au même endroit à chaque rendu). D'où le test **dans** l'effet, où un `return` nu est légitime — un effet a le droit de ne rien faire, contrairement à un composant qui doit produire du JSX.
+
+**✅ Réécrit sans copier-coller ensuite**, les deux composants complets. `[id]` en dépendance, URL en template literal, `Monture | null` pour l'unité contre tableau pour la liste, erreur affichée cette fois.
+
+**🔴 Un vrai bug** : ordre des early returns inversé (`!monture` en premier) → « Référence introuvable » affiché pendant tout le chargement, et le message d'erreur jamais atteint. Règle donnée : l'ordre suit la chronologie des états — chargement, erreur, absence.
+
+**Circuit vérifié à l'écran** : liste, clic, navigation d'une fiche à l'autre (le `[id]` fait son travail), et 404 sur un id inexistant avec message lisible.
+
+---
+
+### 4. Question posée : Next.js rendra-t-il `useParams` inutile ?
+
+Oui pour le guichet, non pour le mécanisme. Next.js déclare ses routes par l'**arborescence de fichiers** (`app/montures/[id]/page.tsx`), les crochets remplaçant le `:` — ce que React Router refuse, Next.js l'impose. Le motif « lire l'identifiant, aller chercher la donnée » reste identique. Nuance ajoutée : en Next.js le fetch peut se faire côté serveur, sans `useEffect` ni état de chargement (Phase 2 backend).
+
+---
+
+### 5. Trois révisions éclair de sortie (demandées par lui)
+
+**`useParams` sur terrain neuf** 🟡 : **la correspondance `path` ↔ déstructuration n'était pas connue** — `const { commande }` écrit sur un `path="/commandes/:reference"`. Point posé : le nom est libre **une seule fois, dans le `path`** ; ensuite c'est une clé d'objet, on la lit à l'identique. Dépendance `[reference]` et `to` justes ensuite.
+
+**Prop optionnelle + défaut** 🟢 : interface et signature justes du premier coup. **Point manqué** : `type?: string` accepte n'importe quelle chaîne → union de valeurs `"info" | "erreur"` non déclenchée, alors que la notion est connue depuis S80. Même schéma que `T[]` vs `T | null` en S82 : règle sue, réflexe absent.
+
+**Utility types** : `Omit<Commande, "id">` 🟢 · `Partial<Commande>` 🟢 · **`Record<string|number>` 🔴** — union écrite à la place de la virgule séparant les deux arguments. Repère donné : ce qui est *dans* un tiroir peut être une union, ce qui *sépare* deux tiroirs est toujours une virgule. Confusion venant de `Omit<X, "a" | "b">`, déjà accrochée en S86.
+
+---
+
+**Niveaux** : socle `useEffect`/`fetch` 🟢 (intact, page blanche) · `?.` + `??` 🟢 · trajet de la donnée par l'URL 🟢 (**c'était le maillon manquant, débloqué par le déroulé complet**) · `useParams` — correspondance avec le `path` 🟡 (cassée en révision de sortie) · `[id]` en dépendance 🟢 · test dans l'effet vs dans le corps 🟡 · ordre des early returns 🟡 · `catch` + `instanceof` 🟡 (donné, non enseigné) · union de valeurs sur prop optionnelle 🔴 (connue, non déclenchée) · `Record` 🔴 · `Omit`/`Partial` 🟢 · inline vs block 🟡.
+
+**⚠️ Mes erreurs** :
+1. **Rafraîchissement sur la mauvaise notion** — `useEffect` au lieu de `useParams`. Recadré par lui, à raison.
+2. **Diagnostic construit sans avoir vu l'écran** : j'ai déduit d'un message que deux composants étaient montés en même temps et lancé une enquête sur ses routes, qui étaient correctes. **Récurrence directe du §9 bis** — pas de diagnostic sans la source.
+3. **Premier énoncé sur PokéAPI** alors que l'univers optique est son terrain par défaut. Corrigé à sa demande.
+
+**🆕 Dettes ouvertes ce jour** : `unknown` · `instanceof`.
+
+**⏭️ Prochaine étape**
+
+1. **Révision éclair demandée explicitement : union de types + generics** — « c'est déjà flou pour moi ». À jouer en ouverture de la prochaine séance.
+2. Approfondissement **React Router Declarative** (demandé S69, jamais ouvert) — `useNavigate`, `NavLink`, route 404, routes imbriquées.
+3. Toujours en attente : projet CSS Grid · `children` · `useRef` (+ `IntersectionObserver` version React) · `<table>` · `useReducer` · types fonction avancés · hoisting · `peer` · exercices de typage réguliers (demande S86).

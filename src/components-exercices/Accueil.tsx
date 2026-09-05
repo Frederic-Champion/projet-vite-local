@@ -27,6 +27,9 @@ export default function Accueil() {
       <Link className="text-blue-600 hover:underline" to="/exo-use-params">
         ExoUseParams
       </Link>
+      <Link className="text-blue-600 hover:underline" to="/liste-monture">
+        useParams-API
+      </Link>
     </nav>
   );
 }
