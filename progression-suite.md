@@ -1595,3 +1595,84 @@ Oui pour le guichet, non pour le mécanisme. Next.js déclare ses routes par l'*
 1. **Révision éclair demandée explicitement : union de types + generics** — « c'est déjà flou pour moi ». À jouer en ouverture de la prochaine séance.
 2. Approfondissement **React Router Declarative** (demandé S69, jamais ouvert) — `useNavigate`, `NavLink`, route 404, routes imbriquées.
 3. Toujours en attente : projet CSS Grid · `children` · `useRef` (+ `IntersectionObserver` version React) · `<table>` · `useReducer` · types fonction avancés · hoisting · `peer` · exercices de typage réguliers (demande S86).
+
+## Session 91 — Generics (cours de fond) + React Router : `useNavigate`, 404, routes imbriquées
+
+**Durée** : ~3h (dimanche). Énergie bonne, séance tenue en entier.
+
+**Révision éclair (union de types + generics)** — demandée explicitement en S90. Union de valeurs (`type Statut = "a" | "b" | "c"`) et les deux `useState` (`T | null` / `T[]`) **justes et sans hésitation**. Generics : `function premier(tableau: T[]) { return T[0] }` — deux erreurs qui disent exactement où était le blocage, `<T>` absent et `T` traité comme une variable.
+
+**🎓 Cours de fond donné — le point qui a débloqué** : `<T>` **déclare un nom**, exactement comme les parenthèses déclarent `nom` dans `function saluer(nom)`. Avant cette déclaration, `T` n'existe nulle part (d'où « Cannot find name 'T' »). `<>` est aux types ce que `()` est aux valeurs : un endroit qui déclare, un endroit qui remplit. Et `T` vaut quelque chose **par appel**, pas une fois pour toutes. `T` est un nom inventé, pas un mot-clé.
+
+**Exercices — 3/3 justes en page blanche** : `dernier<T>(tableau: T[]): T` · `derniers<T>(tableau: T[], n: number): T[]` (a combiné `T` avec `[]` en retour, et laissé `n: number` en type concret) · `paire<V>(a: V, b: V): V[]` (**même paramètre de type sur les deux arguments** = la contrainte demandée, et nom `V` au lieu de `T` → le point « c'est un nom que j'invente » est passé).
+
+**🎹 Raccourci** : `Ctrl+Maj+F` — peu d'occasions, **maintenu**.
+
+---
+
+### 1. `useNavigate`
+
+Cours : le hook renvoie une fonction, appelée en haut ; la fonction navigue, appelée dans un handler. Piège signalé — l'appeler dans le corps = navigation à chaque rendu, même famille que le setter hors événement (S84).
+
+**✅ Exercice page blanche réussi** : deux boutons ajoutés à `FicheMonture` (`naviguer("/liste-monture")` et `naviguer(-1)`), import et hook corrects. **Résumé du mécanisme produit seul et exact.**
+
+**🎓 Trois questions posées, toutes traitées** :
+- *`replace: true` ?* → l'historique est une pile ; empiler une redirection automatique piège l'utilisateur (Retour → page invalide → re-redirection → boucle). Critère donné : **l'utilisateur a choisi d'aller là → on empile · le code l'y a envoyé → `replace`**.
+- *`state` sert à quoi ?* → donnée transportée hors URL (message de confirmation après enregistrement), lue par `useLocation`. Ne survit ni au rechargement ni au partage de lien — cohérent avec ce qu'elle transporte.
+- *`<Navigate />` c'est autre chose ?* → non, **même action, forme déclarative**. Ne produit aucun DOM (rapprochement fait avec son observation sur `<Routes>` en S68). Critère : redirection issue d'un rendu conditionnel → `<Navigate>` · issue d'un événement ou d'un calcul → `useNavigate`.
+
+**🎓 Question de fond : « on pourrait presque remplacer tous les `<Link>` par des `<button onClick={naviguer}>` ? »** — cours donné sur ce que le `href` porte et qu'un bouton perd : clic droit / Ctrl+clic / nouvel onglet, copier l'adresse, favoris, annonce « lien » au lecteur d'écran, indexation. Critère sémantique redonné (`<a>` = destination, `<button>` = action). **Règle retenue : si l'adresse peut s'écrire dans le JSX, c'est un `<Link>`.** Son bouton « Retour à la liste » identifié comme un cas où le `<Link>` serait plus juste en production ; `naviguer(-1)` légitimement un bouton.
+
+---
+
+### 2. Route 404 ✅
+
+`path="*"` = motif qui accepte tout, gagne uniquement parce qu'il est le moins spécifique (l'ordre d'écriture n'intervient pas — React Router garde la route la plus spécifique). Composant + route écrits seuls, vérifiés à l'écran sur une URL invalide.
+
+Deux remarques données : `<p>` au lieu de `<h1>` pour le titre de la page · placement dans `Accueil.tsx` plutôt qu'un fichier propre — **arbitrage assumé et justifié par lui** (30 fichiers dans `components-exercices`, ne voulait pas en créer un de plus pour 4 lignes). Position légitime en atelier, à revoir au SaaS.
+
+**Question posée : peut-on ordonner les fichiers dans l'explorateur VS Code ?** → non, tri alphabétique uniquement, aucun mode manuel. Options données : sous-dossiers (recommandé), préfixes numériques par dizaines, `explorer.sortOrder: "type"`, et le fait qu'au-delà de ~20 fichiers les projets réels cherchent (`Ctrl+P`) au lieu de parcourir.
+
+---
+
+### 3. 🎯 Routes imbriquées + `<Outlet>` — le cap de la séance
+
+**🔴 Premier exercice page blanche non produit** — a écrit un **second `<Routes>` à l'intérieur du layout**, avec les chemins complets réécrits. Geste connu appliqué là où le mécanisme neuf demandait autre chose. **Reprise en version guidée et commentée à sa demande** (« j'efface tout, on recommence de zéro »), qui a fonctionné.
+
+**Points posés** :
+- Les routes enfants s'écrivent **dans le même `<Routes>`**, imbriquées dans la `<Route>` parente. Une route parente n'est plus auto-fermante — c'est l'imbrication JSX qui déclare la relation au routeur.
+- **Un seul `<Routes>` par application.** Le cas de plusieurs existe mais est rare.
+- Chemins **relatifs** : l'enfant écrit `clients` sans `/`, le routeur compose avec le parent. Rattaché au `/` absolu de la S69.
+- Le parent **reste monté** quand on navigue entre ses enfants.
+- Le layout n'importe aucun de ses enfants et ne décide rien.
+
+**✅ Livré et fonctionnel** : `LayoutUseParams` + `AccueilUseParams`, section `/use-params` avec 5 enfants, `to` corrigés dans `Clients`, `ListeMonture`, `FicheMonture` et `Accueil.tsx`.
+
+**🌟 Anticipé sans consigne** : a demandé de lui-même s'il fallait un lien d'entrée et un lien de retour. Critère de la S70 réappliqué correctement — le retour de section vit **dans le layout**, pas répété dans chaque page.
+
+**Questions de fond posées en fin de bloc, toutes pertinentes** :
+- *`<Outlet>` et `index` sont-ils deux moitiés du même mécanisme ?* → non. `<Outlet>` = **où** (un par layout, obligatoire, sert tous les enfants) · `index` = **quel** enfant quand l'URL s'arrête au parent (facultatif, son absence laisse un layout à moitié vide). Test proposé : supprimer `index` (seule `/use-params` casse) vs supprimer `<Outlet>` (plus rien ne s'affiche).
+- *Différence avec `path="/"` ?* → même rôle, deux niveaux. La racine n'a pas de parent auquel se coller, donc elle nomme son URL entière ; un enfant ne le peut pas sans répéter celle du parent.
+- Alternative `<Route index element={<Navigate to="clients" replace />} />` donnée pour les sections sans page d'accueil propre.
+
+**🔴 Diagnostic final — `<Link>` inline** : bouton « retour au menu » chevauchant le contenu de l'`<Outlet>`. Cause = `p-2` sur un `<a>` inline (peint, ne pousse pas). **4ᵉ rencontre du même point** (S75-77, S82, S86) ; il a d'abord attribué le comportement à `<Outlet>`. `inline-block` redonné, avec le rappel que son bouton maison le porte déjà.
+
+---
+
+**Niveaux** : generics — mécanisme `<T>` déclare un nom 🟢 (**c'était le chaînon manquant, 3 signatures écrites seules ensuite**) · union de valeurs 🟢 · `useNavigate` + `naviguer(-1)` 🟢 · `<Link>` vs `<button>` (critère sémantique) 🟢 · route `path="*"` 🟢 · routes imbriquées + chemins relatifs 🟡 — **non produit en page blanche, livré en guidé commenté ; un seul passage** · `<Outlet />` 🟡 · `index` 🟢 (compris, distinction avec `<Outlet>` produite seule après reformulation) · `<Link>` inline + `inline-block` 🔴 (4ᵉ occurrence, attribué à la mauvaise cause).
+
+**🆕 Dettes ouvertes ce jour — mentionnées, non pratiquées** *(signalé par lui : « je ne m'en souviendrai pas dans 2 jours »)* :
+- **`replace: true`** — le repère minimal à garder : redirection automatique → `replace`. Le bug qu'il évite est difficile à diagnostiquer sans connaître la cause.
+- **`state` + `useLocation`**
+- **`<Navigate />`**
+- **`NavLink`** — jamais ouvert.
+
+**⚠️ Mes erreurs** :
+1. **Consigne de l'exercice routes imbriquées trop vague** — « crée un petit composant, deux liens suffisent » sans nommer ni situer, d'où un `ts(2304)` sur un composant inexistant. Récurrence directe de la S89.
+2. Exercice page blanche posé sur un mécanisme vu une seule fois, en fin de bloc dense. La version guidée commentée aurait dû venir en premier.
+
+**⏭️ Prochaine étape — décidée avec lui pour demain (~2h)**
+
+1. **Exercice global de reprise** (~1h) : appliquer `useNavigate`, 404 et routes imbriquées aux **deux calculatrices de `projet-examen-blanc`** — layout de section + `<Outlet>` + `index`. À vérifier en ouverture : les deux calculatrices y sont-elles bien toutes les deux ?
+2. **`NavLink`** (~1h) — demandé explicitement, complément naturel du layout (marquer le lien de la page courante).
+3. Toujours en attente : projet CSS Grid · `children` · `useRef` (+ `IntersectionObserver` version React) · `<table>` · `useReducer` · types fonction avancés · hoisting · `peer` · `unknown` / `instanceof` · exercices de typage réguliers (demande S86).

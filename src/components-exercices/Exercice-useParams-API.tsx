@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 
 interface Monture {
   id: number;
@@ -45,7 +45,7 @@ function ListeMonture() {
     <ul>
       {produits.map((d) => (
         <li key={d.id}>
-          <Link to={`/liste-monture/${String(d.id)}`}>{d.title}</Link>
+          <Link to={`/use-params/montures/${String(d.id)}`}>{d.title}</Link>
         </li>
       ))}
     </ul>
@@ -57,6 +57,11 @@ function FicheMonture() {
   const [monture, setMonture] = useState<Monture | null>(null);
   const [erreur, setErreur] = useState<string | null>(null);
   const [chargement, setChargement] = useState(false);
+  const naviguer = useNavigate();
+
+  function handleRetourListe() {
+    naviguer("/use-params/montures")
+  }
 
   useEffect(() => {
     if (!id) return;
@@ -81,7 +86,7 @@ function FicheMonture() {
 
   if (chargement) return <p>Chargement en cours...</p>;
   if (erreur) return <p>Il y a une erreur : {erreur}</p>;
-  if (!monture) return <p>Référence introuvable</p>
+  if (!monture) return <p>Référence introuvable</p>;
 
   return (
     <div>
@@ -89,6 +94,12 @@ function FicheMonture() {
       <p>{monture.title}</p>
       <p>{monture.price}</p>
       <p>{monture.description}</p>
+      <button onClick={handleRetourListe} type="button" className="mt-4 cursor-pointer rounded-lg border p-2">
+        Retour à la liste
+      </button>
+      <button onClick={() => naviguer(-1)} type="button" className="mt-4 cursor-pointer rounded-lg border p-2">
+        Précédent
+      </button>
     </div>
   );
 }

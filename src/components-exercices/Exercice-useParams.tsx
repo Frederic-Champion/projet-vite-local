@@ -18,7 +18,7 @@ function Clients() {
     <ul>
       {CLIENTS.map((c) => (
         <li key={c.id}>
-          <Link to={`/exo-use-params/${c.id}`}>{c.nom}</Link>
+          <Link to={`/use-params/clients/${c.id}`}>{c.nom}</Link>
         </li>
       ))}
     </ul>
