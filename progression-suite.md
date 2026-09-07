@@ -1676,3 +1676,65 @@ Deux remarques données : `<p>` au lieu de `<h1>` pour le titre de la page · pl
 1. **Exercice global de reprise** (~1h) : appliquer `useNavigate`, 404 et routes imbriquées aux **deux calculatrices de `projet-examen-blanc`** — layout de section + `<Outlet>` + `index`. À vérifier en ouverture : les deux calculatrices y sont-elles bien toutes les deux ?
 2. **`NavLink`** (~1h) — demandé explicitement, complément naturel du layout (marquer le lien de la page courante).
 3. Toujours en attente : projet CSS Grid · `children` · `useRef` (+ `IntersectionObserver` version React) · `<table>` · `useReducer` · types fonction avancés · hoisting · `peer` · `unknown` / `instanceof` · exercices de typage réguliers (demande S86).
+
+## Session 92 — Reprise des routes imbriquées sur `projet-examen-blanc` + bouton retour global
+
+**Durée** : ~2h (dimanche). Énergie bonne. Séance courte, amputée par une révision d'ouverture mal calibrée de ma part.
+
+**🎹 Raccourci** : `Ctrl+Maj+K` — **revenu spontanément, acté 🟢** après avoir été abandonné en S87. `Ctrl+Maj+F` sorti de rotation faute d'occasions (2 séances). **Aucun nouveau posé** : décision d'attendre qu'un besoin réel émerge en séance, comme ça avait marché pour Emmet Wrap.
+
+---
+
+### 1. ⚠️ Révision éclair — format raté de ma part
+
+**Notion 1 (`<Link>` inline)** 🟢 : sort de rotation.
+
+**Notion 2 (`useEffect` + nettoyage)** — **j'ai posé un composant complet à reconstruire au lieu d'une question. 25 min consommées sur 120.** Frédéric l'a relevé, à raison. Une éclair correcte aurait été « quel critère décide qu'un effet a besoin d'un nettoyage, cite deux cas » — 3 min, même valeur de rappel. **Correctif : une révision éclair est une question, jamais un exercice de construction.**
+
+Résultat de l'exercice lui-même, malgré tout : **code entièrement juste** (lazy initializer, `setInterval` capturé, `clearInterval` renvoyé, `[]`), reconstruit en autonomie en allant relire son propre exercice compte à rebours.
+
+**🔴 Point réel révélé** : **`setInterval` a mis du temps à revenir** (`setTimeout` sortait à la place), et le lazy initializer était oublié. `useEffect` est verrouillé 🔒 depuis la S55, mais **le verrou porte sur le mécanisme, pas sur les outils du navigateur qu'on y branche** — ceux-là s'oublient comme le reste. `setInterval`/`clearInterval` à mettre en rotation.
+
+---
+
+### 2. Routes imbriquées reproduites sur `projet-examen-blanc` — 45 min en autonomie avant la séance
+
+**✅ Écrit seul** (en partie de mémoire, en partie en s'inspirant de la structure de la veille) : route parente non auto-fermante, `<Route index>`, **chemins relatifs** (`"1"`, `"2"`), `<Outlet />` dans le layout, `PageIntrouvable` + `path="*"`, tableau `CALCULATRICES` + `.map()` avec `key`. Fonctionnel.
+
+**Corrections signalées, toutes traitées** :
+- **Lien « Retour Accueil » du layout pointant vers la page courante** — repéré par lui au moment de l'écrire (« c'est exactement ce que je pensais »). Point posé : un lien vers la page courante est un lien mort.
+- **Titre du layout nommant une page particulière** (« Accueil Exercice Calculatrice ») alors qu'il s'affiche sur tous les enfants. Ce qui est permanent ne nomme pas une page.
+- Chemins absolus dans le tableau → `<Link to="1">` relatif, possibilité qu'il ne connaissait pas.
+- `path="/CV-application"` → minuscules.
+
+**Désaccord exprimé et fondé** : sur ma remarque « source unique », il a défendu **deux listes distinctes** (accueil principal / accueil de section). Sa lecture est juste — ma remarque portait sur l'emplacement du tableau (`data/` vs en dur), pas sur la structure. Formulation imprécise de ma part.
+
+---
+
+### 3. Bouton retour global — conçu par lui
+
+**Meilleur que le lien de layout que j'avais laissé passer** : un bouton `naviguer(-1)` à côté du bouton maison, dans la `<nav>` permanente, **masqué sur l'accueil**. Global, et supprime le cas du lien mort.
+
+**✅ Écrit seul** : `<button>` (choix juste — `-1` n'est pas une adresse, rien à mettre dans un `href`), `aria-label`, icône Lucide, `useLocation` + `location.pathname !== "/"`, rendu conditionnel en `&&` (critère « A ou rien »).
+
+**🌟 Diagnostic d'alignement posé par lui avant moi** : « ils sont décalés même avec des classes identiques, probablement à cause de leur nature respective ». Exact — deux inline-block reposent sur la **ligne de base du texte**, et leurs SVG ne s'y alignent pas pareil. Correction structurelle donnée : `flex items-center gap-2` sur la `<nav>`, ce qui sort les enfants du flux de texte et rend `inline-block` inutile. **Repère posé : dès que deux éléments doivent s'aligner, un conteneur flex règle le problème à la source.**
+
+**`useLocation`** 🟡 — **passe de mentionné à pratiqué**. Présenté comme le pendant de `useParams` : l'un lit les segments nommés, l'autre l'URL entière ; même principe (un composant monté par une route interroge le routeur).
+
+**Question posée en clôture** : « peut-on utiliser quelque chose comme `includes` ? » → oui, `includes` existe sur les chaînes ; `startsWith` est plus juste pour un chemin (cherche au début). Utile pour masquer sur toute une section, ce que `NavLink` fait nativement.
+
+---
+
+**Niveaux** : routes imbriquées + `index` + `<Outlet>` 🟢 — **reproduits sur un terrain neuf, en autonomie** (2ᵉ passage, dont un guidé la veille) · chemins relatifs 🟢 · `useNavigate(-1)` 🟢 · `useLocation` + `pathname` 🟡 (1er usage) · `<button>` vs `<Link>` (critère sémantique) 🟢 · rendu conditionnel `&&` 🟢 · alignement inline-block / ligne de base 🟢 (diagnostiqué seul) · `useEffect` + nettoyage 🟢 (structure juste) · **`setInterval` 🔴 (non ressorti seul)** · lazy initializer 🟡 · `<Link>` inline — diagnostic partiel 🟡 ·
+
+**🔄 Rotation** : `setInterval`/`clearInterval` **entre**. Toujours dedans : `<Link>` inline vs block. Sortis : `Ctrl+Maj+F` (raccourci).
+
+**⚠️ Mes erreurs** :
+1. **Exercice de construction posé en révision éclair** — 25 min sur 120, séance amputée. Relevé par lui.
+2. Remarque « source unique » formulée de façon à contester sa structure alors qu'elle portait sur le rangement du tableau.
+
+**⏭️ Prochaine étape**
+
+1. **`NavLink`** — prévu aujourd'hui, non ouvert faute de temps. Complément direct du layout (marquer le lien de la page courante) et de la question `startsWith` de fin de séance.
+2. Dettes React Router restantes, **mentionnées mais jamais pratiquées** : `state` · `<Navigate />` · `replace: true` (repère à garder : redirection automatique → `replace`).
+3. Toujours en attente : projet CSS Grid · `children` · `useRef` (+ `IntersectionObserver` version React) · `<table>` · `useReducer` · types fonction avancés · hoisting · `peer` · `unknown` / `instanceof` · exercices de typage réguliers (demande S86).
