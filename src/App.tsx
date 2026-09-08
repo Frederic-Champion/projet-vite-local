@@ -1,7 +1,7 @@
 import Accueil from "./components-exercices/Accueil";
 import { PageIntrouvable } from "./components-exercices/Accueil";
-import { House } from "lucide-react";
-import { Route, Routes, Link } from "react-router";
+import { House, Undo2 } from "lucide-react";
+import { Route, Routes, Link, useNavigate, useLocation } from "react-router";
 import Brouillon2 from "./components-exercices/Brouillon-TSX";
 import ExerciceFetchSearch from "./components-exercices/Exercice-fetch-search";
 import ExercicePropsTableauType from "./components-exercices/exercice Props-TableauType";
@@ -15,6 +15,8 @@ import LayoutUseParams, { AccueilUseParams } from "./components-exercices/Layout
 
 function App() {
   // return <Brouillon2 />;
+  const naviguer = useNavigate();
+  const location = useLocation();
 
   return (
     <div className="grid min-h-screen grid-rows-[auto_1fr]">
@@ -22,6 +24,16 @@ function App() {
         <Link to="/" aria-label="Accueil" className="inline-block rounded-full border p-2 text-blue-500">
           <House size={20} />
         </Link>
+        {location.pathname !== "/" && (
+          <button
+            type="button"
+            onClick={() => naviguer(-1)}
+            aria-label="Précédent"
+            className="inline-block cursor-pointer rounded-full border p-2 text-blue-500"
+          >
+            <Undo2 size={20} />
+          </button>
+        )}
       </nav>
       <main className="p-4">
         <Routes>

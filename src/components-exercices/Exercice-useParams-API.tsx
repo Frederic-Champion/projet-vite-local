@@ -60,7 +60,7 @@ function FicheMonture() {
   const naviguer = useNavigate();
 
   function handleRetourListe() {
-    naviguer("/use-params/montures")
+    naviguer("/use-params/montures");
   }
 
   useEffect(() => {
@@ -83,6 +83,14 @@ function FicheMonture() {
     }
     charger();
   }, [id]);
+
+  useEffect(() => {
+    if (!erreur) return;
+    const t = setTimeout(() => {
+      naviguer("/use-params/montures", { replace: true });
+    }, 2000);
+    return () => clearTimeout(t);
+  }, [erreur, naviguer]);
 
   if (chargement) return <p>Chargement en cours...</p>;
   if (erreur) return <p>Il y a une erreur : {erreur}</p>;

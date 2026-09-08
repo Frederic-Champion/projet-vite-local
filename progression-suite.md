@@ -1738,3 +1738,93 @@ Résultat de l'exercice lui-même, malgré tout : **code entièrement juste** (l
 1. **`NavLink`** — prévu aujourd'hui, non ouvert faute de temps. Complément direct du layout (marquer le lien de la page courante) et de la question `startsWith` de fin de séance.
 2. Dettes React Router restantes, **mentionnées mais jamais pratiquées** : `state` · `<Navigate />` · `replace: true` (repère à garder : redirection automatique → `replace`).
 3. Toujours en attente : projet CSS Grid · `children` · `useRef` (+ `IntersectionObserver` version React) · `<table>` · `useReducer` · types fonction avancés · hoisting · `peer` · `unknown` / `instanceof` · exercices de typage réguliers (demande S86).
+
+## Session 93 — `NavLink` + fermeture des trois dettes React Router
+
+**Durée** : ~3h15 (Mardi). Énergie bonne, séance tenue en entier.
+
+**Révision éclair (critère de nettoyage d'un `useEffect`)** 🟡 : le bon effet identifié (`setInterval`) et le symptôme décrit juste (intervalles empilés, chrono qui déraille). **Mais le critère n'a pas été énoncé comme règle** — c'est le cas qui a été reconnu, pas le principe (« l'effet laisse-t-il une **trace active** ? »). Complété : l'empilement vient de StrictMode ou d'un tableau de dépendances non vide, pas d'un `[]` ; et au démontage l'intervalle **survit** et appelle un setter sur un composant disparu.
+
+**🎹 Raccourci** : `Ctrl+Maj+K` **revenu spontanément après abandon en S87 — acté 🟢**. Nouveau : `Ctrl+Maj+\` (saut à la balise/accolade correspondante), posé sur un besoin réel (JSX long de `CvApplication`).
+
+---
+
+### 1. `NavLink`
+
+**Notion neuve** : `className` accepte une **fonction** recevant `{ isActive }`, rattachée au motif connu (le `prev` d'un setter, le `e` d'un handler — un paramètre fourni par l'appelant). Correspondance **par préfixe**, d'où `end` pour l'exact. `isActive` est un simple booléen : usage libre (classe, icône, style).
+
+**✅ Exercice réussi** : trois `NavLink` dans le layout calculatrices, `end` posé sur le lien de section (le piège annoncé, manqué au premier jet puis corrigé), `to` relatifs, chaîne factorisée en `const` puis fonction `lienClasse` extraite.
+
+**🎓 Questions posées** :
+- *`isActive` sert à quoi d'autre que Tailwind ?* → rien d'imposé, c'est un booléen ; `children` accepte aussi une fonction.
+- *Où va la barre de navigation ?* → **dans le layout**, critère S70 réappliqué. `isActive` n'a de sens que là où le composant survit au changement de page.
+- *Faut-il `@layer components` / `@apply` ?* → cours donné sur les trois niveaux : `const` (répétition locale) · composant (classes + balisage + comportement) · `@apply` (CSS de balises nues en `@layer base`). Position S68 réaffirmée : **en React on factorise par le composant**.
+
+**🔴 `({ isActive }: boolean)`** — annotation portée sur ce qui est extrait au lieu de ce qui arrive. Point redonné : la déstructuration ne change pas ce qui est reçu ; React Router passe **un objet**. Même contrat que les props React. Boussole du `:` (S60) réappliquée.
+
+---
+
+### 2. `replace: true` — dette fermée, pratiquée deux fois
+
+**⚠️ Ma consigne était floue** — arrêt net de Frédéric (« pourquoi tu n'arrives pas à me faire des consignes claires ? »), **3ᵉ occurrence de la semaine**. Objectif donné sans dire ce qu'il fallait écrire. Reformulée en livrable numéroté, efficace immédiatement.
+**⚠️ Aggravant** : la consigne portait sur un `FicheMonture` avec fetch, alors qu'il travaillait dans `projet-examen-blanc` où le composant lit un tableau en dur. **Consigne écrite sans avoir le bon fichier en tête.** Récurrence de §9 bis.
+
+**✅ Exercice réussi une fois reformulé** (`projet-examen-blanc`) : `useNavigate`, second `useEffect` séparé, garde, `setTimeout` 2 s, `clearTimeout`, dépendances complètes. **Les deux pièges traités seul** : hook placé **avant** l'early return (règle des hooks), et `return` nu légitime **dans un effet** alors qu'il ne l'était pas dans un composant (S89).
+
+**✅ Reproduit ensuite en autonomie sur `projet-vite-local`** avec le fetch réel (garde sur `erreur`, dépendance `[erreur, naviguer]`).
+
+**🎓 Question de fond : « un `useEffect` dans un `useEffect`, c'est bien ou mauvais ? »** — posée **avant** de valider, bon réflexe. Interdit : React identifie les hooks par leur **ordre d'appel**, pas par leur nom. Signal donné : un hook ne s'appelle jamais après un `await` ni dans un bloc conditionnel. Forme correcte = deux effets frères, le premier **enregistre un fait** (`setErreur`), le second l'observe.
+
+**🎓 Question : « faut-il le faire aussi sur `ListeMonture` ? »** → non, et le critère vaut mieux que la réponse : **on redirige quand la ressource est introuvable, on affiche quand le service est en panne** (logique 404 vs 500). Sur une liste, rediriger ne répare rien et peut boucler.
+
+---
+
+### 3. `<Navigate />` — dette fermée
+
+Cours par contraste sur son propre code : sans le délai de 2 s, les 9 lignes d'effet se réduisent à `if (!monture) return <Navigate to="/catalogue" replace />`.
+
+**🌟 Jugement critique exprimé et fondé** : « `<Navigate>` ce n'est pas fou, il n'y a jamais de message pour avertir l'utilisateur ». Exact sur ce cas — je l'avais fait tester sur le seul terrain où `<Navigate>` perd. Trois avantages réels donnés ensuite : il n'y a pas toujours de message à afficher (garde d'accès) · **il n'affiche jamais le contenu protégé, même une fraction de seconde** (avec `useEffect`, le JSX est rendu avant que l'effet ne parte) · toutes les issues du composant se lisent au même endroit.
+
+**Critère retenu** : rien à dire à l'utilisateur → `<Navigate>` · message, délai ou action avant le départ → `useNavigate`.
+
+**🌟 A tranché seul sur la 404** : préfère garder `PageIntrouvable` plutôt que rediriger, « le mieux reste un message ». Jugement correct — une 404 est précisément le cas où il y a quelque chose à dire. Nuance ajoutée et acceptée : **pas de `setTimeout` automatique** sur une page qui informe.
+
+**Questions posées** : intérêt de `<Navigate>` en `index` (section sans accueil propre — ne s'applique pas à son cas, sa `CalculatriceAccueil` a du contenu) · `<Outlet>` obligatoire ? combien ? → un par layout (contrainte logique), autant que de layouts dans le projet, emboîtables.
+
+---
+
+### 4. `state` — dette fermée
+
+Cours : les props et le lifting state up ne peuvent pas servir (les deux composants ne se connaissent pas, c'est le routeur qui les monte). `state` transporte une donnée hors URL. **Critère posé** : *si quelqu'un ouvrait cette URL demain, cette information aurait-elle un sens ?* Oui → URL · Non → `state`. Survit au retour arrière, pas au rechargement, pas au partage.
+
+**✅ Circuit complet écrit seul** : `naviguer("/catalogue", { state: { … } })` dans la fiche, `useLocation` + `?.` + `&&` dans le catalogue. Deux composants sans lien de parenté qui communiquent.
+
+**Corrections** : `state` doit transporter **une donnée, pas une mise en forme** (la phrase se compose à l'arrivée) · template literal superflu · import `Navigate` inutilisé.
+
+**🔴 `location.state` est typé `any`** — seul endroit du fichier sans filet TS. D'où `as`, **notion neuve** : assertion qui ne convertit rien et ne vérifie rien, même famille que le `!` de la S67. Légitime sur une garantie structurelle (on écrit soi-même le `state` deux fichiers plus loin), jamais sur API / saisie / URL.
+
+**🎓 Nettoyage du `state` — bloc mal livré de ma part** : donné isolément, appliqué par lui, **et le bandeau a cessé d'apparaître**. Cause : l'effet efface la source avant que l'œil ne voie quoi que ce soit. Il faut **copier dans un `useState` avant de nettoyer** — source volatile / copie stable. Deux notions livrées en une.
+
+**🎓 Question posée derrière : « ne faudrait-il pas un `useState` pour `setTimeout` le message ? »** — piste correcte, confusion à lever : le `setTimeout` a besoin d'un `useEffect` (trace active), le `useState` sert à porter « ce bandeau doit-il encore s'afficher ? ». Deux besoins distincts, souvent combinés en production.
+
+---
+
+**Niveaux** : `NavLink` + fonction dans `className` 🟢 · `end` 🟡 (piège manqué puis corrigé) · annotation d'un paramètre déstructuré 🟡 (rechute) · `replace: true` 🟢 (2 terrains) · deux effets frères / règle des hooks 🟢 (**question posée avant de valider**) · `<Navigate />` 🟢 · critère `<Navigate>` vs `useNavigate` 🟢 · `state` + `useLocation` 🟢 · `as` 🟡 (neuf) · nettoyage du `state` d'historique 🟡 · critère de nettoyage d'un effet 🟡 · factorisation `const` vs composant vs `@apply` 🟢.
+
+**🆕 Notion neuve du jour** : `as` (assertion de type).
+
+**🔄 ROTATION — décision de Frédéric** : **toutes les compétences React Router Declarative entrent en rotation de révision éclair à partir de la semaine prochaine.** Inventaire complet établi en fin de séance (montage et structure · navigation `<Link>`/`useNavigate`/`replace`/`<Navigate>` · paramètres d'URL et trajet de la donnée · layouts, `<Outlet>`, `index`, chemins relatifs · 404 · `useLocation` et `state` · `NavLink`). Tirage à répartir sur plusieurs séances, jamais sur le sujet du jour.
+Toujours en rotation : `setInterval`/`clearInterval` ·
+
+**⚠️ Mes erreurs** :
+1. **Consigne floue, 3ᵉ fois cette semaine** — arrêt explicite de Frédéric. Objectif donné sans livrable énoncé.
+2. **Consigne écrite sur le mauvais fichier** (fetch inexistant dans `projet-examen-blanc`).
+3. **Nettoyage du `state` livré sans sa condition de fonctionnement** (la copie en `useState`), ce qui a fait disparaître le bandeau.
+
+**⏭️ Prochaine étape**
+
+Le mode Declarative est **complet**. Cap Phase 2 à reprendre.
+
+1. **Demain : créneau court (~1h)** — séance légère. Bon moment pour un retour sur les points laissés en suspens (nettoyage du `state` proprement, ou reprise d'un point de la nouvelle rotation).
+2. **Décision à prendre** : suite de l'axe Phase 2 — **Next.js** est le prochain gros bloc de la roadmap (App Router, API Routes), et le routeur y est remplacé par la convention fichier→URL.
+3. Toujours en attente : projet CSS Grid · `children` · `useRef` (+ `IntersectionObserver` version React) · `<table>` · `useReducer` · types fonction avancés · hoisting · `peer` · `unknown` / `instanceof` · exercices de typage réguliers (demande S86).
