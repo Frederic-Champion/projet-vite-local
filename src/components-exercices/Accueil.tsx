@@ -27,7 +27,12 @@ export default function Accueil() {
       <Link className="text-blue-600 hover:underline" to="/use-params">
         Exercice sur useParams
       </Link>
-
+      <Link className="text-blue-600 hover:underline" to="/exercice-children">
+        Exercice sur children
+      </Link>
+      <Link className="text-blue-600 hover:underline" to="/exercice-children-refacto">
+        Exercice sur children Refacto
+      </Link>
     </nav>
   );
 }
@@ -36,7 +41,7 @@ export function PageIntrouvable() {
   return (
     <div>
       <h1>Page Introuvable</h1>
-      <Link className="text-blue-600 hover:underline border rounded-lg p-2" to="/">
+      <Link className="rounded-lg border p-2 text-blue-600 hover:underline" to="/">
         ACCUEIL
       </Link>
     </div>

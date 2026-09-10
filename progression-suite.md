@@ -541,8 +541,6 @@ Le mode Declarative est **complet**. Cap Phase 2 à reprendre.
 
 <!-- Les nouvelles entrées de session commencent ici -->
 
-
-
 ## Session 94 — Chantier documentaire
 
 **Durée** : ~3h (mercredi). Aucun apprentissage — remise à plat des documents du projet, au moment où React Router se ferme et où Next.js n'est pas encore ouvert.
@@ -556,3 +554,52 @@ Le mode Declarative est **complet**. Cap Phase 2 à reprendre.
 **📌 Reste ouvert** : statut de `audit-croise.md` (ré-export `.md`, retrait, ou mention au §10) · `Roadmap_actuelle_S56` en doublon `.md`/`.pdf` et `ficherevisionreact.pdf`, non cités au §10.
 
 **⏭️ Prochaine étape** : nettoyage du `state` (S93, code cassé, créneau court, zéro neuf), puis **Next.js** sur séance longue et fraîche — en posant `children` avant, c'est la seule dette du registre qui bloque réellement la suite.
+
+## Session 95 — Nettoyage du `state` d'historique + `children`
+
+**Durée** : ~2h (jeudi soir). Énergie bonne.
+
+**Révision éclair (`fetch` POST)** 🟢 : objet d'options complet et juste à froid (`method`, `headers` + `Content-Type`, `body` sérialisé). Rôle du header juste. Une erreur d'inattention : `JSON.stringify('data')` (chaîne littérale au lieu de la variable). **Sort de rotation.**
+
+**🎹 Raccourci** : `Ctrl+Maj+\` — usage non renseigné, **à demander** en ouverture.
+
+---
+
+### 1. Nettoyage du `state` d'historique — dette S93 soldée ✅
+
+Circuit réparé dans `projet-examen-blanc` (`Catalogue`) : copie dans `useState(location.state?.message)` + effet qui remplace l'entrée d'historique (`naviguer(location.pathname, { replace: true })`) + JSX qui ne lit plus que la copie. Trois scénarios vérifiés à l'écran (Retour → bandeau · F5 → rien · Précédent → rien).
+
+**Accroches, toutes corrigées** : `?.` oublié dans la valeur initiale · garde inversée et testant la copie au lieu de la source · condition du JSX lisant encore `location.state` (le texte avait migré, pas la condition). Dépendance en trop (`message`) retirée.
+
+**Questions posées** : à quoi sert `naviguer` ici (seul outil qui écrit dans l'historique) · `useState` sans setter (mémoriser une valeur initiale d'un rendu à l'autre, là où une `const` est recalculée) · pourquoi autant de dépendances (le tableau décrit ce que l'effet **lit**).
+
+**Niveaux** : source volatile / copie stable 🟢 · `useState` sans setter 🟡 (neuf, un passage) · `replace` sur la même adresse 🟢.
+
+---
+
+### 2. `children` — dette du registre enseignée
+
+**Blocage réel au premier exercice** : `{children}` introuvable alors que l'interface et la déstructuration étaient justes. Ligne donnée après deux tentatives. **Cause** : rupture avec le modèle mental « le composant connaît son contenu, les props apportent des données ». Débloqué par le contraste `CarteMonture` (données brutes) / `Carte` (zone libre) et l'analogie monture / drageoir.
+
+**Exercice de refacto** ✅ : trois `<section>` répétées extraites en `Encadre`, frontière cadre / contenu identifiée seul. Test de l'utilité fait (1 ligne modifiée au lieu de 3) — **c'est ce qui a rendu l'intérêt concret**.
+
+**`children: any`** puis question de fond : comment trouver un type que le survol ne donne pas ? Critère posé : **type imposé par un outil → survol · type décidé par soi → source**. Geste F12 sur `StrictMode` → `index.d.ts` → lecture de la seule ligne d'arrivée. `ReactNode` vérifié dans ses `@types/react`.
+
+**Exercice de choix props de données / `children`** : 3 cas justes (`PrixMonture`, `Modale`, `Rubrique`). Interfaces non écrites faute de temps, correction donnée. Précision : la `Modale` demande une **prop fonction** (`onFermer`), pas une donnée.
+
+**Questions posées** : `children` est-il un nom imposé ? (oui, réservé par React, comme `key`) · fait-il autre chose ? (non — n'importe quelle prop peut transporter du JSX ; une 2ᵉ zone libre passe par une prop nommée).
+
+**Niveaux** : critère props de données / `children` 🟢 · mécanisme `{children}` 🟡 (**ligne donnée, un seul passage autonome sur la refacto — ne pas surévaluer**) · `React.ReactNode` 🟡 · F12 vers un `.d.ts` 🟡 (neuf).
+
+**Registre** : `children` **sort de `dettes-apprentissage.md`** (enseigné) et devient **dette chaude** ici jusqu'à la page blanche.
+
+---
+
+**🔄 Rotation** : `fetch` POST **sort**. Toujours dedans : React Router Declarative (9 points) · `setInterval` / `clearInterval`.
+
+**⏭️ Prochaine étape — décidée avec lui, suite dans la même conversation**
+
+1. Révision éclair (hors `children`).
+2. **Page blanche : `children` + TypeScript des séances précédentes + `<table>`** (dette type B du registre, réactivée par la pratique). Ordonnance OD/OG comme terrain.
+3. **`useRef`** si le temps le permet, sinon séance suivante.
+4. Puis **Git branches + Pull Request** (séance dédiée), puis **Next.js**. Les autres dettes (coercion + hoisting, `@keyframes`, accessibilité) se calent en créneaux courts pendant la suite.

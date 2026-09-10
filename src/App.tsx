@@ -12,6 +12,8 @@ import LiftingStateUpTS2 from "./components-exercices/Exercice-LiftingStateUp2";
 import { Clients, FicheClient } from "./components-exercices/Exercice-useParams";
 import { ListeMonture, FicheMonture } from "./components-exercices/Exercice-useParams-API";
 import LayoutUseParams, { AccueilUseParams } from "./components-exercices/LayoutUseParams";
+import { ExerciceChildren } from "./components-exercices/ExerciceChildren";
+import {FicheClient2} from "./components-exercices/ExerciceChildrenRefacto";
 
 function App() {
   // return <Brouillon2 />;
@@ -52,7 +54,9 @@ function App() {
             <Route path="montures" element={<ListeMonture />} />
             <Route path="montures/:id" element={<FicheMonture />} />
           </Route>
+          <Route path="/exercice-children" element={<ExerciceChildren />}/>
           <Route path="*" element={<PageIntrouvable />} />
+          <Route path="/exercice-children-refacto" element={<FicheClient2 />} />
         </Routes>
       </main>
     </div>
