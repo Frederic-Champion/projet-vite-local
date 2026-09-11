@@ -33,6 +33,9 @@ export default function Accueil() {
       <Link className="text-blue-600 hover:underline" to="/exercice-children-refacto">
         Exercice sur children Refacto
       </Link>
+      <Link className="text-blue-600 hover:underline" to="/exercice-children-ts">
+        Exercice sur children - TS - Table
+      </Link>
     </nav>
   );
 }

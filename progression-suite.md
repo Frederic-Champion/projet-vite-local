@@ -603,3 +603,55 @@ Circuit réparé dans `projet-examen-blanc` (`Catalogue`) : copie dans `useState
 2. **Page blanche : `children` + TypeScript des séances précédentes + `<table>`** (dette type B du registre, réactivée par la pratique). Ordonnance OD/OG comme terrain.
 3. **`useRef`** si le temps le permet, sinon séance suivante.
 4. Puis **Git branches + Pull Request** (séance dédiée), puis **Next.js**. Les autres dettes (coercion + hoisting, `@keyframes`, accessibilité) se calent en créneaux courts pendant la suite.
+
+## Session 96 — Page blanche `children` + TypeScript + `<table>`
+
+**Durée** : ~2h45 (vendredi). Énergie bonne, séance tenue en entier.
+
+**Révision éclair (`setTimeout` / `setInterval`)** 🟡 : différence de comportement juste. **Identifiant renvoyé par l'appel non connu** (question non comprise) · critère de nettoyage non énoncé (outil cité, pas la règle « trace active »). **Reste en rotation.**
+
+**🎹 Raccourci** : `Ctrl+Maj+\` — pas encore utilisé, « je n'y pense pas ». **Reconduit.**
+
+---
+
+### Page blanche — fiche ordonnance (`projet-vite-local`, `ExerciceOrdonnance.tsx`)
+
+**⚠️ Première consigne rejetée à raison** : découpage en composants, noms de props et code appelant fournis — une recette, pas une page blanche. Refaite en **livrable + contraintes**. La seconde version restait ambiguë (« deux blocs », « sémantique », origine des valeurs) : trois questions de clarification nécessaires.
+
+**Produit seul** :
+
+- **`Rubrique`** (`titre` + `children`), cadre écrit une seule fois 🟢 — **le mécanisme qui bloquait en S95 est sorti sans aide.** Titre placé dans la rubrique et non dans le `<thead>` : question posée, bonne distinction.
+- **Modélisation** : OD/OG en **clés d'objet** plutôt qu'une liste avec union (plus stricte : un seul OD, un seul OG), `OD?`/`OG?` tranché par le métier, puis yeux regroupés dans un sous-objet pour sortir l'addition de la boucle. **Choix défendus avec des arguments métier, et meilleurs que ma modélisation de départ.** 🟢
+- **`TableauCorrections`** extrait avec l'ordonnance en prop, pensé « comme si la donnée venait d'une API » ; a conclu seul qu'aucun state n'était nécessaire. 🟢
+- **Tableau sémantique** (`thead`/`tbody`, `th` d'en-tête de ligne, `colSpan`) revenu sans rappel. 🟢
+
+**Avec aide** :
+
+- **`Object.entries` + `.map()`** : 1ᵉʳ jet en accès par index (`data[0][0]`), puis déstructuration par crochets **sortie après indice**, avec une accolade parasite (`[oeil, {c}]`). Question de fond posée : comment intégrer l'élément de nature différente (`add`) ? → on corrige la forme des données, pas la boucle. 🟡
+- **Union de valeurs sur prop optionnelle** (`variante?: "normal" | "alerte"` + défaut) : **donnée, non déclenchée seule.** Reste 🔴.
+- Alignement de la ligne Add (cellule vide fusionnée) : donné.
+
+**Neuf** : `scope="col"` / `scope="row"` 🟡.
+
+**🎓 Règle métier posée par Frédéric** : une addition à 0 n'existe pas en optique (minimum 0,75). Donc 0 ou absent → pas de ligne. Mon `!== undefined` était faux pour ce cas. Point technique qui reste : `addition && …` afficherait le chiffre `0` → forme retenue : `addition ? (…) : null`.
+
+**📌 Point ouvert** : survol de `sphere` dans le `.map()` non fait. Probable `any` (`Object.entries` sur une `interface` sans signature d'index) et `oeil` typé `string` — *non vérifié*. Bon support pour un exercice de typage.
+
+**Niveaux** : `children` 🟢 (page blanche réussie) · critère props de données / `children` 🟢 · `<table>` sémantique 🟢 · modélisation objet vs liste 🟢 · déstructuration de tableau 🟡 · union sur prop optionnelle 🔴 · `scope` 🟡. **Exercice réussi au prix d'un effort long : fragile côté TS.**
+
+**Registre** : **`<table>` soldée** (type B, réactivée par la pratique) · **`children` soldée** (enseignée S95, tenue en page blanche).
+
+---
+
+**⚠️ Mes erreurs** :
+
+1. **Page blanche rédigée comme une recette** — architecture fournie. Correctif : une page blanche donne **le livrable et les contraintes**, jamais le découpage ni le code appelant.
+2. **Seconde consigne encore ambiguë** (deux blocs, « sémantique » non défini, valeurs non précisées). Récurrence §9.
+
+**🔄 Rotation** : `setInterval` / `clearInterval` (identifiant + critère) · React Router Declarative (9 points) · union de valeurs sur prop optionnelle.
+
+**⏭️ Prochaine étape**
+
+1. Révision éclair.
+2. **`useRef`** — séance fraîche, notion neuve (+ `IntersectionObserver` version React).
+3. Puis **Git branches + Pull Request** (séance dédiée), puis **Next.js**.
