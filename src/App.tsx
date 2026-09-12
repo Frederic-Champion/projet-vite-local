@@ -14,7 +14,7 @@ import { ListeMonture, FicheMonture } from "./components-exercices/Exercice-useP
 import LayoutUseParams, { AccueilUseParams } from "./components-exercices/LayoutUseParams";
 import { ExerciceChildren } from "./components-exercices/ExerciceChildren";
 import {FicheClient2} from "./components-exercices/ExerciceChildrenRefacto";
-import { FicheOrdonnance } from "./components-exercices/Exercice-childre-TS-table";
+import { FicheOrdonnance } from "./components-exercices/Exercice-children-TS-table";
 
 function App() {
   // return <Brouillon2 />;

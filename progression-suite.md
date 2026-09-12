@@ -655,3 +655,74 @@ Circuit réparé dans `projet-examen-blanc` (`Catalogue`) : copie dans `useState
 1. Révision éclair.
 2. **`useRef`** — séance fraîche, notion neuve (+ `IntersectionObserver` version React).
 3. Puis **Git branches + Pull Request** (séance dédiée), puis **Next.js**.
+
+## Session 97 — Typage `Object.entries` : `interface` vs `type`
+
+**Durée** : ~1h (samedi). Énergie bonne. Créneau court annoncé, séance coupée en fin de parcours par un client.
+
+**Révision éclair (`useParams` — route paramétrée)** 🔴 : trois points sur quatre manqués.
+- **Origine du nom inversée** : annoncé comme inventé dans le composant, repris ensuite dans `App`. C'est l'inverse — le nom naît dans le `path`, une seule fois, et devient ensuite une clé d'objet lue à l'identique. **Même point que la révision de sortie S90, non corrigé depuis.**
+- `useParams` **sans parenthèses** dans la ligne écrite (déstructure la fonction, pas son résultat) + clé inventée (`eclair`) absente de l'objet.
+- Type donné `string`, sans `| undefined` — c'est la moitié qui oblige à la garde.
+- **Remarque fondée de sa part** : l'énoncé ne disait pas si la donnée venait d'une API ou d'une liste en dur. Juste pour la suite, sans effet sur la ligne `useParams()` elle-même, identique dans les deux cas.
+
+**🎹 Raccourci** : `Ctrl+Maj+\` **abandonné**. Trois causes cumulées : la commande ne saute qu'entre délimiteurs (`{}`, `()`, `[]`) et **jamais entre balises JSX** — or je l'avais posé sur un besoin de circulation dans un JSX long, donc sur le besoin où il ne répond pas · le curseur doit être collé au délimiteur · `\` en AltGr sur AZERTY. **Geste retenu, utile au-delà du cas** : `Ctrl+Maj+P` → nom de la commande → lire le raccourci réellement assigné à droite. Aucun nouveau raccourci posé, on attend un besoin réel.
+
+---
+
+### 1. Cours — pourquoi `Object.entries` perd le type sur une `interface`
+
+Parti du point ouvert en fin de S96 (survol de `sphere` non fait). **Constat vérifié au survol** : `corrections` en `[string, any][]`, `sphere` en `any` — le tableau d'ordonnance n'avait aucun filet TS.
+
+Cours donné : `Object.entries` a deux signatures, une précise (exige une **signature d'index**) et un filet de secours en `any`. Une `interface` est **ouverte** (rouvrable, fusion de déclarations) → TS ne peut jamais promettre que toutes ses clés mènent au même type → retombe sur `any`. Un `type` est **fermé** → il peut le déduire.
+
+**Point à noter : question reposée à l'identique après l'explication** (« je n'ai pas compris pourquoi `interface` ne fait pas le travail »). Reprise nécessaire, en partant du mot-clé (déclaration ouverte démontrée par l'exemple de la double `interface Yeux`) plutôt que du comportement d'`Object.entries`. **C'est la seconde formulation qui est passée.**
+
+**Repère posé** : boucler sur les clés (`Object.entries`, `Object.keys`, `Record`) → `type` · lire par propriétés nommées (props de composant) → `interface`. Complément de la convention S86, qui reste valable partout ailleurs.
+
+---
+
+### 2. Exercice de réparation — **non produit, cours et réponse donnés**
+
+Demande de réécrire `Yeux` en combinant deux utility types. **Arrêt immédiat : « je n'arrive pas l'exercice, je ne crois pas l'avoir déjà fait ».** Exact — la **combinaison** d'utility types n'a été vue qu'une fois (S86), sur un énoncé très cadré. Briques acquises, assemblage non. Erreur de dosage de ma part.
+
+Cours donné : l'empilement se lit de l'intérieur vers l'extérieur, comme des fonctions imbriquées. `Record<"OD" | "OG", Correction>` puis `Partial<...>`.
+**Le cas rend la confusion S86 lisible** : la virgule sépare les deux tiroirs, l'union vit **dans** le premier — et `Omit<X, "a" | "b">` suit exactement la même structure.
+
+`type Yeux = Partial<Record<"OD" | "OG", Correction>>` appliqué. **Typage vérifié au survol : fonctionne.**
+
+**⚠️ Fausse annonce de ma part** : j'avais annoncé une erreur rouge attendue sur le `.map()` (raisonnement sur le `| undefined` ajouté par `Partial`). **Aucune erreur** — hypothèse non vérifiée présentée comme certaine. Corrigé en séance, son écran fait foi.
+
+---
+
+### 3. Exercice `BadgeStock` — interrompu par un client, partiellement produit
+
+Terrain neuf (`Brouillon.tsx`), notions déjà vues uniquement. Deux composants demandés (`BadgeStock` recevant des props + `ListeStock` appelant), pour provoquer une erreur de typage au passage de props.
+
+**Produit** : un seul composant faisant tout, `.map()` + `key` sur id stable, `<ul>`/`<li>`, tableau annoté, interface nommée.
+
+**🔴 `etat?: string`** — union de valeurs non déclenchée, **3ᵉ occurrence** (S90, S96, S97). La notion est acquise depuis S80 ; le réflexe ne part pas. **Repère donné, à tester la prochaine fois** : devant tout `?: string` / `?: number`, se demander « n'importe quelle chaîne a-t-elle un sens ici ? » — nom de modèle oui, état/statut/variante/rôle non.
+
+**🟡 Défaut non posé dans la déstructuration** (`{!m.etat && "disponible"}` dans le JSX, qui affiche l'inverse du besoin) alors que le mécanisme est sorti seul trois fois sur `Rubrique`. Traduction en libellé non faite.
+
+**🔴 Architecture à un seul composant** → pas de passage de props → **l'erreur rouge cible de l'exercice n'a pas pu apparaître**. L'apprentissage principal n'a pas eu lieu.
+
+**Correction complète non donnée** (lecture à la volée après interruption = zéro ancrage). **Exercice reconduit en ouverture de la prochaine séance.**
+
+---
+
+**Niveaux** : `interface` ouverte vs `type` fermé 🟡 (question reposée après la 1ʳᵉ explication) · `Partial<Record<...>>` 🔴 (**non produit, donné**) · repère `type` pour boucler sur les clés 🟡 · `useParams` — origine du nom dans le `path` 🔴 (récurrence S90) · `useParams()` vs `useParams` 🔴 · `string | undefined` 🟡 · union sur prop optionnelle 🔴 (3ᵉ occurrence) · prop optionnelle + défaut 🟡 (rechute sur terrain neuf) · `.map()` + `key` 🟢.
+
+**⚠️ Mes erreurs** :
+1. **Exercice posé sur un assemblage vu une seule fois** — combinaison d'utility types demandée en page blanche. Récurrence du §9 (exercice sur mécanisme insuffisamment enseigné).
+2. **Erreur rouge annoncée comme certaine, inexistante** — hypothèse non vérifiée présentée comme un fait. Récurrence de la règle « qualifier la source ».
+3. **Raccourci `Ctrl+Maj+\` posé en S93 sur un besoin auquel il ne répond pas** (circulation dans du JSX).
+4. Première explication `interface`/`type` construite depuis `Object.entries` au lieu du mot-clé — a nécessité une reprise complète.
+
+**🔄 Rotation** : **`useParams` — correspondance `path` ↔ déstructuration** revient en priorité haute (2 échecs, S90 et S97) · **union de valeurs sur prop optionnelle** (3 échecs) · `setInterval`/`clearInterval` · React Router Declarative (9 points).
+
+**⏭️ Prochaine étape**
+
+1. **Reprise de `BadgeStock`** en ouverture (~20 min) — court, cible la dette 🔴 qui résiste, et l'erreur de typage au passage de props n'a jamais été rencontrée.
+2. **`useRef`** (+ `IntersectionObserver` version React) — séance fraîche, notion neuve.
+3. Puis **Git branches + Pull Request** (séance dédiée), puis **Next.js**.

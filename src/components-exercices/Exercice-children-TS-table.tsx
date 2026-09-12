@@ -17,10 +17,8 @@ interface Correction {
   cylindre: number;
   axe: number;
 }
-interface Yeux {
-  OD?: Correction;
-  OG?: Correction;
-}
+
+type Yeux = Partial<Record<"OD" | "OG", Correction>>;
 
 interface Ordonnance {
   yeux: Yeux;
