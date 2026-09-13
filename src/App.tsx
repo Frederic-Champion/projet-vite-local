@@ -15,6 +15,7 @@ import LayoutUseParams, { AccueilUseParams } from "./components-exercices/Layout
 import { ExerciceChildren } from "./components-exercices/ExerciceChildren";
 import {FicheClient2} from "./components-exercices/ExerciceChildrenRefacto";
 import { FicheOrdonnance } from "./components-exercices/Exercice-children-TS-table";
+import ExerciceUseRef from "./components-exercices/Exercice-useRef";
 
 function App() {
   // return <Brouillon2 />;
@@ -59,6 +60,7 @@ function App() {
           <Route path="*" element={<PageIntrouvable />} />
           <Route path="/exercice-children-refacto" element={<FicheClient2 />} />
           <Route path="/exercice-children-ts" element={<FicheOrdonnance />} />
+          <Route path="/exercice-useref" element={<ExerciceUseRef />} />
         </Routes>
       </main>
     </div>

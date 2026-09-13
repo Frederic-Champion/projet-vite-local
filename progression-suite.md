@@ -726,3 +726,98 @@ Terrain neuf (`Brouillon.tsx`), notions déjà vues uniquement. Deux composants 
 1. **Reprise de `BadgeStock`** en ouverture (~20 min) — court, cible la dette 🔴 qui résiste, et l'erreur de typage au passage de props n'a jamais été rencontrée.
 2. **`useRef`** (+ `IntersectionObserver` version React) — séance fraîche, notion neuve.
 3. Puis **Git branches + Pull Request** (séance dédiée), puis **Next.js**.
+
+## Session 98 — `useRef` (deux usages) + règle d'ancrage
+
+**Durée** : ~3h40 (dimanche, en deux blocs : 2h20 le matin, 1h20 le soir). Énergie bonne.
+
+**🎹 Raccourci** : aucun en cours depuis l'abandon de `Ctrl+Maj+\`. Nouveau posé sur un besoin réel de la séance (union écrite deux fois à l'identique) : **`Ctrl+Maj+L`** (toutes les occurrences de la sélection d'un coup). Distinction donnée : `Ctrl+D` une par une · `Ctrl+Maj+L` toutes · **`F2` ne renomme que des symboles, jamais du texte dans une chaîne, une classe Tailwind ou un commentaire** — c'est le trou que `Ctrl+Maj+L` comble.
+
+---
+
+### 🎓 LE POINT DE LA SÉANCE — règle d'ancrage posée par Frédéric
+
+**Constat qu'il a formulé** : rythme d'ouverture trop soutenu par rapport au rythme de reprise. Déclencheur : `NavLink` intégralement perdu 5 jours après son cours, `end` non ressorti.
+
+**Sa nuance, meilleure que ma proposition** : j'avais proposé un **quota** d'une notion neuve par séance. Il l'a refusé à raison — « apprendre de nouvelles choses n'est pas le problème, il le faut pour tenir l'objectif ». Le problème n'est pas le débit d'entrée, c'est l'**absence de reprise**. **Règle retenue** : une notion neuve est **ouverte**, pas acquise ; priorité sur l'**ordre**, pas plafond sur le neuf.
+
+**Acté et intégré aux instructions (§6)** : notion ouverte / cycle de reprise N+2 puis N+5 · demander son ressenti avant de reprendre une notion · révision éclair **15 min, 2-3 questions** · **deux exercices courts en ouverture**, à écrire · projet canonique par quinzaine (sources vérifiées : freeCodeCamp, The Odin Project).
+
+**Écarté par lui** : le paragraphe « ratio clavier / discussion ». Constat sous-jacent à garder en tête malgré tout — beaucoup de cours et de questions de fond, peu de code écrit.
+
+**📌 Chantier ouvert** : `audit-exercices-types.md` à **vérifier item par item** (une recommandation vérifiée en S79 s'est révélée fausse). ~30 min, à caler un jour sans énergie pour coder. Tant que ce n'est pas fait, ne pas s'appuyer dessus.
+
+---
+
+### 1. Reprise `BadgeStock` (exercice S97 interrompu) ✅
+
+Refait seul avant la séance. **`etat?: "disponible" | "commande" | "rupture"` écrit d'emblée** — la dette 🔴 union de valeurs sur prop optionnelle, trois échecs depuis S80, **tombe**. Défaut dans la déstructuration, `switch` exhaustif, deux composants séparés, `key` sur id stable.
+
+**Corrections, toutes appliquées** : une `interface` pour deux rôles (le `id?` facultatif trahissait le pliage de l'interface à la donnée alors que `key={m.id}` en dépend) → `Monture` + `type BadgeStockProps = Omit<Monture, "id">`, **`Omit` appliqué spontanément à un cas réel** · `<ul>` disparu à la séparation en deux composants · fonction pure sortie du composant + renommée (`testEtat` annonçait un booléen) · union nommée une fois en `type EtatStock`.
+
+**⚠️ Mon erreur, relevée par lui** : consigne disant « **deux composants et une interface** ». Il a appliqué le chiffre à la lettre — comportement correct, contrainte fautive. **4ᵉ relevé consignes**, cette fois en chiffrant ce qui ne devait pas l'être.
+
+**Niveaux** : union sur prop optionnelle 🟢 (**dette soldée**) · `Omit` sur un cas réel 🟢 · interface de props vs interface de donnée 🟡.
+
+---
+
+### 2. Révisions éclair
+
+**`useParams` (matin)** 🟢 : ligne juste avec les parenthèses, nom repris à l'identique du `path`, narrowing identifié seul (« il faut tester avec un `if`, TS ne dira plus rien »). **Le point cassé en S90 et S97 ressort seul.** Précision donnée : le nom naît dans le `path`, pas « dans App.tsx ».
+
+**`NavLink` (soir)** 🔴 : `className={isActive ? …}` — **la fonction manquante** (`isActive` n'existe pas sans le paramètre déstructuré). **`end` non ressorti**, y compris après reformulation ; a répondu sur la route `index`, qui traite un autre problème. Vu en S93, soit 5 jours. C'est ce résultat qui a déclenché la règle d'ancrage ci-dessus.
+
+⚠️ **Ma question était incomplète** : piège du préfixe posé sans donner les URL, donc indevinable. Relevé par lui.
+
+---
+
+### 3. `useRef` — notion neuve
+
+**Cours** : troisième tiroir (survit aux rendus, ne déclenche aucun rendu) · tableau variable locale / `useState` / `useRef` · critère « est-ce que ça apparaît à l'écran ? » · ne jamais lire une ref pour afficher · les **deux usages** (valeur vs élément DOM) · `.current` rempli par React quand `ref={}` est posé sur une balise · ref DOM jamais lue dans le corps du composant (`null` au 1er passage) · typage par le survol.
+
+**Critère validé à l'oral** dès la question de contrôle (compteur non affiché → ref).
+
+**Exercice 1 (guidé, focus sur un `<input>`)** ✅ **3/3 du premier coup** : type dans le tiroir, `null` initial, garde, `ref={champRef}`. Frontière du `return` nu posée à cette occasion — **légitime dans un handler et dans un effet** (personne n'attend de valeur), illégitime dans un composant ou une fonction utilitaire.
+
+**Exercice 2** — **⚠️ énoncé fautif, relevé par lui avant de commencer** : « le compteur ne s'affiche jamais seul » n'imposait pas `useRef`, le compteur pouvant vivre dans le message. Objection juste, énoncé refait avec un bouton « Voir le total » qui rend la ref nécessaire.
+
+Puis **question « j'utilise comment ? `ref.current.value` ? »** → confusion entre les deux usages. Repère donné : **`.current` contient ce que tu y mets** — un nœud DOM si `ref={}` est posé sur une balise, un nombre si on a écrit `useRef(0)`. Pas de `.value` sur une ref de valeur.
+
+Code produit : ref juste, mais **deux booléens (`defaut`, `afficher`) pour un état à trois valeurs** → 4 combinaisons, message affiché au chargement, aucun retour possible à l'état vide. Correction donnée : un seul `useState("")` portant le message. **Correction complète demandée faute de temps (fils à nourrir) — pas de mesure valable sur ce point, retiré des niveaux à sa demande, à raison.**
+
+**Contraste posé** : une **ref est à jour dès la ligne suivante**, un **state non** (photo figée du rendu). D'où : incrémenter avant de composer la phrase.
+
+---
+
+### 4. Page blanche `useRef` (soir, ~20 min)
+
+Terrain neuf (`ExerciceUseRefBis`), les deux usages + champ contrôlé.
+
+**✅ Produit seul** : les trois déclarations exactes et bien nommées (`champRef` DOM, `totalRef` valeur, `message` state), garde avant usage, deux refs de natures différentes sans confusion. **Question posée avant de coder** : plusieurs `useRef` par composant ? (oui, comme `useState`).
+
+**🔴 Champ non contrôlé** — lecture **et** écriture par le DOM (`champRef.current.value`, puis `= ""` pour vider). JS pur greffé dans React : React ignore le contenu du champ. **Rechute sur un acquis S79.** Le critère est le point à travailler : **une ref DOM sert à ce que React ne sait pas faire (`focus`, `scrollIntoView`, mesurer) ; toute donnée passe par le state.**
+
+**🔴 « Saisis un modèle. » branché sur `onClick` du champ** au lieu d'un test dans `ajouter` → message dès le clic dans l'input, et le total compte les ajouts vides (pas de `return`).
+
+**🟡** : `focus()` avant le vidage (ordre inverse) · `if (!totalRef.current) return;` = `return` nu silencieux sur panier vide · message hors du `<p>` et sans garde · `useState<string | number>` inutile · `type="submit"` hors `<form>`.
+
+**Niveaux** : `useRef` — deux usages, déclaration et typage 🟢 · **frontière state / ref DOM 🔴** · champ contrôlé 🔴 (rechute S79) · `useRef` DOM appliqué 🟡 (guidé + page blanche partielle).
+
+---
+
+**🆕 Notions ouvertes ce jour** (cycle de reprise à tenir) : `useRef` valeur · `useRef` DOM · frontière state / ref DOM. **Reprise prévue N+2.**
+
+**🔄 Rotation** : **`NavLink` + `end` passe en priorité haute** (🔴 à froid). Toujours dedans : React Router Declarative (8 autres points) · `setInterval`/`clearInterval`. **Sortis** : `useParams` + correspondance `path` (🟢 seul) · union de valeurs sur prop optionnelle (dette soldée).
+
+**⚠️ Mes erreurs** :
+1. **Consigne chiffrant les types à produire** (« deux composants et une interface ») — a induit une modélisation fausse. 4ᵉ occurrence consignes.
+2. **Énoncé d'exercice n'imposant pas la notion visée** — relevé par lui avant de commencer.
+3. **Question de révision éclair incomplète** (piège du préfixe sans les URL).
+4. **Quota de notions neuves proposé** — mauvais diagnostic, corrigé par sa nuance.
+
+**⏭️ Prochaine étape — demain, ~1h30**
+
+1. Deux exercices courts en ouverture (nouveau format) : **`NavLink` + `end`**, et **frontière state / ref DOM** (reprise de la page blanche de ce soir, champ contrôlé).
+2. Révision éclair 15 min, 2-3 questions, sur les points React Router jamais rejoués (`state`, `<Navigate>`, `replace`).
+3. **Pas de notion neuve.** `IntersectionObserver` version React repoussé — il ajouterait une transposition par-dessus un `useRef` d'un jour.
+4. Ensuite : **Git branches + Pull Request** (séance dédiée), puis **Next.js**.
