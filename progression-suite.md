@@ -821,3 +821,70 @@ Terrain neuf (`ExerciceUseRefBis`), les deux usages + champ contrôlé.
 2. Révision éclair 15 min, 2-3 questions, sur les points React Router jamais rejoués (`state`, `<Navigate>`, `replace`).
 3. **Pas de notion neuve.** `IntersectionObserver` version React repoussé — il ajouterait une transposition par-dessus un `useRef` d'un jour.
 4. Ensuite : **Git branches + Pull Request** (séance dédiée), puis **Next.js**.
+
+## Session 99 — Reprises : `useRef`, `NavLink`, navigation React Router
+
+**Durée** : ~1h45 (lundi). Énergie bonne. **Première séance au nouveau format** (deux exercices courts en ouverture, révision éclair étendue, zéro notion neuve).
+
+**🎹 Raccourci** : `Ctrl+Maj+L` — pas encore d'occasion, **reconduit**.
+
+---
+
+### 1. Exercices d'ouverture — nouveau format ✅
+
+**`NavLink` + `end`** (🔴 la veille) : **`end` ressorti seul et posé uniquement sur le lien qui en a besoin.** Structure de la fonction juste (`({ isActive }) => …`).
+**🟡 Corps-bloc au lieu de corps-expression** : `=> {isActive && "font-bold"}` — les accolades ouvrent un bloc d'instructions, la valeur est calculée puis jetée, la fonction renvoie `undefined`. Même famille que le `return` nu. Piège spécifique au JSX : les accolades de `className={}` disent « voici du JS » ; une seconde paire ne les prolonge pas.
+Point secondaire : `className` attend une **chaîne** → ternaire avec `""`, pas `&&` (le `&&` est pour afficher ou non du JSX).
+
+**Frontière state / ref DOM — 5/5 à l'oral**, critère formulé seul (« si ça touche au visuel, React doit être informé »). Affinage donné : le focus et le défilement touchent au visuel mais **ne s'écrivent pas en JSX** — c'est ça le critère. **Test opérationnel : « est-ce que je peux l'écrire dans mon JSX ? »** Le cas discriminant (vider un champ = donnée, donc state) est sorti juste.
+
+---
+
+### 2. Page blanche `useRef` — reprise N+1 ✅
+
+Réécrite entièrement. **Les deux 🔴 de la veille corrigés seuls** :
+- **champ contrôlé** (`value` + `onChange`), vidage par `setChamp("")` et focus par la ref — la frontière s'est déclenchée au clavier, pas seulement à l'oral ;
+- **early return de validation** dans le handler, avec le `return` qui protège l'incrément.
+
+**Portée d'une garde** comprise et appliquée : l'incrément remonté **avant** la garde du focus (le comptage est la donnée, le focus un confort), `?.` substitué à la garde sur une instruction unique.
+
+Rangement des trois exercices `useRef` dans un fichier avec composant de regroupement — bonne application de « 1 fichier = 1 exercice » à une famille.
+
+**⚠️ Ma consigne, encore** : « je clique avec le champ vide » ne disait pas **où**. Il l'a lue comme un clic dans l'input, deux fois de suite. **5ᵉ occurrence cette semaine, toujours la même cause : j'écris l'intention au lieu du geste.**
+
+---
+
+### 3. Révision éclair React Router (points S93 jamais rejoués)
+
+**`replace`** 🟢 : repère juste et reformulé seul (éviter la chaîne retour → page invalide → re-redirection). **Sa remarque, juste** : reconnu à la lecture du mot ≠ produit seul en contexte — la mesure reste à faire.
+
+**`<Navigate>` vs `useNavigate`** 🟢 : critère exact (action supplémentaire, message, délai → `useNavigate`). Avantage non cité, redonné : `<Navigate>` **n'affiche jamais le contenu protégé**, même une fraction de seconde.
+
+**`state`** — **critère 🔴, mécanisme 🟡** : a décrit ce qu'il avait codé en S93 sans retrouver la règle de décision (« si quelqu'un ouvrait cette URL demain, cette information aurait-elle un sens ? »). Deux confusions levées : le `state` de React Router ≠ `useState` · pas de « double `useNavigate` » — un seul appel, une fonction appelée autant de fois que voulu. Les deux lignes du circuit redonnées (`{ state: { … } }` en option de `naviguer`, `location.state?.message` à l'arrivée).
+
+**Question posée : différence `<Navigate>` / `<Link>` ?** → `<Link>` produit un `<a>` et attend un clic · `<Navigate>` ne produit aucun DOM et part au rendu. **Repère : `<Link>` = l'utilisateur décide · `<Navigate>` = le code décide.**
+
+---
+
+### 4. Exercice `ExerciceNavigation` — commencé, **non terminé**
+
+**Produit seul, sans modèle** : routes imbriquées avec `<Route index>` et chemin relatif, `useParams` + `find` + garde, `<Link>` en template literal avec `key`, interface de donnée. **Mécanisme revenu « à 80 % » selon lui**, une seule vérification dans `App.tsx` pour le branchement.
+
+**Reste à faire** : `<Navigate>` sur identifiant inconnu (a mis un `<p>`, comportement correct mais hors consigne) · bouton « Enregistrer » + circuit `state` complet.
+
+**📌 Demande explicite** : **revoir `<Outlet>`**, non mémorisé. Noté qu'il n'apparaît pas dans son exercice parce que sa route parente n'a pas d'`element` — simple regroupement de chemins, sans layout. Terrain idéal pour la reprise (ajouter un layout à cette section).
+
+---
+
+**Niveaux** : `useRef` (3 usages) 🟢 · frontière state / ref DOM 🟢 (oral **et** clavier) · champ contrôlé 🟢 · early return de validation dans un handler 🟢 · portée d'une garde 🟢 · `end` 🟢 · fonction dans `className` 🟡 · `replace` 🟢 · `<Navigate>` vs `useNavigate` 🟢 · `<Navigate>` vs `<Link>` 🟢 · `state` — critère 🔴 / mécanisme 🟡 · routes imbriquées + `index` 🟢 · `<Outlet>` 🔴 (oublié).
+
+**🔄 Cycle de reprise — le format fonctionne.** Deux notions rejouées à N+1, toutes deux redressées : `useRef` (🔴 → 🟢) et `NavLink`/`end` (🔴 → 🟢). Sans la reprise, elles étaient perdues.
+**À programmer** : `useRef` **N+5 → ~S103** · `NavLink` **N+5 → ~S103** · `state` et `<Outlet>` **N+2 → séance suivante** (déjà au programme).
+
+**⚠️ Mes erreurs** : consigne écrivant l'intention au lieu du geste (« je clique avec le champ vide ») — **5ᵉ occurrence de la semaine**, et la seule qui reste vraiment récurrente.
+
+**⏭️ Prochaine étape (~demain)**
+
+1. **Finir `ExerciceNavigation`** : `<Navigate>` + circuit `state` complet. ~20 min.
+2. **`<Outlet>`** — reprise demandée, en ajoutant un layout à cette même section. Terrain déjà en place.
+3. Puis **Git branches + Pull Request** (séance dédiée), puis **Next.js**.
