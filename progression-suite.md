@@ -888,3 +888,61 @@ Rangement des trois exercices `useRef` dans un fichier avec composant de regroup
 1. **Finir `ExerciceNavigation`** : `<Navigate>` + circuit `state` complet. ~20 min.
 2. **`<Outlet>`** — reprise demandée, en ajoutant un layout à cette même section. Terrain déjà en place.
 3. Puis **Git branches + Pull Request** (séance dédiée), puis **Next.js**.
+
+## Session 100 — Reprises React Router : `<Navigate replace>`, `state`, `<Outlet>`
+
+**Durée** : ~2h15 (mardi). Énergie bonne. Zéro notion neuve.
+
+**Ressenti en ouverture** : `state` flou · `<Outlet>` très flou (« je vois le fonctionnement, la mise en place je m'en souviens à peine »).
+
+**🎹 Raccourci** : `Ctrl+Maj+L` — peu utilisé, **reconduit**.
+
+---
+
+### Révision éclair (3 questions)
+
+- **`setInterval` / `clearInterval`** 🟢 : écrits justes dans un `useEffect`, identifiant capturé. Était 🔴 en S92 et S96.
+- **Critère de nettoyage d'un effet** 🟡 : cas reconnus, règle non formulée (**3ᵉ fois**) → cours complet donné (règle de la trace active + tableau démarrer/arrêter + deux moments du nettoyage). Appliqué ensuite 3/3 sur trois cas, puis **au clavier en fin de séance** (`clearTimeout`). Reste à l'**énoncer** seul.
+- **Conversions aux frontières** 🟢 : `e.target.value` toujours chaîne, `Number()` à l'entrée. Précision : le résultat est `"31"`, la chaîne.
+- **Déstructuration de tableau** 🟢 : crochets du premier coup, sans index.
+
+---
+
+### 1. Finir `ExerciceNavigation` (guidé)
+
+- **`<Navigate>` vs `useNavigate`** : question posée avant d'écrire, critère redonné. `<Navigate replace>` 🟢 (`replace` ajouté après correction).
+- **`<Outlet>` natif ou lié à `useParams` ?** → deux outils indépendants : `<Outlet>` = **où** afficher l'enfant, `useParams` = **quelle valeur** dans l'URL.
+- **`state`** : 1ᵉʳ jet transportant une phrase figée + `?.` sur `location` au lieu de `state`. **Point « donnée brute, pas phrase » non compris à la 1ʳᵉ explication** → reformulé par contraste (qui envoie / qui rédige) et analogie ordonnance, appliqué ensuite. 🟢
+- **Layout + `<Outlet>`** en étapes numérotées 🟡. Faute de frappe dans le `to` trouvée seul après indice. Test « `<Outlet>` commenté » : layout affiché, enfants absents — compris.
+
+### 2. Page blanche `<Outlet>` sur terrain neuf ✅
+
+Section montures avec layout + `<Outlet>` + `index` + `useParams` + `find` + `<Navigate>`, **sans rouvrir l'exercice précédent**. Circuit `state` ajouté spontanément. `replace` à nouveau oublié au 1er jet.
+
+**Bonus conçu et écrit seul** (question posée : « est-ce faisable en React ? ») : effacement du message après 3 s → copie de `location.state` dans un `useState` avec setter, test dans l'effet, `setTimeout` + `clearTimeout`. Obstacle expliqué : `location.state` appartient au routeur, on ne peut pas l'effacer directement. Seul écart : dépendance manquante (`[montureSave]`).
+**Limite F5 constatée** (message qui revient). Remède `naviguer(location.pathname, { replace: true })` non appliqué.
+
+---
+
+**Niveaux** : `<Outlet>` 🟢 (**« très flou » en ouverture, produit en page blanche 1h plus tard**) · `<Navigate replace>` 🟢 (`replace` oublié deux fois au 1er jet) · `<Navigate>` vs `useNavigate` 🟢 · circuit `state` + donnée brute 🟢 · copie du `state` + effacement temporisé 🟢 · critère de nettoyage 🟡 · `setInterval` / `clearInterval` 🟢 · conversions 🟢 · déstructuration de tableau 🟢.
+
+**🎓 Règles posées par Frédéric**
+- **Nommage libre dans les exercices.** Claude peut proposer une convention quand elle apporte quelque chose, mais ne renomme pas ce qu'il a choisi. Les conventions strictes valent pour un projet sérieux.
+- **Ne pas exiger ce qui n'est pas l'objet de l'exercice** (ex. : interface sur un tableau en dur dans un exercice de routage).
+- Un simple oubli reconnu comme tel n'a pas à être consigné.
+
+**⚠️ Mes erreurs**
+1. **Affirmé de mémoire que `state` ne survit pas au F5 — faux**, contredit par son écran. Règle corrigée : `state` survit au Précédent/Suivant **et au F5 dans le même onglet** (entrée d'historique conservée) ; pas au lien partagé ni au nouvel onglet. *Source : observation + reconstruction MDN `History.pushState()`, non vérifiée dans la doc.*
+2. Corrections de nommage insistantes sur des exercices.
+
+**🗑️ Instruction obsolète** : §7 React Router, ligne `state` — « survit au retour arrière, pas au rechargement » est **faux** (même erreur dans les entrées S91 et S93).
+
+**🔄 Cycle de reprise** : `state`, `<Outlet>`, `<Navigate replace>` rejoués → **N+5 ≈ S105**. `useRef` et `NavLink` toujours attendus **≈ S103**.
+**📌 À travailler (demande explicite)** : **`location.pathname`**, avec le nettoyage du `state` par `replace` sur la même adresse.
+
+**Rotation** : `setInterval` / `clearInterval` **sort**. Restent : critère de nettoyage (à énoncer) · React Router Declarative (points non rejoués : montage, `path`/`to`, `<Link>` vs `<button>`, 404).
+
+**⏭️ Prochaine étape**
+1. **Git branches + Pull Request** — séance dédiée, longue et fraîche.
+2. Puis **Next.js**.
+3. En ouverture des prochaines séances : reprises `useRef` et `NavLink` (≈ S103), `location.pathname` + nettoyage du `state`.

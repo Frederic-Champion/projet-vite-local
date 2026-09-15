@@ -16,7 +16,8 @@ import { ExerciceChildren } from "./components-exercices/ExerciceChildren";
 import { FicheClient2 } from "./components-exercices/ExerciceChildrenRefacto";
 import { FicheOrdonnance } from "./components-exercices/Exercice-children-TS-table";
 import ExerciceUseRef from "./components-exercices/Exercice-useRef";
-import { FicheClients3, ListeClients3 } from "./components-exercices/ExerciceNavigation";
+import { FicheClients3, ListeClients3, LayoutClients } from "./components-exercices/ExerciceNavigation";
+import { Affichage, ListeMonturesExo, FicheMontureExo } from "./components-exercices/Exercice-Outlet-UseParams";
 
 function App() {
   // return <Brouillon2 />;
@@ -62,9 +63,13 @@ function App() {
           <Route path="/exercice-children-refacto" element={<FicheClient2 />} />
           <Route path="/exercice-children-ts" element={<FicheOrdonnance />} />
           <Route path="/exercice-useref" element={<ExerciceUseRef />} />
-          <Route path="/exercice-navigation">
+          <Route path="/exercice-navigation" element={<LayoutClients />}>
             <Route index element={<ListeClients3 />} />
             <Route path="fiche-client/:id" element={<FicheClients3 />} />
+          </Route>
+          <Route path="/exercice-outlet" element={<Affichage />}>
+            <Route index element={<ListeMonturesExo />} />
+            <Route path="fiche-monture/:id" element={<FicheMontureExo />} />
           </Route>
         </Routes>
       </main>
