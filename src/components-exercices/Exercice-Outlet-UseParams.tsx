@@ -1,4 +1,4 @@
-import { Outlet, Link, useParams, Navigate, useNavigate, useLocation } from "react-router";
+import { Outlet, Link, useParams, Navigate, useNavigate, useLocation, replace } from "react-router";
 import { formatEuro } from "../utils/format";
 import { useState, useEffect } from "react";
 
@@ -9,6 +9,7 @@ const MONTURES = [
 ];
 
 function ListeMonturesExo() {
+  const naviguer = useNavigate();
   const location = useLocation();
   const [montureSave, setMontureSave] = useState(location.state?.monture);
 
@@ -20,6 +21,12 @@ function ListeMonturesExo() {
       return () => clearTimeout(timer);
     }
   }, [montureSave]);
+
+  useEffect(() => {
+    if (location.state) {
+      naviguer(location.pathname, {replace: true})
+    }
+  }, [location.state, replace, naviguer])
 
   return (
     <div>
