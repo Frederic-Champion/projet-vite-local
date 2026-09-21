@@ -946,3 +946,339 @@ Section montures avec layout + `<Outlet>` + `index` + `useParams` + `find` + `<N
 1. **Git branches + Pull Request** — séance dédiée, longue et fraîche.
 2. Puis **Next.js**.
 3. En ouverture des prochaines séances : reprises `useRef` et `NavLink` (≈ S103), `location.pathname` + nettoyage du `state`.
+
+## Session 101 — Nettoyage du `state` par `pathname` + Git branches et Pull Request + cadrage Memory Card
+
+**Durée** : ~3h (mercredi, 2h prévues puis prolongées). Énergie bonne.
+
+**🎹 Raccourci** : `Ctrl+Maj+L` — non utilisé, **reconduit**.
+
+---
+
+### Révision éclair (3 questions)
+
+- **Critère de nettoyage d'un effet** 🟢 : règle **énoncée seule, sans exemple** (« reste-t-il une trace après ? »). Précision donnée : trace **active** (quelque chose tourne ou écoute). Sort de rotation.
+- **404 écrite en premier** 🟡 : bonne page, mais explication hors sujet. L'ordre n'intervient pas, React Router garde la route la plus spécifique.
+- **`margin: auto` vertical** : centrage horizontal/vertical 🟢 · `flex` sur le parent 🟢 · **raison 🔴** (attribuée à la hauteur de la div ; c'est la spécification qui calcule `margin: auto` vertical à zéro en flux normal).
+
+---
+
+### 1. Reprise `location.pathname` + nettoyage du `state` ✅
+
+Sur l'exercice montures (`ListeMonturesExo`). Second effet séparé, garde sur `location.state` justes du premier coup. Premier jet : adresse écrite en dur et sans `replace`. Corrigé avec `naviguer(location.pathname, { replace: true })`. Dépendances complétées. **3 tests passés** (disparition après 3 s, F5, Précédent/Suivant).
+
+**Question posée** : `pathname` ne sert-il qu'à ça ? → usages donnés (masquer selon la page, `startsWith` pour une section, dépendance d'effet pour réagir à un changement de page, se désigner soi-même).
+
+**Niveaux** : `location.pathname` 🟢 · nettoyage du `state` par `replace` sur la même adresse 🟢.
+
+---
+
+### 2. Git branches + Pull Request — dette la plus ancienne du parcours
+
+**⚠️ Premier passage raté de ma part** : principe en quelques lignes puis liste de commandes sans explication. **Arrêt de Frédéric** (« tu me dis de taper du code sans expliquer ce que ça fait »). Repris depuis zéro : commit = photo, `main` = suite de photos, branche = deuxième suite, lecture d'une commande Git morceau par morceau, **une étape à la fois avec son pourquoi**. Ce format a fonctionné jusqu'au bout.
+
+**Cycle complet fait en guidé sur `projet-vite-local`** : branche → commit → publication → PR → relecture (commentaire *Pending* puis *Submit review*) → fusion → suppression de la branche (GitHub puis locale) → pull sur `master`.
+
+**Reformulation juste de sa part** : un fichier créé sur une branche n'existe pas sur la branche principale, et on peut abandonner l'essai. Nuances données : une branche ne copie rien (historique partagé) ; pas de retour en arrière nécessaire, `master` n'a jamais bougé.
+
+**Questions posées** : équivalents souris (sélecteur de branche dans la barre d'état, Publish Branch) → **fait à la souris au quotidien, savoir nommer la commande** · utilité seul (essais, chantiers parallèles, relecture de son propre travail, Checks, visibilité recruteur).
+
+**📌 Constaté** : `projet-vite-local` utilise **`master`**, pas `main`. Non renommé.
+
+**🎓 Décision de Frédéric** : Memory Card se fera **sur une branche de `projet-examen-blanc`**, fusionnée à la fin — reprise du cycle en conditions réelles.
+
+**Niveaux** : branches (principe, création, changement, suppression) 🟢 · cycle PR complet 🟡 (**un seul passage guidé, notion ouverte**).
+
+**Registre** : **Git branches + PR sort de `dettes-apprentissage.md`** (enseignée) → dette chaude ici jusqu'à la reprise autonome sur Memory Card.
+
+---
+
+### 3. Questions de fond et cadrage du projet canonique
+
+- **Les tests** : cours d'aperçu (unitaire / composant / end-to-end, Vitest, React Testing Library, Playwright). Programme d'après 9 mois, **pas une dette**.
+- **`useOutletContext`** : fait passer une valeur à travers un `<Outlet>`, qui ne transmet aucune prop. **Mentionné, non enseigné, non nécessaire** aux projets prévus.
+- **Trouver une API** : répertoire **public-apis** (colonnes Auth / HTTPS / CORS), mot-clé **`free fake REST API`** plutôt que le thème, lire la liste des catégories dans la doc. Recherche « API Lunettes » infructueuse : les catalogues optiques sont privés.
+
+**🎓 Ordre décidé avec lui** : **Memory Card → Shopping Cart** (ordre du parcours Odin). Proposition acceptée comme cap : Memory Card → séance coercion + hoisting → Next.js, sans attendre de solder tout le registre (aucune dette ne bloque Next.js).
+
+**Énoncé Memory Card vérifié sur theodinproject.com** (et non de mémoire). Adaptations : page routée dans `projet-examen-blanc` sur branche · **pas de déploiement** · **pas de tests**.
+**Données retenues** : DummyJSON, **10 cartes = 5 montres femme + 5 montres homme**, récupérées par **`Promise.all`** (dette d'entretien, jugée floue — réactivée par la pratique). `sunglasses` écartée (5 articles seulement).
+
+**Structure mise en place en fin de séance** : branche, page, route, entrée d'accueil, score et meilleur score en dur.
+
+---
+
+**⚠️ Mes erreurs**
+1. **Git : commandes données sans expliquer ce qu'elles font** — arrêt net. Correctif : pour un outil entièrement neuf, le modèle mental d'abord, puis **une commande à la fois avec son pourquoi**.
+2. **Énoncé Memory Card donné de mémoire avec des écarts** (12 cartes présentées comme imposées, mélange au montage oublié). Corrigé après vérification à sa demande.
+3. **`sunglasses` recommandée sans vérifier le nombre d'articles.**
+
+**🔄 Cycle de reprise**
+- **`useRef`** : plus situé en fin de séance (« je ne sais même plus à quoi ça sert »), **revenu à la relecture de ses cours**. Noté 🟢 en S99 : compris en séance ≠ ancré, même après une reprise à N+1. **Reprise maintenue en S103, priorité haute.**
+- `NavLink` ≈ S103 · `state`, `<Outlet>`, `<Navigate replace>` ≈ S105 · **cycle Git PR** → rejoué sur Memory Card.
+
+**Rotation** : critère de nettoyage **sort**. Entrent : **`margin: auto` vertical (raison)** · **404 et spécificité des routes**. Restent : React Router Declarative (montage, `path`/`to`, `<Link>` vs `<button>`).
+
+**⏭️ Prochaine étape**
+1. **Memory Card, séance 1** : `Promise.all` sur les deux catégories de montres, grille de cartes avec chargement et erreur, CSS. Commits sur la branche.
+2. **Séance 2** : clic, score réel, meilleur score, mélange (au montage et au clic — le mélange aléatoire d'un tableau est **neuf**, cours court au moment venu). Puis PR et fusion en autonomie.
+3. **S103** : reprises `useRef` et `NavLink` en ouverture.
+4. Puis séance **coercion + hoisting**, puis **Next.js**.
+
+## Session 102 — Memory Card : `Promise.all` et récupération des montres
+
+**Durée** : ~2h30 (mercredi). Énergie bonne. **Séance écourtée en urgence, sans clôture** — entrée rédigée le lendemain.
+
+**🎹 Raccourci** : `Ctrl+Maj+L` — pas d'occasion, **reconduit**.
+
+---
+
+### ⚠️ Format de révision éclair — refusé par Frédéric, corrigé
+
+**Deux des trois questions posées étaient celles de la veille**, à l'identique. Relevé immédiatement (« pas normal »). Au-delà de la répétition, le fond du reproche porte sur le format : **des devinettes et des définitions, jamais de code**. Or ses trous sont au clavier, pas à l'oral — une révision sans code ne mesure rien.
+
+**Nouveau format proposé et accepté** (à intégrer au §6, point 1) : 2 à 3 items, **tous avec du code**, en trois formes — **écrire** (3 à 15 lignes à froid, résultat attendu donné), **déboguer** (code cassé fourni), **prédire** (dire ce que ça affiche). Un « pourquoi » ne se pose jamais seul, uniquement sur du code qu'il vient d'écrire ou de lire. **Une réponse juste formulée avec ses mots est une réponse juste.** Jamais la même question d'une séance à l'autre : reprendre une notion, c'est la même notion sur **un autre code**.
+
+**Points de révision malgré tout** : `<Link>` vs `<button>` 🟢 (**sort de rotation**) · spécificité des routes 🟡 (bonne réponse, explication hors sujet) · `margin: auto` vertical 🔴 sur la raison (2ᵉ fois) → règle donnée : la spécification calcule `margin: auto` vertical à zéro **en flux normal**, faute d'espace restant calculable ; flex et grid en fabriquent un. **Les deux sortent de rotation** (posées deux jours de suite, ce qui n'est plus de la rotation).
+
+---
+
+### 1. Deux exercices de typage ✅
+
+- **`Record<Marque, number>`** 🟢 juste du premier coup — **la dette `Record` (virgule vs union) tombe.**
+- **Interface `Verre` + signature** 🟢 : union de valeurs sur prop optionnelle, défaut dans la déstructuration, annotation sur ce qui **arrive**. Trois pièges passés d'un coup.
+
+---
+
+### 2. Memory Card — mise en place de la branche et du fetch
+
+Structure (branche, page, route, entrée d'accueil) posée la veille en 15 min ; le projet commence réellement ici.
+
+**Cours `Promise.all` demandé** (rappel + comparaison `await` / `.then`) : séquentiel vs parallèle, `fetch` lance et `await` attend, un tableau entre et un tableau sort dans le même ordre, deux passages (réponses puis `.json()`), `res.ok` + `throw` toujours nécessaires.
+
+**Trois questions de fond posées** :
+- *pourquoi les `fetch` sont-ils dans un tableau ?* → un seul argument, un conteneur pour un nombre variable de Promises.
+- *est-on obligé de déstructurer en deux `const` ?* → non, mais `const [resMontres] = ...` ne récupère que la position 0 et **perd la seconde réponse en silence**. Alternative : garder le tableau et travailler avec `some` / `map`.
+- *`throw new Error` et `e instanceof Error`* → cours complet donné : `throw` accepte n'importe quelle valeur, d'où `catch (e: unknown)` et le narrowing par `instanceof`. Question de suite (« faut-il stocker `const stockage = new Error` ? ») → confusion classe / instance levée : `instanceof` compare à la **classe**, pas à un objet.
+
+**✅ Écrit seul** : les deux `Promise.all`, déstructuration par position, `res.ok` sur les deux réponses, `instanceof` dans le `catch`, `finally`, fusion des deux listes par double spread dans **un seul** state, `useState<Montre[]>` typé, `interface Reponse` appliquée au résultat de `.json()` (annotation portée sur **ce qui arrive** 🟢).
+
+**Corrections** : `chargement` initialisé à `false` → flash de page vide avant le message de chargement (au montage, la page **est déjà** en train de charger) · `dataH["products"]` en crochets alors que la clé est écrite en dur (les crochets servent quand le nom est **dans une variable**) · `setErreur("")` inutile dans un effet qui ne tourne qu'une fois.
+
+**🌟 A trouvé `limit` seul dans la doc DummyJSON** après que j'aie recommandé `?limit=5` sans l'avoir vérifié. Capture de la page officielle à l'appui. Même réflexe que sur le nom de paquet React Router.
+
+**Question posée : intérêt de `git commit` sans `git push` ?** → cours donné (commit local, push publie). Contrainte deux machines rappelée : **push obligatoire avant de changer de poste**.
+
+**Niveaux** : `Promise.all` 🟢 · `instanceof` + `unknown` 🟡 (enseignés, plus donnés) · `throw new Error` 🟢 · annotation d'un résultat de `.json()` 🟢 · `Record` 🟢 (**dette soldée**) · union sur prop optionnelle 🟢 (confirmée) · état initial de chargement 🟡.
+
+**⚠️ Mes erreurs** :
+1. **Deux questions de révision éclair identiques à celles de la veille.**
+2. **Format de révision sans code**, qui ne mesure pas ce qui le fait échouer.
+3. **`?limit=5` recommandé sans vérification** — corrigé par sa capture de la doc.
+
+---
+
+## Session 103 — Reprises N+5 (`useRef`, `NavLink`, `.then`) + Memory Card : mélange et grille
+
+**Durée** : ~2h30 (jeudi). Énergie bonne.
+
+**🎹 Raccourci** : `Ctrl+Maj+L` — toujours pas d'occasion, **reconduit**.
+
+**Ressenti en ouverture** (demandé) : `useRef` « à réactiver de mémoire » · `NavLink` « plutôt bien en tête ».
+
+---
+
+### 1. Reprises — l'écart ressenti / mesuré, dans les deux sens
+
+**`useRef`, exercice complet en page blanche** (deux usages + champ contrôlé) : **code juste, mais 25 min pour 15 annoncées, avec recherche en mémoire.** Les deux 🔴 de la fois précédente corrigés seuls : **champ contrôlé** et **early return de validation** protégeant l'incrément. Reste 🟡 : le signal est l'**effort**, pas le résultat.
+Corrections : `useEffect(() => {}, [])` vide (réflexe de frappe) · **garde `if (myRef.current !== null)` englobant le comptage et le message**, qui ne dépendent pas de la ref → une garde protège **la seule instruction qui en a besoin**, d'où `myRef.current?.focus()` · `return setMessage(...)` mélangeant sortir et renvoyer.
+
+**`NavLink`, question courte** 🔴 — **et il le sentait acquis.** A reconstruit à la main avec `useLocation` ce que `NavLink` fait seul, avec un ternaire sur `location.pathname` (chaîne non vide, donc toujours vrai : les trois liens en gras partout). **La fonction dans `className` n'est pas ressortie**, 2ᵉ échec à froid. Réécriture après rappel : fonction juste sur les trois, mais **`end` posé sur les trois liens** — appliqué mécaniquement, pas par le raisonnement du préfixe. Repère donné : *quelle autre adresse commence par celle-ci ?* Si aucune, pas de `end`.
+
+**Révision éclair `.then`** 🔴 — **« je n'y arrive pas »**, jamais écrit lui-même, seulement lu. Cours complet donné : `.then` renvoie une nouvelle Promise, d'où le **`return res.json()`** obligatoire · correspondance terme à terme avec `await` · `throw` identique · `.catch` / `.finally` · piège du corps-bloc sans `return` (même famille que son `className` de `NavLink`). Réécrit ensuite. **Reste en rotation à sa demande — non ressorti seul.**
+
+**🎓 L'information de la séance** : le ressenti ne prédit pas la restitution, **dans les deux sens**. `useRef` annoncé flou est sorti juste ; `NavLink` annoncé solide était perdu. Le cycle de reprise a rattrapé trois notions qui auraient été perdues.
+
+---
+
+### 2. Memory Card — mélange et grille
+
+**Question posée : quel outil pour faire varier les positions ? `Math.random` avec la position ?** → non : tirer un index par carte produit doublons et oublis. C'est un **réordonnancement**, pas un tirage. Cours **Fisher-Yates** donné (parcours de la fin vers le début, échange avec un index tiré parmi les positions non encore fixées, `(i + 1)` pour inclure `i`, copie obligatoire sinon React ne voit pas le changement). Raccourci `sort(() => Math.random() - 0.5)` écarté et expliqué (distribution biaisée).
+
+**🎓 Question importante : « je ne sais même pas comment j'aurais pu la trouver seul »** → réponse : personne ne réinvente Fisher-Yates. Réflexe à installer : **quand une opération n'existe pas nativement sur un tableau, elle a un nom** — on cherche `javascript shuffle array`, puis on vérifie pourquoi l'implémentation retenue est la bonne.
+
+Deux questions de suite : faut-il repasser la boucle ? (non, chaque tour fixe définitivement une position) · remélange-t-on le tableau précédent au clic ? (oui, même fonction, avec `(prev) =>`).
+
+**✅ `melanger` écrite seule et juste** après le déroulé à la main. Placement corrigé : fonction **pure** → hors du composant.
+
+**Grille et cartes produites** : `<button>` (choix juste, la carte déclenche une action), `key` sur id stable, `alt` sur l'image, `gap`, dégradé, `hover`, mélange appliqué dès la réception des données.
+
+**🔴 Logique de score à reprendre en ouverture** : dans `onAjouter`, l'`id` est rangé dans la ref **avant** le test `some`, donc le score retombe à 0 à chaque clic. L'ordre (tester → compter → mémoriser) est le cœur du jeu. Non traité faute de temps.
+
+**Niveaux** : `useRef` 🟡 (juste, mais effort long) · portée d'une garde 🟡 (rechute) · champ contrôlé 🟢 · `NavLink` + fonction dans `className` 🔴 (2ᵉ échec à froid) · `end` 🔴 · `.then` 🔴 (donné) · Fisher-Yates 🟢 (écrit seul après cours) · fonction pure hors composant 🟡 · `<button>` vs `<Link>` 🟢.
+
+**🎓 Règle posée par Frédéric** : la présentation visuelle des exercices lui appartient — cadrer le **comportement**, pas l'habillage.
+
+**🔄 Cycle de reprise**
+- **`NavLink` + `end`** → reprise **rapprochée (N+2)**, priorité haute. Échec à froid avec ressenti d'acquis.
+- **`useRef`** → **N+5 ≈ S108**, toujours ouvert.
+- `.then` **reste en rotation**.
+- `state`, `<Outlet>`, `<Navigate replace>` ≈ S105 · cycle **Git PR** → à rejouer sur la fusion de la branche Memory Card.
+
+**🔄 Rotation** : **entre** — `.then` (fetch classique et `Promise.all`) · `NavLink` / `end`. **Sortent** — `<Link>` vs `<button>` · `margin: auto` vertical · spécificité des routes (posés deux jours de suite). Restent : React Router Declarative (montage, `path`/`to`).
+
+**⚠️ Mes erreurs** : aucune relevée par lui cette séance. Point d'attention maintenu : ne pas cadrer la présentation quand l'objet de l'exercice est le comportement.
+
+**⏭️ Prochaine étape**
+
+1. **Ouverture : `NavLink` + `end`** (N+2, ~10 min, sur un autre code).
+2. **Memory Card, fin du jeu** : ordre tester → compter → mémoriser dans `onAjouter`, remise à zéro de la mémoire des cartes cliquées, meilleur score conservé, message de victoire à 10. Puis **PR et fusion en autonomie** (reprise du cycle Git).
+3. Puis **Shopping Cart** (Odin), séance **coercion + hoisting**, puis **Next.js**.
+
+## Session 104 — Révisions `.then` + fin de Memory Card + Pull Request en autonomie
+
+**Durée** : ~2h30 (vendredi). Énergie bonne, séance prolongée à sa demande.
+
+**🎹 Raccourci** : `Ctrl+Maj+L` — **commence à servir**, reconduit.
+
+**Demande d'ouverture** : au moins une partie des révisions sur `.then`.
+
+---
+
+### 1. Révision éclair — **premier vrai test du nouveau format** (~1h, trop long)
+
+**Item 1 — Prédire (`.then`)** 🔴 : chaîne avec `res.json();` sans `return`. A répondu « affiche le titre, le catch est ignoré ». La console affiche **`échec`** : `data` vaut `undefined`, `data.title` lève une `TypeError`, que le `.catch` attrape. Piège reconnu et compris après coup.
+
+**Item 2 — Écrire (`.then`)** : a **demandé lui-même** un fetch simple avant la version `Promise.all` pour vérifier qu'il suivait. Bonne démarche, accordée.
+- **Fetch simple** 🟢 : `return res.json()` posé, `throw` dans le premier `.then`, `.catch` et `.finally` en fin de chaîne, corps-expression bien employés. `async` résiduel.
+- **Version `Promise.all`** 🟡 : la partie difficile est juste — **déstructuration dans le paramètre** `([resM, resV]) =>` et **`return Promise.all([...])`** pour enchaîner. A dérapé en fin de chaîne : `Promise.all(setArticles(...))`, réflexe « deux données donc `Promise.all` ». Repère donné : **on n'écrit `Promise.all` que quand on lance plusieurs opérations asynchrones à attendre** — ici les deux `fetch`, puis les deux `.json()`, et plus rien après.
+
+**Cours `instanceof Error` redonné** à sa demande (« pas encore clair ») : reconstruit depuis le problème (`throw` accepte n'importe quoi → `e: unknown` → TS interdit l'accès) et non depuis la syntaxe. Narrowing rattaché à `if (!client)`. Analogie marque / exemplaire pour la distinction classe / instance.
+
+**Item 3 — Déboguer (React)** 🔴 **trois erreurs, aucune repérée** : composant avec `setTotal(montures.length)` dans le corps.
+- **Setter dans le corps** non repéré → boucle infinie. Famille la plus récurrente du parcours.
+- **State vs donnée dérivée** non repéré : `total` se calcule depuis une prop, il ne se stocke pas. Le réflexe « déplacer dans un `useEffect` » aurait aussi été faux.
+- **🔴 Régression introduite** : a modifié la signature correcte `{ montures }: { montures: Monture[] }` en `{ montures }: Monture[]`. **4ᵉ occurrence** de l'annotation portée sur ce qui est extrait au lieu de ce qui arrive.
+
+---
+
+### 2. Reprise `NavLink` + `end` (N+2) 🟡
+
+**Progrès réel** : la **fonction** dans `className` est ressortie **seule** (🔴 deux jours avant), déstructuration juste, `end` non posé partout.
+
+**🔴 Le `end` reste faux** : posé sur le lien de section (`/mon-compte/commandes`), ce qui l'éteint dès qu'on ouvre `/mon-compte/commandes/42`. Les deux tests de l'énoncé échouaient. A aussi écrit un 4ᵉ lien avec `:id` dans un `to` (motif réservé au `path`).
+
+**Objection fondée de sa part** : « pas compris, 2 et 3 sont presque identiques ». Juste — la différence n'est pas dans l'adresse. **Reformulation qui est passée** : ce lien désigne-t-il **une page** ou **une section** ? Page → `end` (il doit s'éteindre quand on descend plus profond) · section → pas de `end` (il doit rester allumé). Tableau des trois URL donné à l'appui.
+Réécriture non faite, séance basculée sur Memory Card à sa demande (1h déjà consommée en révisions).
+
+---
+
+### 3. Memory Card — jeu terminé et fusionné ✅
+
+**`onAjouter` restructuré seul** : le test `some` remonté **avant** la mémorisation (le bug qui remettait le score à zéro à chaque clic), puis **early return** séparant les deux branches — perdre (score 0, mémoire vidée) ou marquer (score, record, mémorisation). `setBest(best)` inutile supprimé, `(prev) =>` posé sur le mélange.
+
+**Fin de partie écrite seule** : ternaire grille / écran de victoire, bouton Rejouer remettant score, mémoire et mélange à zéro, `best` préservé.
+
+**Corrections** : le `10` en dur → `score === dataMontre.length` (nombre magique, casse si `limit` change) · classes Tailwind inexistantes (`from`, `to`, `blue-100`) → **repère permanent réappliqué : une classe mal orthographiée ne produit ni erreur ni warning** · handler de 3 instructions dans le JSX → fonction nommée.
+
+**🌟 Deux désaccords exprimés, tous deux fondés** :
+1. **`some` vs `includes`** — sa version est correcte et lisible, `includes` n'était qu'une préférence. Retiré.
+2. **`dataH["products"]`** — syntaxe valide, plus lisible pour lui dans cet exercice. Retiré. *(Règle S100 réappliquée : ne pas imposer de convention hors de l'objet de l'exercice.)*
+
+**⚠️ Mon erreur, relevée par lui** : j'ai présenté son `useRef` des cartes cliquées comme un mauvais choix (« c'est fragile ») alors qu'il **avait appliqué le critère correctement** — la liste n'apparaît pas à l'écran, donc ref. C'était une remarque d'anticipation (le jour où on voudra l'afficher), formulée comme une correction. Retirée.
+
+### 4. Pull Request et fusion — **en autonomie** 🟢
+
+Cycle complet refait seul, sans consigne : 5 commits sur la branche, PR avec message descriptif, fusion dans `main`, suppression de la branche distante. **Le cycle Git PR passe de 🟡 à 🟢** (1 passage guidé S101 + 1 autonome).
+**📌 Noté** : `projet-examen-blanc` est sur `main`, `projet-vite-local` sur `master`.
+
+---
+
+### 5. Tour des dettes — demandé en fin de séance
+
+Registre relu (fichier, pas de mémoire). **Quatre entrées déjà périmées** : `children`, `useRef`, `<table>`, **Git branches + PR** — les séances 3 et 5 du plan de remboursement sont faites.
+
+**Top 5 établi** : 1. coercion + hoisting · 2. event loop · 3. debugger (coût nul, à imposer au prochain vrai bug) · 4. dark mode sémantique en React (réveille `@theme` + `localStorage` JS pur) · 5. `@keyframes`, **qui a enfin un support : le retournement de carte de Memory Card**.
+
+**Comparaison demandée avec le sommaire Grafikart React** (page officielle récupérée, 33 chapitres) : chapitre 1 intégralement acquis, React Router acquis et plus complet que sa vidéo. **Cinq des sept manques restants figuraient déjà au registre** — la liste le confirme, elle ne révèle rien de caché. À ajouter : **portails** et **ErrorBoundary** (🟠 ⚡). **Render props = motif déjà pratiqué** (`NavLink`, `children` en fonction), seul le nom manque. Chapitre 4 (Framer Motion, react-query, Zustand) = écosystème, pas du React, et la roadmap fait autrement.
+Point relevé : le seul chapitre « bonnes pratiques » de Grafikart porte sur **muter l'état dans un `useEffect`**, soit exactement l'erreur non repérée à l'item 3.
+
+---
+
+**Niveaux** : `.then` fetch simple 🟢 · `.then` + `Promise.all` 🟡 · `instanceof` / `unknown` 🟢 (2ᵉ cours, appliqué) · setter dans le corps 🔴 · state vs donnée dérivée 🔴 · annotation d'un paramètre déstructuré 🔴 (4ᵉ) · `NavLink` fonction 🟢 / `end` 🔴 · early return dans un handler 🟢 · nombre magique 🟡 · classe Tailwind inexistante 🟡 · cycle Git PR 🟢.
+
+**⚠️ Mes erreurs**
+1. **Correction infondée sur son `useRef`** — critère correctement appliqué de sa part, présenté comme une faiblesse.
+2. **Deux corrections de préférence présentées comme des corrections** (`includes`, notation en crochets).
+3. **Bloc de révision trop long** : 1h sur 2h30, alors que le format vise 15 min. Le nouveau format est bon, le **volume** ne l'est pas — 3 items dont un cours complet, c'est une séance, pas une ouverture.
+
+**🔄 Cycle de reprise**
+- **`NavLink` / `end`** → reprise **maintenue**, réécriture non faite. Le mécanisme est acquis, le critère `end` non.
+- **Setter dans le corps + donnée dérivée + annotation déstructurée** → 🔴 à rejouer ensemble, même famille.
+- `useRef` ≈ S108 · `state`, `<Outlet>`, `<Navigate replace>` ≈ S105.
+
+**🔄 Rotation** : `.then` **reste** (juste après rappel, pas à froid). Restent : `NavLink`/`end` · React Router Declarative (montage, `path`/`to`).
+
+**🗑️ À corriger au registre** : `children`, `useRef`, `<table>`, **Git branches + PR** soldées · `unknown`/`instanceof` soldée · ajouter **portails** et **ErrorBoundary**.
+
+**⏭️ Prochaine étape**
+
+1. **Consolidation avant Next.js** — c'est un très gros morceau, on ne l'ouvre pas sur une base tiède. Reprises `NavLink`/`end` et la famille setter / donnée dérivée / annotation.
+2. **Top 5 des dettes** à traiter au fil des prochaines séances, en commençant par **coercion + hoisting**.
+3. Puis **Next.js** : séance longue et fraîche (week-end ou midi).
+
+## Session 105 — Reprises React Router + coercion, hoisting, `var` + Debugger Chrome
+
+**Durée** : ~2h30 en deux blocs (dimanche 1h30, lundi 1h). Énergie bonne.
+
+**🎹 Raccourci** : `Ctrl+Maj+L` — reconduit.
+
+---
+
+### Révision éclair (2 items, format code)
+
+- **Prédire `.then`** 🟢 : ordre et `.catch` ignoré justes. Précision : la valeur affichée est celle **retournée** par le `.then` précédent (`19.98`, pas le prix).
+- **Écrire le montage React Router** 🟢 : structure juste. `path` fixe au lieu de paramétré — **pas une rechute selon Frédéric, consigne floue** (deux fichiers demandés sans nécessité). **Montage / `path` / `to` sortent de rotation à sa demande**, retour bien plus tard.
+
+---
+
+### 1. Reprises
+
+- **`NavLink` + `end`** 🟢 : fonction dans `className` sortie seule (2ᵉ fois), `end` posé sur le seul lien qui en a besoin, absent là où il serait inutile. **Redressé après deux échecs à froid.**
+- **Famille setter / donnée dérivée / annotation** 🟢 à l'**écriture** (composant `ResumePanier`) : annotation sur ce qui arrive, setter dans un handler, total et longueur dérivés. Restent : `(prev) =>` non déclenché 🟡 · paramètre de fonction inutile 🟡. **Le format débogage (échec S104) reste à remesurer.**
+- **`state` / `<Outlet>` / `<Navigate replace>` (N+5)** — exercice SAV en page blanche : layout + `<Outlet>` + `index` 🟢 · `<Navigate replace>` après les hooks 🟢 · circuit `state` 🟢 · `state` transportant une phrase au lieu d'une donnée brute 🟡 · chemin enfant absolu 🟡. Garde `?.` oubliée : **oubli, pas rechute**. Ressenti « moyen » en ouverture : bien calibré.
+
+### 2. Coercion — dette n°1 du registre, enseignée
+
+1ʳᵉ série 5/8, 2ᵉ série sur autre code 4/5. `+` et l'ordre de lecture 🟢 · `Number("")` = 0 🟢 · `Boolean()` renvoie toujours un booléen 🟢 · `==` vs `===` 🟢 · chaînes truthy (`"0"`, `" "`) 🟡.
+
+### 3. Hoisting + `var`
+
+Déclaration de fonction vs `const` fléchée 🟢 · `let`/`const` et TDZ 🟢 · **`var` : difficulté réelle signalée par lui** → cours complet (portée fonction, redéclaration, boucle + `setTimeout`). 🟢 après explication.
+
+### 4. Debugger Chrome — pratiqué pour la première fois
+
+Guidé sur la boucle `var` / `let` : points d'arrêt, F8, Scope, Closure, Call Stack, `debugger;`. Survol, console en pause, Watch vus. 🟡 (un passage). **À entretenir et refaire ensemble au prochain vrai bug.**
+
+---
+
+**🎓 Règle posée par Frédéric** : **des encouragements quand un point est réussi.** Il en avait avant, c'était motivant. Le « couper les félicitations » du §1 visait les récapitulatifs longs, pas ça.
+
+**🎓 Décisions** : **Next.js repoussé** (pas prêt) · **Shopping Cart Odin avant** · **React Developer Tools à installer avant Shopping Cart**.
+
+**Registre** : **coercion + hoisting soldée** (enseignée) · **Debugger soldé** (pratiqué) · **ajout `trim()`** (non urgent, à recroiser au prochain formulaire). Top restant : event loop · dark mode sémantique React · `@keyframes` (retournement de carte Memory Card).
+
+**⚠️ Mes erreurs** : consigne du montage floue (livrable en deux fichiers inutile) · `path` fixe qualifié de rechute alors que la consigne était en cause.
+
+**🗑️ Instruction à ajuster** : §1 « Couper : les félicitations détaillées » → préciser que les encouragements sur un point réussi restent attendus.
+
+**🔄 Cycle de reprise** : `NavLink` / `end` → N+5 ≈ S110 · `state` / `<Outlet>` / `<Navigate replace>` → cycle fermé (donnée brute à surveiller) · `useRef` ≈ S108 · **coercion + hoisting → N+2 ≈ S107**.
+
+**🔄 Rotation** : **sortent** — montage, `path` / `to`, `NavLink` / `end` (priorité haute levée). **Entrent** — chaînes truthy · `var`. **Reste** — `.then` en écriture (`Promise.all`).
+
+**⏭️ Prochaine étape**
+
+1. Ouverture : reprise coercion / hoisting (N+2) + famille setter / donnée dérivée **en format débogage**.
+2. Installer React Developer Tools.
+3. **Shopping Cart (The Odin Project)** — énoncé à vérifier sur theodinproject.com avant de cadrer. Sur branche, PR en fin de projet.
+4. Puis **Next.js**, quand tu te sentiras prêt.
