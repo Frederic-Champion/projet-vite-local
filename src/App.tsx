@@ -18,6 +18,7 @@ import { FicheOrdonnance } from "./components-exercices/Exercice-children-TS-tab
 import ExerciceUseRef from "./components-exercices/Exercice-useRef";
 import { FicheClients3, ListeClients3, LayoutClients } from "./components-exercices/ExerciceNavigation";
 import { Affichage, ListeMonturesExo, FicheMontureExo } from "./components-exercices/Exercice-Outlet-UseParams";
+import { ListeFavoris, LayoutFavoris } from "./components-exercices/Exercice-useOutletContext";
 
 function App() {
   // return <Brouillon2 />;
@@ -70,6 +71,9 @@ function App() {
           <Route path="/exercice-outlet" element={<Affichage />}>
             <Route index element={<ListeMonturesExo />} />
             <Route path="fiche-monture/:id" element={<FicheMontureExo />} />
+          </Route>
+          <Route path="use-outlet-context" element={<LayoutFavoris />}>
+            <Route index element={<ListeFavoris />} />
           </Route>
         </Routes>
       </main>
