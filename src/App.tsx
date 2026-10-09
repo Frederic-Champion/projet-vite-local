@@ -2,7 +2,7 @@ import Accueil from "./components-exercices/Accueil";
 import { PageIntrouvable } from "./components-exercices/Accueil";
 import { House, Undo2 } from "lucide-react";
 import { Route, Routes, Link, useNavigate, useLocation } from "react-router";
-import Brouillon2 from "./components-exercices/Brouillon-TSX";
+import { Brouillon2 } from "./components-exercices/Brouillon-TSX";
 import ExerciceFetchSearch from "./components-exercices/Exercice-fetch-search";
 import ExercicePropsTableauType from "./components-exercices/exercice Props-TableauType";
 import ExercicePageDevis from "./components-exercices/Exercice-FonctionProps";
@@ -19,6 +19,8 @@ import ExerciceUseRef from "./components-exercices/Exercice-useRef";
 import { FicheClients3, ListeClients3, LayoutClients } from "./components-exercices/ExerciceNavigation";
 import { Affichage, ListeMonturesExo, FicheMontureExo } from "./components-exercices/Exercice-Outlet-UseParams";
 import { ListeFavoris, LayoutFavoris } from "./components-exercices/Exercice-useOutletContext";
+import { ExerciceUseContext } from "./components-exercices/Exercice-createContext-useContext";
+import { BoutonTheme } from "./contexts/ThemeContext";
 
 function App() {
   // return <Brouillon2 />;
@@ -41,6 +43,7 @@ function App() {
             <Undo2 size={20} />
           </button>
         )}
+        <BoutonTheme />
       </nav>
       <main className="p-4">
         <Routes>
@@ -75,6 +78,7 @@ function App() {
           <Route path="use-outlet-context" element={<LayoutFavoris />}>
             <Route index element={<ListeFavoris />} />
           </Route>
+          <Route path="/use-context" element={<ExerciceUseContext />} />
         </Routes>
       </main>
     </div>

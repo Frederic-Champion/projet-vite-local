@@ -1,9 +1,5 @@
-
-export default function Brouillon2() {
+export function Brouillon2() {
   return (
-    <div>
-      Brouillon
-    </div>
-  );
+    <div> Brouillon </div>
+  )
 }
-

@@ -635,7 +635,7 @@ Circuit réparé dans `projet-examen-blanc` (`Catalogue`) : copie dans `useState
 
 **🎓 Règle métier posée par Frédéric** : une addition à 0 n'existe pas en optique (minimum 0,75). Donc 0 ou absent → pas de ligne. Mon `!== undefined` était faux pour ce cas. Point technique qui reste : `addition && …` afficherait le chiffre `0` → forme retenue : `addition ? (…) : null`.
 
-**📌 Point ouvert** : survol de `sphere` dans le `.map()` non fait. Probable `any` (`Object.entries` sur une `interface` sans signature d'index) et `oeil` typé `string` — *non vérifié*. Bon support pour un exercice de typage.
+**📌 Point ouvert** : survol de `sphere` dans le `.map()` non fait. Probable `any` (`Object.entries` sur une `interface` sans signature d'index) et `oeil` typé `string` — _non vérifié_. Bon support pour un exercice de typage.
 
 **Niveaux** : `children` 🟢 (page blanche réussie) · critère props de données / `children` 🟢 · `<table>` sémantique 🟢 · modélisation objet vs liste 🟢 · déstructuration de tableau 🟡 · union sur prop optionnelle 🔴 · `scope` 🟡. **Exercice réussi au prix d'un effort long : fragile côté TS.**
 
@@ -661,6 +661,7 @@ Circuit réparé dans `projet-examen-blanc` (`Catalogue`) : copie dans `useState
 **Durée** : ~1h (samedi). Énergie bonne. Créneau court annoncé, séance coupée en fin de parcours par un client.
 
 **Révision éclair (`useParams` — route paramétrée)** 🔴 : trois points sur quatre manqués.
+
 - **Origine du nom inversée** : annoncé comme inventé dans le composant, repris ensuite dans `App`. C'est l'inverse — le nom naît dans le `path`, une seule fois, et devient ensuite une clé d'objet lue à l'identique. **Même point que la révision de sortie S90, non corrigé depuis.**
 - `useParams` **sans parenthèses** dans la ligne écrite (déstructure la fonction, pas son résultat) + clé inventée (`eclair`) absente de l'objet.
 - Type donné `string`, sans `| undefined` — c'est la moitié qui oblige à la garde.
@@ -714,6 +715,7 @@ Terrain neuf (`Brouillon.tsx`), notions déjà vues uniquement. Deux composants 
 **Niveaux** : `interface` ouverte vs `type` fermé 🟡 (question reposée après la 1ʳᵉ explication) · `Partial<Record<...>>` 🔴 (**non produit, donné**) · repère `type` pour boucler sur les clés 🟡 · `useParams` — origine du nom dans le `path` 🔴 (récurrence S90) · `useParams()` vs `useParams` 🔴 · `string | undefined` 🟡 · union sur prop optionnelle 🔴 (3ᵉ occurrence) · prop optionnelle + défaut 🟡 (rechute sur terrain neuf) · `.map()` + `key` 🟢.
 
 **⚠️ Mes erreurs** :
+
 1. **Exercice posé sur un assemblage vu une seule fois** — combinaison d'utility types demandée en page blanche. Récurrence du §9 (exercice sur mécanisme insuffisamment enseigné).
 2. **Erreur rouge annoncée comme certaine, inexistante** — hypothèse non vérifiée présentée comme un fait. Récurrence de la règle « qualifier la source ».
 3. **Raccourci `Ctrl+Maj+\` posé en S93 sur un besoin auquel il ne répond pas** (circulation dans du JSX).
@@ -810,6 +812,7 @@ Terrain neuf (`ExerciceUseRefBis`), les deux usages + champ contrôlé.
 **🔄 Rotation** : **`NavLink` + `end` passe en priorité haute** (🔴 à froid). Toujours dedans : React Router Declarative (8 autres points) · `setInterval`/`clearInterval`. **Sortis** : `useParams` + correspondance `path` (🟢 seul) · union de valeurs sur prop optionnelle (dette soldée).
 
 **⚠️ Mes erreurs** :
+
 1. **Consigne chiffrant les types à produire** (« deux composants et une interface ») — a induit une modélisation fausse. 4ᵉ occurrence consignes.
 2. **Énoncé d'exercice n'imposant pas la notion visée** — relevé par lui avant de commencer.
 3. **Question de révision éclair incomplète** (piège du préfixe sans les URL).
@@ -843,6 +846,7 @@ Point secondaire : `className` attend une **chaîne** → ternaire avec `""`, pa
 ### 2. Page blanche `useRef` — reprise N+1 ✅
 
 Réécrite entièrement. **Les deux 🔴 de la veille corrigés seuls** :
+
 - **champ contrôlé** (`value` + `onChange`), vidage par `setChamp("")` et focus par la ref — la frontière s'est déclenchée au clavier, pas seulement à l'oral ;
 - **early return de validation** dans le handler, avec le `return` qui protège l'incrément.
 
@@ -927,12 +931,14 @@ Section montures avec layout + `<Outlet>` + `index` + `useParams` + `find` + `<N
 **Niveaux** : `<Outlet>` 🟢 (**« très flou » en ouverture, produit en page blanche 1h plus tard**) · `<Navigate replace>` 🟢 (`replace` oublié deux fois au 1er jet) · `<Navigate>` vs `useNavigate` 🟢 · circuit `state` + donnée brute 🟢 · copie du `state` + effacement temporisé 🟢 · critère de nettoyage 🟡 · `setInterval` / `clearInterval` 🟢 · conversions 🟢 · déstructuration de tableau 🟢.
 
 **🎓 Règles posées par Frédéric**
+
 - **Nommage libre dans les exercices.** Claude peut proposer une convention quand elle apporte quelque chose, mais ne renomme pas ce qu'il a choisi. Les conventions strictes valent pour un projet sérieux.
 - **Ne pas exiger ce qui n'est pas l'objet de l'exercice** (ex. : interface sur un tableau en dur dans un exercice de routage).
 - Un simple oubli reconnu comme tel n'a pas à être consigné.
 
 **⚠️ Mes erreurs**
-1. **Affirmé de mémoire que `state` ne survit pas au F5 — faux**, contredit par son écran. Règle corrigée : `state` survit au Précédent/Suivant **et au F5 dans le même onglet** (entrée d'historique conservée) ; pas au lien partagé ni au nouvel onglet. *Source : observation + reconstruction MDN `History.pushState()`, non vérifiée dans la doc.*
+
+1. **Affirmé de mémoire que `state` ne survit pas au F5 — faux**, contredit par son écran. Règle corrigée : `state` survit au Précédent/Suivant **et au F5 dans le même onglet** (entrée d'historique conservée) ; pas au lien partagé ni au nouvel onglet. _Source : observation + reconstruction MDN `History.pushState()`, non vérifiée dans la doc._
 2. Corrections de nommage insistantes sur des exercices.
 
 **🗑️ Instruction obsolète** : §7 React Router, ligne `state` — « survit au retour arrière, pas au rechargement » est **faux** (même erreur dans les entrées S91 et S93).
@@ -943,6 +949,7 @@ Section montures avec layout + `<Outlet>` + `index` + `useParams` + `find` + `<N
 **Rotation** : `setInterval` / `clearInterval` **sort**. Restent : critère de nettoyage (à énoncer) · React Router Declarative (points non rejoués : montage, `path`/`to`, `<Link>` vs `<button>`, 404).
 
 **⏭️ Prochaine étape**
+
 1. **Git branches + Pull Request** — séance dédiée, longue et fraîche.
 2. Puis **Next.js**.
 3. En ouverture des prochaines séances : reprises `useRef` et `NavLink` (≈ S103), `location.pathname` + nettoyage du `state`.
@@ -977,7 +984,7 @@ Sur l'exercice montures (`ListeMonturesExo`). Second effet séparé, garde sur `
 
 **⚠️ Premier passage raté de ma part** : principe en quelques lignes puis liste de commandes sans explication. **Arrêt de Frédéric** (« tu me dis de taper du code sans expliquer ce que ça fait »). Repris depuis zéro : commit = photo, `main` = suite de photos, branche = deuxième suite, lecture d'une commande Git morceau par morceau, **une étape à la fois avec son pourquoi**. Ce format a fonctionné jusqu'au bout.
 
-**Cycle complet fait en guidé sur `projet-vite-local`** : branche → commit → publication → PR → relecture (commentaire *Pending* puis *Submit review*) → fusion → suppression de la branche (GitHub puis locale) → pull sur `master`.
+**Cycle complet fait en guidé sur `projet-vite-local`** : branche → commit → publication → PR → relecture (commentaire _Pending_ puis _Submit review_) → fusion → suppression de la branche (GitHub puis locale) → pull sur `master`.
 
 **Reformulation juste de sa part** : un fichier créé sur une branche n'existe pas sur la branche principale, et on peut abandonner l'essai. Nuances données : une branche ne copie rien (historique partagé) ; pas de retour en arrière nécessaire, `master` n'a jamais bougé.
 
@@ -1009,17 +1016,20 @@ Sur l'exercice montures (`ListeMonturesExo`). Second effet séparé, garde sur `
 ---
 
 **⚠️ Mes erreurs**
+
 1. **Git : commandes données sans expliquer ce qu'elles font** — arrêt net. Correctif : pour un outil entièrement neuf, le modèle mental d'abord, puis **une commande à la fois avec son pourquoi**.
 2. **Énoncé Memory Card donné de mémoire avec des écarts** (12 cartes présentées comme imposées, mélange au montage oublié). Corrigé après vérification à sa demande.
 3. **`sunglasses` recommandée sans vérifier le nombre d'articles.**
 
 **🔄 Cycle de reprise**
+
 - **`useRef`** : plus situé en fin de séance (« je ne sais même plus à quoi ça sert »), **revenu à la relecture de ses cours**. Noté 🟢 en S99 : compris en séance ≠ ancré, même après une reprise à N+1. **Reprise maintenue en S103, priorité haute.**
 - `NavLink` ≈ S103 · `state`, `<Outlet>`, `<Navigate replace>` ≈ S105 · **cycle Git PR** → rejoué sur Memory Card.
 
 **Rotation** : critère de nettoyage **sort**. Entrent : **`margin: auto` vertical (raison)** · **404 et spécificité des routes**. Restent : React Router Declarative (montage, `path`/`to`, `<Link>` vs `<button>`).
 
 **⏭️ Prochaine étape**
+
 1. **Memory Card, séance 1** : `Promise.all` sur les deux catégories de montres, grille de cartes avec chargement et erreur, CSS. Commits sur la branche.
 2. **Séance 2** : clic, score réel, meilleur score, mélange (au montage et au clic — le mélange aléatoire d'un tableau est **neuf**, cours court au moment venu). Puis PR et fusion en autonomie.
 3. **S103** : reprises `useRef` et `NavLink` en ouverture.
@@ -1057,9 +1067,10 @@ Structure (branche, page, route, entrée d'accueil) posée la veille en 15 min ;
 **Cours `Promise.all` demandé** (rappel + comparaison `await` / `.then`) : séquentiel vs parallèle, `fetch` lance et `await` attend, un tableau entre et un tableau sort dans le même ordre, deux passages (réponses puis `.json()`), `res.ok` + `throw` toujours nécessaires.
 
 **Trois questions de fond posées** :
-- *pourquoi les `fetch` sont-ils dans un tableau ?* → un seul argument, un conteneur pour un nombre variable de Promises.
-- *est-on obligé de déstructurer en deux `const` ?* → non, mais `const [resMontres] = ...` ne récupère que la position 0 et **perd la seconde réponse en silence**. Alternative : garder le tableau et travailler avec `some` / `map`.
-- *`throw new Error` et `e instanceof Error`* → cours complet donné : `throw` accepte n'importe quelle valeur, d'où `catch (e: unknown)` et le narrowing par `instanceof`. Question de suite (« faut-il stocker `const stockage = new Error` ? ») → confusion classe / instance levée : `instanceof` compare à la **classe**, pas à un objet.
+
+- _pourquoi les `fetch` sont-ils dans un tableau ?_ → un seul argument, un conteneur pour un nombre variable de Promises.
+- _est-on obligé de déstructurer en deux `const` ?_ → non, mais `const [resMontres] = ...` ne récupère que la position 0 et **perd la seconde réponse en silence**. Alternative : garder le tableau et travailler avec `some` / `map`.
+- _`throw new Error` et `e instanceof Error`_ → cours complet donné : `throw` accepte n'importe quelle valeur, d'où `catch (e: unknown)` et le narrowing par `instanceof`. Question de suite (« faut-il stocker `const stockage = new Error` ? ») → confusion classe / instance levée : `instanceof` compare à la **classe**, pas à un objet.
 
 **✅ Écrit seul** : les deux `Promise.all`, déstructuration par position, `res.ok` sur les deux réponses, `instanceof` dans le `catch`, `finally`, fusion des deux listes par double spread dans **un seul** state, `useState<Montre[]>` typé, `interface Reponse` appliquée au résultat de `.json()` (annotation portée sur **ce qui arrive** 🟢).
 
@@ -1072,6 +1083,7 @@ Structure (branche, page, route, entrée d'accueil) posée la veille en 15 min ;
 **Niveaux** : `Promise.all` 🟢 · `instanceof` + `unknown` 🟡 (enseignés, plus donnés) · `throw new Error` 🟢 · annotation d'un résultat de `.json()` 🟢 · `Record` 🟢 (**dette soldée**) · union sur prop optionnelle 🟢 (confirmée) · état initial de chargement 🟡.
 
 **⚠️ Mes erreurs** :
+
 1. **Deux questions de révision éclair identiques à celles de la veille.**
 2. **Format de révision sans code**, qui ne mesure pas ce qui le fait échouer.
 3. **`?limit=5` recommandé sans vérification** — corrigé par sa capture de la doc.
@@ -1093,7 +1105,7 @@ Structure (branche, page, route, entrée d'accueil) posée la veille en 15 min ;
 **`useRef`, exercice complet en page blanche** (deux usages + champ contrôlé) : **code juste, mais 25 min pour 15 annoncées, avec recherche en mémoire.** Les deux 🔴 de la fois précédente corrigés seuls : **champ contrôlé** et **early return de validation** protégeant l'incrément. Reste 🟡 : le signal est l'**effort**, pas le résultat.
 Corrections : `useEffect(() => {}, [])` vide (réflexe de frappe) · **garde `if (myRef.current !== null)` englobant le comptage et le message**, qui ne dépendent pas de la ref → une garde protège **la seule instruction qui en a besoin**, d'où `myRef.current?.focus()` · `return setMessage(...)` mélangeant sortir et renvoyer.
 
-**`NavLink`, question courte** 🔴 — **et il le sentait acquis.** A reconstruit à la main avec `useLocation` ce que `NavLink` fait seul, avec un ternaire sur `location.pathname` (chaîne non vide, donc toujours vrai : les trois liens en gras partout). **La fonction dans `className` n'est pas ressortie**, 2ᵉ échec à froid. Réécriture après rappel : fonction juste sur les trois, mais **`end` posé sur les trois liens** — appliqué mécaniquement, pas par le raisonnement du préfixe. Repère donné : *quelle autre adresse commence par celle-ci ?* Si aucune, pas de `end`.
+**`NavLink`, question courte** 🔴 — **et il le sentait acquis.** A reconstruit à la main avec `useLocation` ce que `NavLink` fait seul, avec un ternaire sur `location.pathname` (chaîne non vide, donc toujours vrai : les trois liens en gras partout). **La fonction dans `className` n'est pas ressortie**, 2ᵉ échec à froid. Réécriture après rappel : fonction juste sur les trois, mais **`end` posé sur les trois liens** — appliqué mécaniquement, pas par le raisonnement du préfixe. Repère donné : _quelle autre adresse commence par celle-ci ?_ Si aucune, pas de `end`.
 
 **Révision éclair `.then`** 🔴 — **« je n'y arrive pas »**, jamais écrit lui-même, seulement lu. Cours complet donné : `.then` renvoie une nouvelle Promise, d'où le **`return res.json()`** obligatoire · correspondance terme à terme avec `await` · `throw` identique · `.catch` / `.finally` · piège du corps-bloc sans `return` (même famille que son `className` de `NavLink`). Réécrit ensuite. **Reste en rotation à sa demande — non ressorti seul.**
 
@@ -1120,6 +1132,7 @@ Deux questions de suite : faut-il repasser la boucle ? (non, chaque tour fixe d�
 **🎓 Règle posée par Frédéric** : la présentation visuelle des exercices lui appartient — cadrer le **comportement**, pas l'habillage.
 
 **🔄 Cycle de reprise**
+
 - **`NavLink` + `end`** → reprise **rapprochée (N+2)**, priorité haute. Échec à froid avec ressenti d'acquis.
 - **`useRef`** → **N+5 ≈ S108**, toujours ouvert.
 - `.then` **reste en rotation**.
@@ -1150,12 +1163,14 @@ Deux questions de suite : faut-il repasser la boucle ? (non, chaque tour fixe d�
 **Item 1 — Prédire (`.then`)** 🔴 : chaîne avec `res.json();` sans `return`. A répondu « affiche le titre, le catch est ignoré ». La console affiche **`échec`** : `data` vaut `undefined`, `data.title` lève une `TypeError`, que le `.catch` attrape. Piège reconnu et compris après coup.
 
 **Item 2 — Écrire (`.then`)** : a **demandé lui-même** un fetch simple avant la version `Promise.all` pour vérifier qu'il suivait. Bonne démarche, accordée.
+
 - **Fetch simple** 🟢 : `return res.json()` posé, `throw` dans le premier `.then`, `.catch` et `.finally` en fin de chaîne, corps-expression bien employés. `async` résiduel.
 - **Version `Promise.all`** 🟡 : la partie difficile est juste — **déstructuration dans le paramètre** `([resM, resV]) =>` et **`return Promise.all([...])`** pour enchaîner. A dérapé en fin de chaîne : `Promise.all(setArticles(...))`, réflexe « deux données donc `Promise.all` ». Repère donné : **on n'écrit `Promise.all` que quand on lance plusieurs opérations asynchrones à attendre** — ici les deux `fetch`, puis les deux `.json()`, et plus rien après.
 
 **Cours `instanceof Error` redonné** à sa demande (« pas encore clair ») : reconstruit depuis le problème (`throw` accepte n'importe quoi → `e: unknown` → TS interdit l'accès) et non depuis la syntaxe. Narrowing rattaché à `if (!client)`. Analogie marque / exemplaire pour la distinction classe / instance.
 
 **Item 3 — Déboguer (React)** 🔴 **trois erreurs, aucune repérée** : composant avec `setTotal(montures.length)` dans le corps.
+
 - **Setter dans le corps** non repéré → boucle infinie. Famille la plus récurrente du parcours.
 - **State vs donnée dérivée** non repéré : `total` se calcule depuis une prop, il ne se stocke pas. Le réflexe « déplacer dans un `useEffect` » aurait aussi été faux.
 - **🔴 Régression introduite** : a modifié la signature correcte `{ montures }: { montures: Monture[] }` en `{ montures }: Monture[]`. **4ᵉ occurrence** de l'annotation portée sur ce qui est extrait au lieu de ce qui arrive.
@@ -1182,8 +1197,9 @@ Réécriture non faite, séance basculée sur Memory Card à sa demande (1h déj
 **Corrections** : le `10` en dur → `score === dataMontre.length` (nombre magique, casse si `limit` change) · classes Tailwind inexistantes (`from`, `to`, `blue-100`) → **repère permanent réappliqué : une classe mal orthographiée ne produit ni erreur ni warning** · handler de 3 instructions dans le JSX → fonction nommée.
 
 **🌟 Deux désaccords exprimés, tous deux fondés** :
+
 1. **`some` vs `includes`** — sa version est correcte et lisible, `includes` n'était qu'une préférence. Retiré.
-2. **`dataH["products"]`** — syntaxe valide, plus lisible pour lui dans cet exercice. Retiré. *(Règle S100 réappliquée : ne pas imposer de convention hors de l'objet de l'exercice.)*
+2. **`dataH["products"]`** — syntaxe valide, plus lisible pour lui dans cet exercice. Retiré. _(Règle S100 réappliquée : ne pas imposer de convention hors de l'objet de l'exercice.)_
 
 **⚠️ Mon erreur, relevée par lui** : j'ai présenté son `useRef` des cartes cliquées comme un mauvais choix (« c'est fragile ») alors qu'il **avait appliqué le critère correctement** — la liste n'apparaît pas à l'écran, donc ref. C'était une remarque d'anticipation (le jour où on voudra l'afficher), formulée comme une correction. Retirée.
 
@@ -1208,11 +1224,13 @@ Point relevé : le seul chapitre « bonnes pratiques » de Grafikart porte sur *
 **Niveaux** : `.then` fetch simple 🟢 · `.then` + `Promise.all` 🟡 · `instanceof` / `unknown` 🟢 (2ᵉ cours, appliqué) · setter dans le corps 🔴 · state vs donnée dérivée 🔴 · annotation d'un paramètre déstructuré 🔴 (4ᵉ) · `NavLink` fonction 🟢 / `end` 🔴 · early return dans un handler 🟢 · nombre magique 🟡 · classe Tailwind inexistante 🟡 · cycle Git PR 🟢.
 
 **⚠️ Mes erreurs**
+
 1. **Correction infondée sur son `useRef`** — critère correctement appliqué de sa part, présenté comme une faiblesse.
 2. **Deux corrections de préférence présentées comme des corrections** (`includes`, notation en crochets).
 3. **Bloc de révision trop long** : 1h sur 2h30, alors que le format vise 15 min. Le nouveau format est bon, le **volume** ne l'est pas — 3 items dont un cours complet, c'est une séance, pas une ouverture.
 
 **🔄 Cycle de reprise**
+
 - **`NavLink` / `end`** → reprise **maintenue**, réécriture non faite. Le mécanisme est acquis, le critère `end` non.
 - **Setter dans le corps + donnée dérivée + annotation déstructurée** → 🔴 à rejouer ensemble, même famille.
 - `useRef` ≈ S108 · `state`, `<Outlet>`, `<Navigate replace>` ≈ S105.
@@ -1282,3 +1300,880 @@ Guidé sur la boucle `var` / `let` : points d'arrêt, F8, Scope, Closure, Call S
 2. Installer React Developer Tools.
 3. **Shopping Cart (The Odin Project)** — énoncé à vérifier sur theodinproject.com avant de cadrer. Sur branche, PR en fin de projet.
 4. Puis **Next.js**, quand tu te sentiras prêt.
+
+## Session 106 — Reprises coercion / donnée dérivée + `useOutletContext` + cadrage Shopping Cart
+
+**Durée** : ~2h15. Énergie bonne.
+
+**🎹 Raccourci** : `Ctrl+Maj+L` **acté 🟢**. Nouveau, posé à sa demande sur un besoin à venir (Shopping Cart) : **`Alt+Maj+↓`** (copier la ligne en dessous).
+
+**Ressenti en ouverture** : coercion et `var` « pas trop mal ».
+
+---
+
+### Révision éclair (2 items, prédiction)
+
+- **Coercion** 2/4 : `Boolean("false")` 🟢 · `null == undefined` 🟢 · **`+` et l'ordre de lecture 🟡, retombé** (`"10" + 5 - 5` → 100, `4 + 4 + "4"` → "84"). Redressé samedi, perdu aujourd'hui : c'est un réflexe à installer (couper la ligne en étapes), pas une incompréhension.
+- **`var` vs `let`, portée** 🟢 : juste et bien raisonné.
+
+### 1. Famille setter / donnée dérivée — format débogage
+
+Annotation corrigée 🟢 · setter dans le corps repéré 🟢 · `(prev) =>` repéré 🟢 (syntaxe cassée = copier-coller).
+**🔴 Donnée dérivée non repérée (2ᵉ échec en débogage)** : `nombre` déplacé dans un `useEffect`. **Raison donnée par lui** : ne sachant pas si `verres` venait d'une API, il a voulu suivre un éventuel changement. **Débloqué** : une prop suit déjà les changements (le parent se re-rend, la `const` est recalculée) ; c'est le state recopié qui se désynchronise. Repère : _une prop n'a jamais besoin d'être recopiée dans un state pour rester à jour._
+Reprise immédiate (tri de 4 `useState`) : 4/4 🟢, lignes `const` non écrites.
+**Niveau** : critère 🟢 au tri · 🟡 en débogage.
+
+### 2. Shopping Cart — cadrage
+
+**Énoncé vérifié sur theodinproject.com.** Adaptations retenues : section routée dans `projet-examen-blanc` sur branche · pas de tests · pas de déploiement · données DummyJSON (lunettes + montres). **Référence visuelle choisie par lui : kapaha** (démo GitHub Pages).
+
+**Question de conception** : le panier est lu par la navigation, la boutique et la page panier → il vit dans le **layout de section** (parent commun, reste monté). `<Outlet>` ne transmettant aucune prop, d'où la notion suivante.
+
+### 3. `useOutletContext` — notion neuve
+
+Doc officielle vérifiée. Exercice guidé (layout favoris + page enfant) ✅ fonctionnel. 🟡 (un passage).
+**Blocage réel** : ranger une **fonction dans un objet** (`{ ajouterFavori }`). Levé par la forme longue (`{ ajouterFavori: ajouterFavori }`, une fonction est une valeur) et le rapprochement avec `console.log` et les props fonction.
+**🌟 Question juste de sa part** : `favoris` était envoyé inutilement → on n'envoie que ce dont l'enfant a besoin, et l'interface suit (TS ne vérifie pas le lien entre les deux côtés).
+`as` : nom oublié, redonné (assertion de type).
+
+### 4. Scaffolding Shopping Cart ✅
+
+Branche `Shopping-Cart-ODIN-Project` créée d'abord · dossier `pages/shopping-cart/` (renommé depuis `Shopping-Cart.tsx` : extension sur un dossier + majuscules) · 4 composants (layout, accueil, boutique, panier) · routes imbriquées relatives + `index` + `<Outlet>`.
+
+---
+
+**🎓 Décision** : **hooks personnalisés + Context API juste après Shopping Cart** (leçon Odin suivante, avec le panier comme cas réel).
+
+**📌 À demander** : installation de React Developer Tools (non confirmée).
+
+**⚠️ Mes erreurs**
+
+1. **« Rien de neuf » annoncé pour Shopping Cart** alors que j'avais moi-même annoncé `useOutletContext` en S104. Contradiction relevée par lui.
+2. **Cours `useOutletContext` surchargé** (typage, `unknown`, `as`, hooks personnalisés, Context API dans un seul message) → blocage. Récurrence du dosage.
+3. `favoris` inclus inutilement dans le `context` de l'exercice.
+
+**🔄 Cycle de reprise** : `useOutletContext` → rejoué dans Shopping Cart (N+2) · donnée dérivée → compteur de navigation et total du panier · `NavLink` / `end` → barre de navigation de Shopping Cart (avant le N+5 prévu) · `useRef` ≈ S108.
+
+**🔄 Rotation** : **`+` et ordre de lecture (priorité)** · chaînes truthy · `var` · `.then` en écriture.
+
+**⏭️ Prochaine étape**
+
+1. **Barre de navigation du layout** avec `NavLink` (question du préfixe sur le lien d'accueil de section).
+2. **Le plan** : states (et ce qui n'en est pas), interfaces produit et ligne de panier, contenu du `context` et page qui utilise quoi.
+3. Puis fetch DummyJSON et cartes produits.
+
+## Session 107 — Shopping Cart : navigation, plan des données, fetch dans le layout, `useOutletContext`
+
+**Durée** : ~3h. Énergie bonne.
+
+**🎹 Raccourci** : `Alt+Maj+↓` — usage non confirmé, **à demander** en ouverture.
+**Outillage** : React Developer Tools installé sur le **portable**. Autre machine : à vérifier.
+
+---
+
+### Révision éclair (2 items)
+
+- **Prédire — coercion** 🟢 **6/6** : `+` et ordre de lecture (retombé en S106) **redressé**, dont `"6" - 2 + "1"` · chaînes truthy (`" "`, `"0"`) justes.
+- **Écrire — `.then` + `Promise.all`** 🔴 : structure de la chaîne juste (déstructuration dans le paramètre, `throw`, `.catch` / `.finally`, `instanceof` juste). **Second `Promise.all` absent** (`return [res1.json(), res2.json()]` → tableau de Promises transmis tel quel). Retombé alors qu'il était sorti en S104. Repère retenu par lui : **deux `await`, donc deux `Promise.all`**. Clé `titre` au lieu de `title`. Correction donnée.
+
+---
+
+### 1. Barre de navigation du layout
+
+`<header>` + `<nav>` + trois `NavLink`, titre en **`Link`** (choix juste : il n'a pas à s'allumer). **Fonction dans `className` sortie seule, 3ᵉ fois d'affilée → acquise.**
+`end` d'abord posé sur les trois liens, puis **décidé lien par lien après la question « page ou section ? »** : Accueil seul. 🟢
+
+### 2. Plan de Shopping Cart
+
+API retenue par lui : **fakestoreapi**. Interface `Produit` juste.
+
+- **🔴 Donnée dérivée à la planification** : quantité panier et montant total listés comme states (3ᵉ contexte après S104 et S106 en débogage). Le state central `panier` manquait. **Structure donnée** : 4 states dans le layout (`produits`, `chargement`, `erreur`, `panier`), deux `reduce` numériques pour le compteur et le total.
+- `LignePanier` décrivait l'écran (boutons) au lieu de la donnée → `{ produit: Produit; quantite: number }`.
+- Types partagés dans `pages/shopping-cart/type.ts`.
+
+### 3. Fetch dans le layout
+
+**Syntaxe hybride conçue seul** : fonction `async` + `.catch` / `.finally` accrochés à l'appel. Valide, et montre la compréhension « une fonction `async` renvoie une Promise ». 🟢
+Corrections : `chargement` initialisé à `false` (récurrence S102) · `useState([])` non typé (`never[]`).
+
+**Règle pro posée** : l'état de chargement / d'erreur s'affiche **dans le composant qui a besoin de la donnée**. Principe trouvé seul (« la nav reste visible, seule la zone de contenu affiche l'erreur »). Le **layout sert de réserve** (reste monté → un seul fetch), la **Boutique affiche** chargement, erreur et catalogue. Test d'URL fausse passé : seule la Boutique affiche l'erreur.
+
+### 4. `useOutletContext` — reprise N+1
+
+Circuit juste des deux côtés (objet dans `<Outlet context>`, déstructuration par nom, `useOutletContext<Type>()`). Seul écart : `produits: []` dans l'interface → `never`. **Ressenti « fragile » exprimé par lui** → à rejouer. 🟡
+
+**Neuf** : `import type` imposé par `verbatimModuleSyntax` 🟡.
+
+### 5. Taille des images
+
+**Neuf** : `object-contain` / `object-cover` 🟡. Rappel `aspect-ratio` (impose un rapport, jamais une taille). Forme retenue : conteneur `max-w-6xl mx-auto`, grille à colonnes responsives, image `h-48 w-full object-contain`. Distinction **boîte / photo dans la boîte** donnée.
+Explications trop longues de ma part ; **le format « code corrigé + une phrase par ligne » a fonctionné**.
+
+---
+
+**Niveaux** : coercion `+` 🟢 · chaînes truthy 🟢 · `.then` + `Promise.all` 🔴 · `NavLink` fonction 🟢 · `end` 🟢 · donnée dérivée (planification) 🔴 · modélisation `LignePanier` 🟡 · fetch `async` + `.catch` 🟢 · état initial de chargement 🟡 · règle chargement/erreur au plus près 🟢 · `useOutletContext` 🟡 · `import type` 🟡 · `object-contain` 🟡.
+
+**⚠️ Mes erreurs**
+
+1. **« Le raccourci a servi » affirmé sans information** — récurrence de « ne pas déduire l'état d'un item ».
+2. **« La boutique et le panier ont besoin des produits »** — faux avec `LignePanier` contenant son produit, corrigé en séance.
+3. **Explications CSS trop longues** avant le format ligne par ligne.
+
+**🔄 Cycle de reprise** : `useOutletContext` → fiche produit (N+2) · **`useRef` ≈ S108** (en ouverture) · `NavLink` / `end` → N+5 ≈ S110 · donnée dérivée → compteur et total du panier (écriture réelle).
+
+**🔄 Rotation** : **`.then` + `Promise.all` (priorité)** · `+` et ordre de lecture (une fois encore, sur autre code) · chaînes truthy · `var`.
+
+**⏭️ Prochaine étape**
+
+1. Ouverture : reprise **`useRef`**.
+2. **Cartes en `Link` vers la fiche produit** : route `boutique/:id`, `useParams` + `find` dans `produits` lu par le `context` (pas de nouveau fetch), `Link` en bloc, **pas de bouton dans le lien**. Vérifier que le lien Boutique reste allumé sur la fiche.
+3. Puis le **panier** : state `panier`, ajout, compteur et total dérivés.
+
+## Session 108 — Reprise `useRef` + Shopping Cart : fiche produit
+
+**Durée** : ~2h. Énergie bonne. Machine : **portable** (React DevTools installé ; le fixe reste à vérifier).
+
+**🎹 Raccourci** : `Alt+Maj+↓` — pas encore utilisé, **reconduit**.
+
+---
+
+### Révision éclair (2 items)
+
+- **Prédire — coercion** : `"73"` et `60` justes · `"211"` juste (faute de frappe à la saisie) · **`"5" + 2 * 3` → `"56"` 🟡 : priorité de `*` sur `+` non connue** (« je ne savais pas que ça fonctionnait comme les vrais maths »). Repère : d'abord `*` et `/`, puis gauche → droite ; `+` ne colle qu'à partir de la première chaîne. **Reste en rotation, test rapide.**
+- **Déboguer — `Promise.all`** 🟢 : `return` manquant trouvé et corrigé. Prédiction juste sur le fond (`undefined` transmis), formulation incomplète : la déstructuration de `undefined` lève une `TypeError` → `.catch` → « échec ». **Sort de rotation à sa demande**, retour plus tard en entretien.
+
+---
+
+### 1. Reprise `useRef` (N+5) — page blanche 🟢
+
+Ressenti annoncé **6,5/10**, résultat au-dessus. Deux refs distinguées et typées (DOM + valeur), champ contrôlé, early return protégeant l'ajout, compteur incrémenté avant la sortie, `(prev) =>` posé d'emblée, compteur lu seulement au clic.
+**Désaccord fondé de sa part** : test `if (!ref.current?.value)` au lieu de `if (!nom)` — **équivalent sur un champ contrôlé**, pas une rechute. Argument de robustesse retenu (test qui dépend de la donnée, pas de l'attachement de la ref).
+
+### 2. Shopping Cart — fiche produit ✅
+
+**Préparé seul avant la consigne** : route `boutique/:id`, carte entière en `Link` avec `key`, `useParams` + `find`. **`String(p.id) === id` sorti seul** → conversion aux frontières déclenchée au clavier (dette chaude). `Omit` appliqué spontanément à un vrai besoin.
+
+- A trouvé lui-même que `chargement` et `erreur` étaient nécessaires (F5 → `produits` vide → faux « introuvable » ; API en panne → message mensonger) → `Omit` retiré, `FetchDataContext` complet.
+- **Ordre des early returns inversé au 1er jet** 🟡, corrigé (chargement → erreur → introuvable).
+- Bouton Retour : `naviguer(..., { replace: true })` → **`naviguer(-1)`** (`replace` réservé aux redirections décidées par le code).
+- **Panier commencé dans la fiche** (state local, un seul article) → recadré : la fiche est démontée en la quittant, le panier vit dans le **layout** en liste. Retiré pour l'étape suivante.
+- Champ quantité rendu contrôlé sans consigne. Early return renvoyant un bloc JSX (message + `Link`) plutôt qu'un ternaire enveloppant la page.
+- **Les quatre tests passés** (clic carte + lien Boutique allumé · F5 sans faux « introuvable » · id inexistant · clic droit / nouvel onglet).
+
+**🎓 Questions de fond** : lifting state up à travers le `context` (ça monte par un appel de fonction, ça redescend par le `context`) · `useOutletContext` = des props pour un enfant que le layout ne connaît pas à l'avance ; lien annoncé avec la Context API.
+
+---
+
+**Niveaux** : priorité `*` / `+` 🟡 · `Promise.all` (débogage) 🟢 · `useRef` 🟢 · frontière state / ref DOM 🟢 · `useOutletContext` 🟢 (2ᵉ page, circuit juste — **à confirmer à froid**) · `useParams` + `find` 🟢 · conversion aux frontières 🟢 · ordre des early returns 🟡 · `naviguer(-1)` vs `replace` 🟢 · emplacement du state partagé 🟡.
+
+**⚠️ Mes erreurs**
+Pas d'erreur particulière : Remarque écrite par Frédéric après => cette partie du résumé a volontairement été supprimer par Frédéric. Il n'y a pas forcement d'erreur à me faire une remarque. Claude n'est pas obligé de spécifiquement noté toutes les observations faite par Frédéric n'allant pas dans son sens.
+
+**🔄 Cycle de reprise** : `useRef` → cycle fermé (N+2, N+5 tenus) · `useOutletContext` → rejoué sur le panier · `NavLink` / `end` ≈ S110 · donnée dérivée → compteur et total (écriture réelle).
+
+**🔄 Rotation** : **`+` et priorité des opérateurs** (test rapide) · chaînes truthy · `var`. **Sort** : `Promise.all`.
+
+**⏭️ Prochaine étape — le panier**
+
+1. Dans le **layout** : state `panier: LignePanier[]`, fonction `ajouterAuPanier(produit, quantite)` transmise par le `context`.
+2. Quantité : `number`, valeur par défaut 1, conversion `Number()` à la frontière de l'input.
+3. **Produit déjà présent → augmenter sa quantité** au lieu d'ajouter une ligne (upsert, déjà conçu seul sur le CV Application).
+4. Compteur dans la barre et total en `const` dérivées.
+5. Puis la page Panier : +, −, suppression.
+
+## Session 109 — Shopping Cart : panier étape 1 (ajout, upsert, compteur)
+
+**Durée** : ~2h (vendredi). Énergie bonne.
+
+**🎹 Raccourci** : `Alt+Maj+↓` — reconduit.
+
+---
+
+### Révision éclair (2 items)
+
+- **Prédire — priorité des opérateurs** : `2 + "3" * 2` → `8` 🟢 · `"4" + 4 * 2 + 1` → `"441"` au lieu de `"481"` (**faute de frappe selon lui**) · `3 * "2" + "2"` → `"62"` (guillemets absents, type à confirmer).
+- **Prédire — `var` / `let`** : portée juste et bien expliquée · `b` hors du bloc donné `undefined` au lieu d'une **`ReferenceError`** (distinction posée : `undefined` = existe sans valeur / `ReferenceError` = n'existe pas à cet endroit).
+- **Les deux sortent de rotation, décision de Frédéric.**
+
+---
+
+### 1. Panier dans le layout
+
+- `Article.quantite` passé en `number` · type du `context` complété (panier + fonction d'ajout).
+- **🔴 Donnée dérivée — 4ᵉ occurrence** (S104, S106, S107, S109) : compteur stocké dans un state `affichageQuantite` mis à jour à la main. **Règle des trois échecs appliquée** : cours donné directement, remplacé par une `const` + `reduce`. Test retenu : *« est-ce que je peux le calculer à partir d'un state existant ? »* → `const`.
+- **Upsert** : 1ᵉʳ jet avec `find` **dans** le `(prev) =>` (bon emplacement), mais `return article.quantite += quantite` → mutation de l'ancien state **et** retour d'un nombre au lieu d'un tableau. 2ᵉ jet **juste et immuable** : `.map()` + `{ ...a, quantite: ... }`. 🟢 Allègements proposés, facultatifs : `some` au lieu de `find`, `else` inutile après `return`.
+
+### 2. Fiche produit
+
+- Quantité à **1 par défaut**, `Number(e.target.value)` à la frontière 🟢.
+- **Neuf** : bouton **`disabled={quantite < 1}`** (condition dérivée, recalculée à chaque rendu) + variante Tailwind **`disabled:opacity-50`** 🟡. `min={1}` = confort, pas protection.
+- **Garde dans `ajouterPanier`** : jugée redondante aujourd'hui (un seul appelant, bouton grisé). **Décision de Frédéric : l'ajouter quand le bouton +  du panier ou l'ajout rapide de la boutique arriveront.** Choix légitime — à ne pas oublier à ce moment-là.
+
+### 3. React DevTools — premier usage 🟢
+
+Onglet Components → `LayoutPage` → lecture du state `panier` en direct. **Tests passés** : 2 × A → 1 ligne · +1 × A → toujours 1 ligne, quantité 3 · 1 × B → 2 lignes · 0 → bouton grisé. Nombre négatif non testable (bouton grisé).
+
+---
+
+**Niveaux** : priorité `*` / `+` 🟢 · portée `var` / `let` 🟢 · `ReferenceError` vs `undefined` 🟡 · donnée dérivée 🔴 (cours donné, appliqué ensuite) · upsert immuable `.map()` + spread 🟢 · mutation dans un updater 🟡 (repérée après indices) · conversion aux frontières 🟢 · `disabled` dérivé 🟡 · React DevTools 🟢 · `useOutletContext` 🟢 (3ᵉ passage, fonction transmise et appelée).
+
+**⚠️ Mes erreurs** : aucune relevée cette séance.
+
+**🔄 Cycle de reprise** : `useOutletContext` → page Panier (lecture + fonctions de modification) · **donnée dérivée → total du panier, à écrire seul (test décisif)** · `NavLink` / `end` ≈ S110.
+
+**🔄 Rotation** : chaînes truthy. **Sortent** : priorité des opérateurs · `var` / `let`.
+
+**⏭️ Prochaine étape — le panier, étape 2**
+1. Page Panier : afficher les lignes (image, titre, prix unitaire, quantité, sous-total).
+2. Boutons **+**, **−** et **supprimer**, via des fonctions du layout transmises par le `context`. Quantité qui tombe à 0 → la ligne disparaît.
+3. **Garde dans `ajouterPanier`** au moment où le + l'appelle (décision S109).
+4. **Total** en `const` dérivée.
+5. Puis : ajout rapide depuis la Boutique · habillage · PR et fusion · **hooks personnalisés + Context API**.
+
+## Session 110 — Shopping Cart : page Panier, ajout rapide, paiement, panier persistant
+
+**Durée** : ~2h30 (samedi). Énergie bonne. Pas de révision éclair : séance ouverte directement sur le code préparé seul.
+
+**🎹 Raccourci** : `Alt+Maj+↓` — peu utilisé, **reconduit**.
+
+---
+
+### 1. Page Panier — préparée seule (35 min avant la séance) 🟢
+
+- `supprimerPanier` (`filter`) et **`modifierPanier(id, delta)`** (`.map()` + spread) : immuables, via `(prev) =>`. **Une seule fonction pour + et −** grâce au paramètre `delta` — décision de conception juste.
+- **Types fonction avec paramètres** dans l'interface du `context` : justes (notion en attente depuis S72 → **soldée**). `const data: Produit[]` sur le résultat de `.json()`.
+- − **grisé à 1**, X pour supprimer : choix d'interface légitime (aucune quantité 0 possible).
+- Sous-totaux, panier vide + lien boutique, `formatEuro` réutilisé depuis `utils/`.
+- **✅ Total du panier écrit seul, en `reduce` dérivé — dette donnée dérivée : test décisif réussi** après 4 occurrences (S104, S106, S107, S109). Allègements proposés : `const total` nommée, early return pour le panier vide.
+
+### 2. Ajout rapide depuis la Boutique 🟢
+
+Carte restructurée : `<article>` > `Link` (image + titre) + bouton **frère**, jamais dans le lien. Garde d'`ajouterPanier` inutile (quantité en dur à 1) — décision S109 tenue.
+`Link` sorti de la grille → redevenu **inline** → `block` ajouté (le « point 3 » de S108 trouve ici son vrai cas).
+
+### 3. Reprise `NavLink` / `end` (N+5) 🟢
+
+Ressenti « très bien », **bien calibré** : fonction dans `className` juste, `end` uniquement sur le lien racine. Seul écart : `to` inexacts par rapport aux adresses données. **Cycle fermé.**
+
+### 4. Bouton Paiement
+
+State local `paiement` + écran de message. Faute visible dans l'interface (« Paiment ») signalée.
+
+### 5. Panier persistant (`localStorage`) — notion Phase 1 réactivée
+
+1ᵉʳ jet : clé = contenu du panier (`setItem(memoire, memoire)`) · résultat de `getItem` jeté · **lecture dans un effet** (écrasée au 1ᵉʳ rendu par l'effet d'écriture). **Squelette à un trou donné** → `JSON.parse(memoire ?? "[]")`, **plus élégant que la forme classique**. 🟢 Quatre tests passés.
+**Vocabulaire « lazy initializer » oublié** (mécanisme appliqué juste) → redonné. 🟡 sur le terme.
+
+---
+
+### 🎓 Décisions de Frédéric — suite de Shopping Cart
+
+- **L'énoncé Odin n'est pas à suivre à la lettre** : ajout rapide de 1 en boutique, quantité choisie sur la fiche. Adaptation voulue et défendable.
+- **Indispensables** : habillage CSS soigné (belle page d'accueil, image) · `localStorage` ✅ · paiement ✅.
+- **Recherche** : validée. **Tailles XS→XL** (vêtements) : **décision ouverte**, tentante car travaille la modélisation (une ligne de panier s'identifierait par produit + taille). **Mini-panier glissant** : pendant l'habillage, **au clic** (pas de survol sur mobile).
+
+**Conception de la recherche posée** (non codée) : **un seul state** (`recherche`) · résultats en `const` dérivée (`filter` insensible à la casse) · ouverture de la fenêtre dérivée (`recherche` non vide) — pas de booléen séparé · composant `BarreRecherche` qui détient son state et reçoit `produits` en prop · `slice` à 5 · résultats en `Link` qui vident `recherche` · `absolute` sous un parent `relative`. Fermeture au clic extérieur (`useRef` + écouteur) en option.
+
+---
+
+**Niveaux** : fonctions de modification immuables 🟢 · types fonction avec paramètres 🟢 · **donnée dérivée 🟢 (écrite seule)** · `Link` inline hors grille 🟢 · `NavLink` / `end` 🟢 · `localStorage` + `JSON` 🟡 (reconstruit avec squelette) · lazy initializer : mécanisme 🟢 / terme 🟡 · `??` 🟢.
+
+**⚠️ Mes erreurs** : aucune relevée cette séance.
+
+**🔄 Cycle de reprise** : `NavLink` / `end` → **fermé** · `useOutletContext` → acquis en usage réel (4 pages) · `localStorage` → à rejouer (N+2) · **donnée dérivée → recherche** (liste filtrée).
+
+**🔄 Rotation** : chaînes truthy · **entre** : lazy initializer (le nom et le « pourquoi »).
+
+**Registre** : types fonction au-delà de `() => void` **soldée**.
+
+**⏭️ Prochaine étape**
+1. **Barre de recherche** selon la conception posée (ouverture de séance).
+2. **Habillage** (1 à 2 séances) : accueil, cartes, fiche, panier, mini-panier, textes provisoires.
+3. **PR et fusion** de la branche Shopping Cart.
+4. Décision sur les **tailles**.
+5. Puis **hooks personnalisés + Context API**, avec Shopping Cart comme terrain (`usePanier`, contexte de panier).
+
+## Session 111 — Shopping Cart : barre de recherche complète (résultats, « Afficher plus », clic extérieur)
+
+**Durée** : ~1h samedi soir (23h40, hors séance) + 2h10 dimanche matin. Énergie bonne.
+
+**🎹 Raccourci** : `Alt+Maj+↓` **acté 🟢**. Nouveau, sur un besoin exprimé (ajouter / retirer des parenthèses) : sélection + `(` pour entourer (comportement natif) · **Remove Brackets** (`Ctrl+Alt+Retour arrière`, donné de mémoire — **existence et raccourci à vérifier** via `Ctrl+Maj+P`, à demander).
+
+---
+
+### Révision éclair
+
+- **Chaînes truthy** 🟢 6/6. **Sort de rotation.**
+- **`localStorage` + lazy initializer** 🔴 à froid, correction donnée au 3ᵉ essai : corps-bloc sans `return` (famille récurrente) · `JSON.parse("favoris")` (ordre `getItem` → `parse` inversé) · `??` placé dans la parenthèse de `getItem` · effet recopié avec `panier` · `JSON.stringify(data)` pour fabriquer `data`. Nom « lazy initializer » retrouvé, le pourquoi non formulé → donné. **Reprise N+2.**
+
+### 1. Soir — condition d'affichage + extraction
+
+- **Question de fond** : pourquoi `includes("")` renvoie `true` → réponse comprise (la suite vide se trouve partout). Condition inversée corrigée.
+- **Extraction `BarreRecherche`** 🟢 : fichier dans `shopping-cart/`, interface, prop `produits`, state descendu au plus près de son usage.
+
+### 2. Matin — résultats et clic extérieur
+
+- **« Afficher plus / moins » ajouté de sa propre initiative**, `deplier` justifié comme vrai state.
+- Erreurs corrigées : `key` oubliée · `<li>` dans un `<li>` · seuil `> 4` · **`slice(…, -1)` deux fois** (le dernier résultat disparaît) 🟡.
+- **Fragment `<>` posé seul** 🟢. `const visible` en ternaire : bloqué, débloqué par l'indice « écris la phrase si… alors… sinon » 🟢. Un seul `.map()` (DRY).
+- **Clic extérieur** : state `ouvert` (l'ouverture n'est plus dérivée du texte — compris) · `useRef` sur la `<div>` · **`contains` trouvé seul** 🟢 · `PointerEvent` trouvé au survol 🟢. **🔴 Référence unique oubliée** (résultat d'`addEventListener` stocké, `removeEventListener` sans `document`) + condition inversée → squelette à un trou donné.
+- **`as Node`** : cours `EventTarget` / `Node` / `as` / alternative `instanceof` → « compris, pas instinctif » (ses mots).
+- **Question `onBlur`** : piège expliqué (le blur ferme la liste avant que le clic n'atteigne le `Link`) → compris.
+- **4 tests passés.**
+
+**Niveaux** : chaînes truthy 🟢 · `localStorage` + lazy initializer 🔴 · extraction de composant + state local 🟢 · `slice` avec index négatif 🟡 · fragment 🟢 · ternaire dans une `const` 🟢 (avec indice) · `contains` 🟢 · référence unique d'écouteur 🔴 (rechute, notion verrouillée) · `as` + `Node` 🟡 · `onFocus` / `onBlur` 🟡 (neufs).
+
+**🆕 Neuf** : `contains` · `onFocus` / `onBlur` · hiérarchie `EventTarget` / `Node` · motif « fermer au clic extérieur ».
+
+---
+
+**Shopping Cart vs énoncé Odin (vérifié sur theodinproject.com)** : pages, navigation, compteur, panier (+ / − / suppression), FakeStore ✅ · ajout rapide en boutique + quantité sur la fiche (adapté) · tests et déploiement écartés. Ajouts hors énoncé : fiche, `localStorage`, paiement, recherche.
+
+**🎓 Décisions de Frédéric**
+- **Tests et déploiement** : voir l'en-tête (roadmap modifiée).
+- **Quantité** : masquer les flèches natives du `type="number"` et construire ses propres boutons − / + — **en dernier** dans l'habillage.
+- **Bouton 🔍** en ouverture de la prochaine séance (~30 min), **à la place** des deux exercices courts : entretien (`<form>`, `onSubmit`, `preventDefault`, `useNavigate`, `visible[0]`, garde sur liste vide).
+
+**⚠️ Mes erreurs** : réécriture « plus élégante » proposée à minuit alors que sa version fonctionnait → trois incompréhensions, « illisible ». Correctif : en séance tardive, ne pas proposer de refonte d'un code qui marche.
+
+**🔄 Cycle de reprise** : `localStorage` + lazy initializer → N+2 · **clic extérieur + référence unique → mini-panier glissant** · `useOutletContext` acquis en usage.
+
+**🔄 Rotation** : **sort** — chaînes truthy. **Reste** — lazy initializer.
+
+**⏭️ Prochaine étape**
+1. **Bouton 🔍** (ouverture, ~30 min).
+2. **Habillage** : accueil avec image, cartes, fiche, panier, liste de recherche en `absolute` sous le champ.
+3. **Mini-panier glissant au clic** (reprise du clic extérieur).
+4. Décision sur les **tailles XS → XL**.
+5. Boutons − / + personnalisés.
+6. **PR + fusion**, puis **hooks personnalisés + Context API**.
+
+## Session 112 — Bouton 🔍 + début de l'habillage (accueil)
+
+**Durée** : 2h15 (mardi, en deux temps). Énergie bonne au départ, **arrêt sur frustration en fin de séance** (positionnement).
+
+**🎹 Raccourci** : **Remove Brackets** (`Ctrl+Alt+Retour arrière`) — **vérifié, fonctionne**. En pratique.
+
+**⚠️ API FakeStore en panne** (erreur 523, serveur d'origine injoignable). Sa gestion d'erreur a tenu en conditions réelles. **Données de secours refusées** : tests du bouton 🔍 reportés au retour de l'API.
+
+---
+
+### 1. Bouton 🔍 (à la place de la révision éclair) — **non testé**
+
+- `action=""` généré par Emmet → rôle expliqué, retiré.
+- **🔴 Garde** : `!recherche` puis `!equivalent` (**un tableau vide est truthy**), puis `&&` et `!==` inversés → **réponse donnée au 3ᵉ essai** : `recherche.trim() === "" || equivalent.length === 0`. Réflexe donné : écrire la phrase française, puis traduire (« ou » → `||`).
+- **🔴 `onSubmit` posé sur le `<button>`** (seul `<form>` émet `submit` → échec silencieux, rechute). Repéré grâce au type `SubmitEvent<HTMLButtonElement>` au survol. **Correction non confirmée — à vérifier.**
+- `aria-label` : décrire l'action (« Rechercher »), pas l'élément.
+
+### 2. Habillage de l'accueil
+
+- **Image locale** : `src/assets/` + `import` vs `public/`. Erreurs corrigées : accolades (import par défaut), chemin, extension.
+- **Titre sur la photo** 🟢 : `fixed` remplacé par parent `relative` + calque `absolute inset-0 flex items-center justify-center`. Fonctionne.
+- **Icônes Lucide dans la navigation** appliquées. `fillRule` / `clipRule` corrigés dans le SVG.
+- **Google Font via `@theme`** : procédure donnée, **non testée**.
+- **Footer en bas de page** : solution `calc` **refusée à raison** (peu lisible, dépend de la hauteur du header) → chaîne `min-h-screen` + `flex-1` (layout → `<main>` → page) appliquée.
+- **🔴 Blocage final** : blanc entre photo et footer (deux `mt-auto` qui se partagent l'espace, hauteur fixe sur l'image). **Non résolu, séance arrêtée.**
+
+**Niveaux** : tableau vide truthy 🔴 · garde à deux conditions (`||`) 🔴 · `onSubmit` sur `<form>` 🔴 (rechute) · import d'image 🟡 · centrage par calque `absolute` 🟢 · `flex-1` / `mt-auto` en colonne 🔴 (appliqués sans être compris).
+
+**📌 Demande explicite** : **cours sur le positionnement des éléments**, expliqué. À partir de sa page d'accueil : flux normal vs contexte flex · `relative` / `absolute` / `inset-0` · `flex-1` · `mt-auto` et le partage de l'espace entre deux marges `auto` · image dans le flux vs image en calque.
+
+**Restés en suspens** : texte du header chevauchant la barre globale d'`App.tsx` (`pt-16` passé à `pt-4`) · `gap-1` / `gap-2` différents entre lien actif et inactif · chaîne `className` des `NavLink` recopiée trois fois.
+
+**⚠️ Mes erreurs**
+1. **Empilement en fin de séance** : quatre notions de positionnement et deux remarques annexes dans une même réponse → « je ne comprends rien ».
+2. **Puis du code sans explication** pour corriger → arrêt de séance. Correctif : pour une notion non comprise, redécouper et expliquer une notion à la fois, jamais basculer sur le code seul.
+3. Première solution de footer (`calc`) proposée avant la solution propre.
+
+**🔄 Cycle de reprise** : **`localStorage` + lazy initializer → N+2 = S113** · clic extérieur → mini-panier.
+
+**⏭️ Prochaine étape**
+1. **Cours positionnement**, pas à pas, sur la page d'accueil → régler le blanc.
+2. Au retour de l'API : vérifier `onSubmit` sur le `<form>` + les 4 tests du bouton 🔍.
+3. Suite de l'habillage (chevauchement du header, `NavLink` factorisés, pastille du panier, police).
+
+## Session 113 — Cours de positionnement (accueil) + habillage de la barre de recherche
+
+**Durée** : ~2h (mercredi, en deux blocs). Énergie bonne. API FakeStore revenue.
+
+**🎹 Raccourci** : Remove Brackets (`Ctrl+Alt+Retour arrière`) — redonné, usage non confirmé, **reconduit**.
+
+---
+
+### Révision éclair — reprise `localStorage` + lazy initializer (N+2) 🟢
+
+Ressenti 7,5/10, **bien calibré**. `useState` + `useEffect` justes du premier coup (`return`, `??` avant `parse`, bonne dépendance) : les quatre erreurs de S111 ont disparu.
+« Pourquoi la fonction ? » 🟡 : idée juste, formulation imprécise (« la fonction est lancée » au lieu de « donnée à React, qui l'appelle une fois ») · rien ne change à l'écran : non cité. Corrigé.
+
+### 1. Cours de positionnement — demande S112, blanc réglé ✅
+
+Une notion à la fois, chacune vérifiée dans le navigateur. **Format efficace** : « plus clair qu'hier ».
+- **Chaîne des hauteurs** (`min-h-screen` → `flex-1` → `flex-1`, parent `flex flex-col` + enfant `flex-1`) 🟢 : maillon cassé testé (`flex` retiré du `<main>` → blanc déplacé sous le footer).
+- **`mt-auto` + partage de l'espace libre** 🟢 : démontré seul (un seul `mt-auto` → même quantité de blanc, déplacée). Retenu : une marge `auto` ne supprime pas l'espace libre, elle le **place**.
+- **Hero plein écran** (option choisie) : zone photo `relative flex-1 min-h-64`, image `absolute inset-0 h-full w-full object-cover`. **Mécanisme reformulé juste et seul** ; précisions données : `relative` = repère des enfants · `object-cover` recadre.
+- **Neuf** : `Ctrl+F` et clic droit → Inspecter dans le panneau Elements 🟢.
+
+### 2. Barre de recherche habillée ✅
+
+- **Bouton 🔍** : `onSubmit` bien sur le `<form>` (suspens S112 levé), **4 tests passés**.
+- Habillage déplacé sur le `<form>`, input `flex-1 outline-none`, icône Lucide : écrit seul 🟢.
+- **Neuf** : `focus-within:` (cours CSS vs Tailwind demandé) 🟡 · **`ring` vs `border`** 🟡 — **décalage au focus remarqué par lui**, cause : bordure ajoutée seulement au focus ; `ring` = peinture, pas layout · `overflow-hidden` pour les coins · `aria-label` = l'action.
+- Contour collé à la photo → `items-center py-3` sur le header 🟢.
+
+### 3. Header
+
+- Titre : **nom de marque inventé** (« ODIN Store ») plutôt que son nom ou une icône de profil.
+- **Chevauchement avec la barre d'`App.tsx`** : `ml-24` écarté (nombre magique) → réserver l'espace dans `App.tsx`, ou sortir la barre du `fixed`. **Choix fait : à demander.**
+- Barre décentrée (`justify-center` centre le **groupe**) → `grid grid-cols-3` + `justify-self-*`, `gap-36` retiré. **Application : à demander.**
+
+### 4. Liste de résultats en `absolute` — expliquée, **non codée**
+
+Parent `relative` · `<ul>` `absolute top-full left-0 w-full z-10` + fond opaque. `top-full` et `w-full` difficiles à visualiser → schémas donnés · `left-full` vs `left-0` (axe et base du pourcentage) · un `absolute` perd la pleine largeur du bloc · `z-10` car la photo positionnée vient après dans le HTML. **À relire et coder demain, à sa demande.**
+
+---
+
+**Niveaux** : `localStorage` + lazy initializer 🟢 (pourquoi 🟡) · chaîne des hauteurs 🟢 · `mt-auto` en flex 🟢 · `relative` / `absolute inset-0` 🟢 · `object-cover` 🟢 · `focus-within` 🟡 · `ring` vs `border` 🟡 · `items-center` / stretch 🟢 · `grid-cols-3` + `justify-self` 🟡 · `top-full` / `left` / `w-full` en `absolute` 🔴 (neuf, non pratiqué).
+
+**⚠️ Mes erreurs** : aucune relevée.
+
+**🔄 Cycle de reprise** : `localStorage` + lazy initializer → N+5 ≈ S116 · positionnement → liste de recherche (demain) puis mini-panier glissant.
+
+**🔄 Rotation** : lazy initializer (le **pourquoi** à formuler seul).
+
+**📌 Petites retouches** : « Réalis**é** par Frédéric » dans le footer · chaîne `className` des `NavLink` recopiée trois fois · `gap-1` / `gap-2` différents selon l'état actif.
+
+**⏭️ Prochaine étape**
+1. Relecture du mini-cours, puis **liste de résultats en `absolute`** (test : rien ne bouge à l'ouverture).
+2. Vérifier : grille 3 colonnes du header · décision `App.tsx` (barre `fixed`).
+3. Suite de l'habillage : retouches `NavLink`, pastille du panier, police, cartes, fiche, panier.
+4. Mini-panier glissant au clic · décision tailles XS→XL · boutons − / + · **PR + fusion**, puis **hooks personnalisés + Context API**.
+
+## Session 113 bis — Tokens `@theme`, architecture CSS pro, liste de recherche en `absolute`
+
+**Durée** : ~2h (mercredi soir, 22h20 → 00h05). Séance « extra », à sa demande.
+
+**🎹 Raccourci** : **`Ctrl+Maj+F` revenu spontanément** sur un vrai besoin (recherche de `rounded` dans le projet). Ajout : le champ « files to include » pour limiter la recherche à un dossier.
+
+---
+
+### Fait
+
+- **Liste de résultats en `absolute`** ✅ appliquée (`top-full left-0 w-full z-10`) : plus rien ne bouge à l'ouverture. Notion 🔴 hier soir, appliquée seule ce soir.
+- **`shopping-cart.css` créé** : un seul `@theme` préfixé `shop`, rangé par catégorie (couleurs → typo → formes → ombres), nommé par rôle et commenté. Importé depuis `index.css`. **Tokens appliqués à toute la barre et à la liste** 🟢.
+- **Erreur Prettier** (`Can't resolve '/src/…'`) : le `/` initial est une convention Vite, que Prettier lit comme la racine du disque → **import relatif**. Cours `./` / `../` compris 🟢, **et déjà pratiqué sans le savoir** (`../../utils/format`).
+- **Renommage `Shopping-cart.css` → minuscules** : les dossiers et fichiers hors composants vont en minuscules, les composants restent en PascalCase. ⚠️ **Piège Git Windows** : un changement de casse seule peut passer inaperçu → `git mv` en deux temps. **Vérification : à demander.**
+
+### Expliqué (compris, pas encore pratiqué)
+
+- **Architecture CSS d'un projet Tailwind** : très peu de CSS, rangé **par rôle** (`theme.css`, `base.css`), pas par page. Le fichier par section ne se justifie que dans l'atelier.
+- **Pas de classe maison `@apply` pour alléger le JSX** : Tailwind reste dans le JSX ; un JSX trop chargé → **extraire un composant**. CSS réservé à `@layer base`, `@utility`, et au HTML qu'on ne contrôle pas.
+- **Méthode pro du visuel** : partir d'une référence, limiter les choix (tokens), construire dans l'ordre structure → typo → couleurs → états → responsive.
+- **F12 sur un site existant** : on relève des **mesures** (onglet Calculés, box model), on ne lit pas leur architecture (CSS compilé). Liste qui disparaît → « Emulate a focused page » *(cité de mémoire)*.
+- **Police** : `--font-shop-titre` = liste de secours ; le nom seul ne charge rien → `@import` Google Fonts en premier dans `index.css`. **Reportée à demain.**
+- **Titres trop longs dans la liste** : `truncate` + `min-w-0` (texte) + `shrink-0` (image, qui s'écrasait) + `items-center` + `title={p.title}`. **Non appliqué.**
+
+### Non compris
+
+- **`cn()` (`clsx` + `tailwind-merge`)** 🔴 : « je ne vois toujours pas ce que c'est ». **Cours à reprendre demain**, sur les `NavLink`.
+
+**Divers** : *Refactoring UI* présenté (livre des créateurs de Tailwind). **Figma : demande de l'avancer dans la roadmap** → proposition : usage de base avant le SaaS optique, **à trancher**. Avertissement VS Code `Unknown at rule @theme` : sans conséquence, réglage `files.associations` reporté.
+
+**Niveaux** : `@theme` + tokens par rôle 🟢 · `absolute` + `top-full` / `w-full` 🟢 (appliqué) · chemins relatifs 🟢 · architecture CSS Tailwind 🟡 · `truncate` + `min-w-0` 🟡 · `cn()` 🔴.
+
+**⏭️ Prochaine étape**
+1. **Cours `cn()`**, appliqué à la factorisation des `NavLink`.
+2. Appliquer la coupure des titres, puis **trois remarques en attente sur `BarreRecherche`**.
+3. Police · vérifier la casse dans Git · header en grille 3 colonnes et barre `fixed` d'`App.tsx` *(état à demander)*.
+4. Suite de l'habillage → mini-panier → PR + fusion → hooks personnalisés + Context API.
+
+## Session 114 — Révision lazy initializer et chaîne des hauteurs + `clsx`, `tailwind-merge`, `cn()` + pastille du panier
+
+**Durée** : ~2h (jeudi, interrompue par un client). Énergie bonne.
+
+**🎹 Raccourci** : Remove Brackets — non utilisé, reconduit.
+
+---
+
+### État vérifié en ouverture
+- **Casse de `shopping-cart.css`** : aucun risque, le fichier n'avait jamais été commité (`U`). Le piège Git ne concerne que les fichiers déjà suivis.
+- **Header en grille 3 colonnes** : appliqué ✅.
+- **Barre `fixed` d'`App.tsx`** : conservée (navigation de l'atelier). **Idée de Frédéric** : pouvoir la masquer / l'afficher à la demande → exercice court noté (`useState` booléen + `&&`), sans notion neuve.
+
+### Révision éclair
+- **Lazy initializer** 🟢 : correction juste (flèche). Prédiction donnée dans le désordre, en connaissance de cause selon lui → **non fragile**. Variante sans parenthèses (`useState(lireHistorique)`) donnée.
+- **Chaîne des hauteurs (N+1)** 🟢 : maillon `<main>` réparé, `<div>` inutile supprimée de sa propre initiative, `flex-1` sur le contenu (motif valide). `mt-auto` + `flex-1` redondants : signalé.
+
+### `clsx` / `tailwind-merge` / `cn()`
+- **Blocage initial** : « `clsx` c'est du JS natif ? » → c'est un **paquet npm**. Forme longue donnée (`filter` + `join`), qui a débloqué. Installé, absent du modèle Vite (`package.json` fait foi).
+- **1ᵉʳ jet** 🔴 : `clsx` avec un template literal → une seule chaîne, virgule entrée dans la classe (survol cassé), `${false}` écrit `"false"`. Corrigé : **arguments séparés**. Appliqué aux trois `NavLink`, extrait en fonction `lienActif` 🟢.
+- **🔴 `({ isActive }: boolean)`** : annotation portée sur ce qui est extrait, **5ᵉ occurrence**. Geste donné : survoler `isActive` sur un `NavLink` qui fonctionne.
+- **`tailwind-merge`** 🟢 : conflits (l'ordre dans le HTML ne décide pas) → la dernière classe écrite gagne, par propriété. Utile **seulement** quand un composant accepte des classes de l'extérieur.
+- **`cn()`** : fonction écrite soi-même dans `utils/cn.ts`, testée (`p-4` en console ✅). **`...inputs` (paramètre rest) expliqué en forme longue** 🟡 · `ClassValue` 🟡. Rôles retenus : le rest **collecte**, `clsx` **trie**, `twMerge` **arbitre**.
+
+### Pastille du panier ✅
+`` `${lienActif} relative` `` → la fonction devient son code source, `isActive` perdu. Corrigé : `relative` sur un `<span>` qui enveloppe l'icône, pastille `absolute -top-2 -right-2`. Un `absolute` sans décalage reste à sa place dans le flux.
+
+---
+
+**Niveaux** : lazy initializer 🟢 · chaîne des hauteurs 🟢 · `clsx` 🟢 · `twMerge` 🟢 · `cn()` / rest / `ClassValue` 🟡 · annotation d'un paramètre déstructuré 🔴 (5ᵉ) · `${}` avec une valeur non-chaîne 🟡 · décalages négatifs en `absolute` 🟢.
+
+**⚠️ Mes erreurs** : consigne de l'item 2 sans **rendu attendu** (relevé par lui).
+
+**🔄 Rotation — décision de Frédéric** : les notions simples récentes **entrent toutes en rotation**, parce qu'elles s'oublient si on ne les réemploie pas (fonctionnement ou simple nom) :
+`clsx` · `twMerge` / `cn()` · paramètre rest · `relative` / `absolute` / `inset-0` · `top-full`, `left-0`, `w-full`, décalages négatifs, `z-10` · `object-cover` · `truncate` + `min-w-0` + `shrink-0` · `mt-auto` / chaîne `flex-1` · `focus-within` · `ring` vs `border` · `trim()` · `contains` / `onFocus` / `onBlur` · `${}` piège · préfixes `@theme` · chemins `./` `../`.
+Toujours dedans : lazy initializer (le pourquoi).
+
+**📌 En attente** : coupure des titres de la liste *(appliquée ? à demander)* · 3 remarques sur `BarreRecherche` · police · bascule de la barre d'`App.tsx` · Figma dans la roadmap (à trancher).
+
+**⏭️ Prochaine étape**
+1. **Composant `<Bouton>` avec `cn()`** (bouton « Ajouter au panier » de la Boutique et de la Fiche) → coller les deux JSX en ouverture.
+2. Points en attente ci-dessus.
+3. Suite de l'habillage → mini-panier → PR + fusion → hooks personnalisés + Context API.
+
+## Session 115 — Cartes de la Boutique, composant `<Bouton>` avec `cn()`, polices
+
+**Durée** : ~3h30 (vendredi, avec pause repas). Énergie bonne.
+
+**🎹 Raccourci** : Remove Brackets — non utilisé (séances surtout CSS), reconduit.
+
+---
+
+### Révision éclair
+- **`truncate` dans un flex** 🟡 : `shrink-0` sur l'image ✅ · **`min-w-0` sur le conteneur du texte oublié** ❌ · faute `object-contains` (classe inexistante, silencieuse).
+- **Prédire** : `${false}` dans un template literal → écrit `"false"` ❌ (**2ᵉ fois**, après `clsx` en S114) · tableau vide truthy ✅ · `trim()` ✅.
+- Fiche de définitions demandée : `shrink-0` / `min-w-0` / `truncate` / `object-contain` · **`truncate` (1 ligne, listes) vs `line-clamp-N` (N lignes, cartes)**.
+
+### 1. Cartes de la Boutique
+Débordement du titre : `line-clamp-2` fonctionnait, mais la **case de grille étirée** (`h-32` + `stretch`) laissait voir une 3ᵉ ligne. Correctif `h-14` jugé « tassé » → **refonte complète demandée** : deux flex au lieu d'une grille interne, `gap-4`, titre `h-14`, `flex-1` + `mt-auto` pour aligner les prix, `Link` en `block`. Retirés : `min-h-96`, `min-w-72`, `h-32`. **Validé : « propre »** 🟢.
+Au passage : `text-[rgb(249-83-62)]` (tirets → classe silencieuse) → **token `--color-shop-prix`** créé et appliqué partout.
+
+### 2. Composant `<Bouton>` + `cn()`
+- **Intérêt contesté par lui**, à raison pour deux occurrences. Recadré : **cohérence** sur 6+ boutons (une définition, un seul endroit à modifier), et `cn()` comme condition d'un composant ajustable. Accepté.
+- Rappels demandés : **`children`** · **où trouver `React.ReactNode`** (type décidé par soi → source : `Ctrl+clic` sur `StrictMode`) · **`...inputs: ClassValue[]`** réexpliqué (2ᵉ fois) par l'union + `[]` et le trajet d'un appel.
+- 1ᵉʳ jet : `children` passé en attribut (forme longue) · `onAjouter` trop spécifique → `onClick` · `className` obligatoire · **aucune classe par défaut** (le composant n'apportait rien). Tout corrigé.
+- Règle posée : **ce qui vaut pour tous les boutons → composant** (dont l'état grisé), **ajustements et marges extérieures → page**.
+- **Test `twMerge` réussi** dans les DevTools (`px-2 py-1` gagne sur `px-4 py-2`). Réutilisé seul sur « Afficher plus ».
+
+### 3. `BarreRecherche` terminée
+Coupure des titres **déjà faite seul** (`items-center`, `shrink-0`, `min-w-0`, `truncate`, `title`). `text-shop-prix`, `aria-label="Rechercher"`. `equivalent.slice()` : copie inutile signalée ; **conservée par choix** (symétrie des deux branches), défendable.
+
+### 4. Polices
+**Bebas Neue** (titres, marque) + **Oswald** (texte) via `@import` en tête de `index.css` et tokens `--font-shop-*`. Points posés : graisse unique de Bebas → **pas de `font-bold`** (faux gras) · police posée une fois sur la racine (héritage) · Oswald à éviter sur les paragraphes longs · vérification par **Rendered Fonts**. ✅ Les deux fonctionnent.
+
+---
+
+**Niveaux** : `truncate` + `min-w-0` 🟡 (oubli en révision, appliqué en code) · `line-clamp` + hauteur de boîte 🟢 · flex dans une carte / `mt-auto` 🟢 · `${}` avec une valeur non-chaîne 🔴 (2ᵉ) · composant avec `children` + `cn()` 🟢 · rest / `ClassValue` 🟡 · tokens de police 🟢.
+
+**⚠️ Mon erreur** : « trois remarques » annoncées en S113 bis **sans les écrire**, reconstituées aujourd'hui sans garantie. **Correctif : une remarque annoncée s'écrit tout de suite, même en une ligne.**
+
+**🔄 Rotation** : ajouter **`${}` piège (priorité)** · `truncate` vs `line-clamp` · `children` entre les balises · rest / `ClassValue`. Le reste de la liste S114 est inchangé.
+
+---
+
+### 🛒 Shopping Cart — reste à faire
+
+**Habillage** : fiche produit (mise en page, `formatEuro`, champ quantité) · page Panier + écran de paiement · états de chargement / d'erreur (Boutique, Fiche ; « Monture » → « produit ») · **`<Bouton>` partout** (Paiement, Retour, + / − / supprimer), à faire seul · footer « Réalisé » *(à confirmer)*.
+**Fonctionnalités** : mini-panier glissant au clic · boutons − / + personnalisés (en dernier) · **tailles XS → XL : décision ouverte**.
+**Clôture** : responsive (header 3 colonnes à adapter) · **PR + fusion**.
+Atelier : bascule masquer / afficher de la barre d'`App.tsx`.
+
+**⏭️ Prochaine étape** : habillage de la **fiche produit**, puis du **panier**.
+
+## Session 116 — États de chargement et d'erreur, composant `EtatMessage`, début de l'habillage du panier
+
+**Durée** : ~2h15 (samedi, en deux blocs). Énergie bonne. **API FakeStore en panne toute la journée.**
+
+**🎹 Raccourci** : Remove Brackets — non utilisé, reconduit.
+
+---
+
+### Révision éclair (`${}`, `||`, `??`)
+`${promo && "barré"}` ✅ · `quantite || "épuisé"` ✅ · **`quantite ?? "épuisé"` ❌** : `??` ne remplace que `null` / `undefined`, donc `0` est gardé (« un stock à 0 est une information »).
+
+### 1. API en panne : lecture de la console
+`ERR_FAILED 522` (Cloudflare, serveur d'origine injoignable) + message CORS. Repère posé : **le message CORS est une conséquence** (la page d'erreur de Cloudflare n'a pas l'en-tête) ; chercher le code serveur qui l'accompagne. Erreurs doublées = StrictMode. Images servies depuis le cache.
+
+### 2. États de chargement et d'erreur ✅
+- **Chargement** : centrage par `flex-1` + `items-center justify-center` **trouvé seul** (chaîne des hauteurs réinvestie) 🟢. Ajouts : `flex-col gap-3`, taille et couleur de l'icône. **Neuf** : `Loader2` + `animate-spin` 🟡 · classe `uppercase` plutôt que du texte tapé en capitales (lecteurs d'écran) 🟡.
+- **Erreur** : message humain à l'écran, détail technique en `console.error` · `{erreur}` remis à l'écran au 2ᵉ jet, signalé · titre + phrase d'aide en deux éléments au lieu d'un `<br>`. **Neuf** : `window.location.reload()` 🟡, avec la distinction **`window.location` (navigateur, agit sur la page) vs `useLocation` (React Router, lit la route)** — demandée par lui.
+- `min-h-44 min-w-44` réapparus par copier-coller (inutiles avec `flex-1`).
+
+### 3. Composant `EtatMessage`
+**Code donné** (interface, composant, trois états de la Fiche), faute de temps, à sa demande. **Réutilisé seul dans la Boutique** ✅. Question posée : `icone: React.ReactNode` → une **deuxième zone de contenu** passe par une prop nommée, de même type que `children`. `<Link>` (destination) et non `<Bouton>` (action) pour « Retour à la boutique ».
+
+### 4. Panier — habillage commencé
+Structure standard donnée (liste 2/3 + récapitulatif 1/3 en `lg:grid-cols-3`, ligne en flex : image `shrink-0`, texte `flex-1 min-w-0`, quantité, supprimer). Choix tranchés : `<Bouton>` pour Paiement, − et + ; bouton-icône `Trash2` pour supprimer. États vide et paiement → `EtatMessage`. **Étapes 1 et 2 faites par lui, code non vu.** Au passage : `paiment` (faute), total à sortir du JSX dans une `const`.
+
+---
+
+**Niveaux** : `??` vs `||` sur `0` 🔴 · lecture d'une erreur réseau 🟢 · centrage par `flex-1` 🟢 · `animate-spin` / `uppercase` 🟡 · `window.location` vs `useLocation` 🟡 · `EtatMessage` : utilisation 🟢 / **conception 🔴 (donnée, à rejouer seul)** · `ReactNode` pour une prop de contenu 🟢.
+
+**🔄 Rotation** : ajouter **`??` vs `||` avec `0`** · `window.location` vs `useLocation` · `animate-spin` · `uppercase`. Le reste inchangé (dont `${}` piège).
+
+---
+
+### 🛒 Shopping Cart — reste à faire
+**Habillage** : **panier (en cours)** + écran de paiement · fiche produit (mise en page, `formatEuro`, champ quantité) · `<Bouton>` sur les boutons restants · footer « Réalisé » *(à confirmer)*. ✅ États de chargement / d'erreur faits (Boutique, Fiche).
+**Fonctionnalités** : mini-panier glissant au clic · boutons − / + personnalisés (en dernier) · **tailles XS → XL : décision ouverte**.
+**Clôture** : responsive · **PR + fusion**.
+Atelier : bascule de la barre d'`App.tsx`.
+
+**⏭️ Prochaine étape** : coller `Panier.tsx` en ouverture → étapes 3 (ligne d'article) et 4 (récapitulatif).
+
+## Session 117 — Panier terminé, bande latérale glissante, `SelecteurQuantite` + cours flex-grow / shrink / basis
+
+**Durée** : ~6h45 (dimanche, 3h10 le matin + ~3h35 l'après-midi). Énergie bonne, fatigue en fin de journée. **API FakeStore toujours en panne** : fiche produit bloquée.
+
+**🎹 Raccourci** : Remove Brackets — utilisé une fois, reconduit.
+
+---
+
+### Révision éclair (2 items, format code)
+- **Prédire `??` / `||` / `${}`** 3/6 : **`${stock > 0 && "dispo"}` → `"false"` ✅, le piège `${}` tombe pour la première fois** (2 échecs avant) · `nom ?? "Sans nom"` → `""` ❌ (règle appliquée au `0`, pas à la chaîne vide) · `` `${null}` `` → `"null"` ❌. Repère : **le JSX masque `null` / `false` / `undefined`, un template literal les écrit tous.**
+- **Déboguer — pastille `absolute`** 🟢 : `relative` posé, cause non énoncée. `flex` à la place d'`inline-block` → **`inline-flex`** donné.
+
+---
+
+### 1. Ligne d'article du panier
+- `min-w-300` → `w-full max-w-6xl` (plafond, pas plancher) 🟢 reformulé seul.
+- Image débordant de son conteneur + `shrink-0` au mauvais niveau 🟢.
+- **`items-*` (parent) vs `self-*` (un enfant)** 🟢.
+- **`min-w-0` à chaque niveau de la chaîne flex** 🟡 (réexpliqué à sa demande).
+- **Colonne de prix alignée** (demande de sa part, site de référence) : chaque `<li>` est un flex indépendant → `w-32 shrink-0` + alignement du texte 🟢. **Neuf** : `tabular-nums` 🟡.
+- `w-full` + `m-6` dans une case de grille → débordement, retirés 🟢.
+
+### 2. 🎓 Cours flex-grow / flex-shrink / flex-basis — demandé (« jamais appris »)
+basis = départ, grow = part de l'espace en trop, shrink = part du manque · calcul en trois temps · lien avec `min-width: auto` · `flex: grow shrink basis` · `flex-1` vs `flex-auto` vs `flex-none`.
+- **Prédiction 3/3**, dont le cas `shrink-0` 🟢. Cas 3 : `grow` sur un `<input>` → forme robuste `flex-1 min-w-0`.
+- Questions de suite : `0 1 auto` en forme longue · `basis-0` (n'a de sens qu'avec `grow`) · `size-16 shrink-0` = `0 0 auto` (**corrigé par lui**).
+- **`w-*` vs `basis-*`** pour un élément fixe → `w-*` + `shrink-0` (`basis` dépend de l'axe, et laisse la boîte s'élargir en silence).
+**Niveau** : calcul 🟢 · choix des classes en situation 🟡. **Notion ouverte.**
+
+### 3. Pages blanches — deux `ReferenceError`
+- Matin : icône collée sans import dans `Brouillon.tsx` → toute l'app tombe. Console lue sur demande 🟢. Rappel : **Vite ne vérifie pas les types** → `typecheck`.
+
+### 4. Quantité éditable au clavier (initiative de sa part)
+- 1ᵉʳ jet : un `useState` pour toutes les lignes, que `value` ne lit pas → débloqué par deux questions.
+- **Écart `nouvelle − ancienne` trouvé seul, en réutilisant `modifierPanier`** 🟢.
+- **🔴 `supprimerPanier` appelé dans `value`** → setter pendant le rendu (famille récurrente) + `value` à `undefined`. Correction demandée, donnée : handler en accolades + early return `< 1`. Limite assumée : champ impossible à vider.
+- Flèches natives masquées en `@layer base` (extrait de mémoire, vérifié à l'écran). **Neuf** : sélecteur d'attribut, pseudo-éléments natifs, préfixes 🟡.
+
+### 5. Récapitulatif du panier ✅
+- Question de fond : **pourquoi sous-total et total ?** → identiques sans livraison ni réduction ; ligne « Livraison : Offerte » ajoutée pour justifier la séparation.
+- Corrections, toutes appliquées : « continuer mes achats » appelait `setPaiement` (copier-coller) → **`<Link>`** · `<p>` dans un `<span>` (HTML invalide) → `<div>` · `reduce` en double → `const total` · séparateur en élément vide → `border-t` · boutons hors de la carte.
+- **Étirement dans la grille** : la carte de la liste s'étirait à la hauteur de la colonne de droite → `items-start`. Distinction **case / élément dans la case** (`stretch` dimensionne l'élément) et **`items-*` = vertical / `justify-items-*` = horizontal** en grille 🟢. Question « la grille n'est pas adaptée ? » → non, flexbox a le même `stretch`.
+
+### 6. Bande latérale (panier façon Amazon) — conçue par lui
+- **Son idée** (la page se resserre pour laisser la place au panier) : écartée trop vite de ma part, **motif réel** (Amazon). `pr-36` refusé par lui (la photo d'accueil serait raccourcie) : décision argumentée, gardée.
+- `<aside>` après le `<main>` 🟢 · `inset-y-0` (et non `h-screen`) 🟢 · **liste qui défile seule** : `flex-col` + `shrink-0` + `flex-1` + **`min-h-0`** + `overflow-y-auto` 🟡 (neuf, `min-w-0` sur l'autre axe).
+- **`hidden 2xl:flex`** : affichage sur grand écran seulement (risque de recouvrement sur portable).
+- **`afficherBande`** en donnée dérivée avec **`startsWith`** (règle positive : boutique + fiches) 🟢. Précédence `&&` / `||` signalée.
+- **Bande glissante** : **élément toujours rendu pour pouvoir l'animer** (le rendu conditionnel supprime l'animation) 🟡 neuf · `translate-x-full` / `translate-x-0` + `transition-transform` 🟢 · **`cn()` pour une valeur par défaut surchargée par condition — initiative de sa part** 🟢 · state `bandeOuverte` ouvert dans `ajouterPanier` · croix de fermeture (`fixed` sert de repère au `absolute`).
+- **Débogage « ça ne fonctionne pas »** : React DevTools (`bandeOuverte` à `true`) → **test d'élimination mené par lui, cause isolée** (`afficherBande` faux) → il testait sur la page Panier, où la bande est masquée par la règle `startsWith`. DevTools ancrés à droite = fenêtre < 1536 px = bande masquée.
+
+### 7. Composant `SelecteurQuantite`
+- **Construit seul, avant de lire la consigne**, fonctionnel du 1ᵉʳ coup 🟢 : version **spécialisée** (reçoit l'article + les fonctions du panier), prop `className` passée à `cn()` de lui-même. Corrections : `className?: ReactNode` → `string` · paramètre `quantite` qui était un **écart** → `delta`.
+- Compromis spécialisé / générique expliqué : sa version ne pourrait pas servir à la fiche (pas d'`Article`). **Version générique donnée (fatigue)** : `quantite` + `onChangerQuantite(nouvelleQuantite)`, **le parent décide** (0 → suppression dans le panier, refus sous 1 sur la fiche) 🟡 (donnée).
+- En place dans la bande. **Page Panier : pas encore.**
+
+---
+
+**Niveaux** : `${}` piège 🟢 · `??` sur chaîne vide 🟡 · `relative` + `absolute` 🟢 · `inline-flex` 🟡 · `items` / `self` 🟢 · `items` vs `justify-items` en grille 🟢 · `stretch` case / élément 🟢 · `min-w-0` / `min-h-0` à chaque niveau 🟡 · flex-grow / shrink / basis 🟢 calcul / 🟡 usage · `w-*` vs `basis` 🟡 · `tabular-nums` 🟡 · **setter dans `value` 🔴** · HTML : `<p>` dans `<span>` 🟡 · `<Link>` vs `<button>` 🟢 · `startsWith` / donnée dérivée 🟢 · élément toujours rendu pour l'animer 🟡 · `cn()` en surcharge conditionnelle 🟢 · extraction de composant en autonomie 🟢 · contrat générique d'un composant 🟡 · test d'élimination / React DevTools 🟢.
+
+**🎓 Décisions de Frédéric**
+- **Tailles XS → XL abandonnées.**
+- Pas de `pr-36` : la bande repose sur les marges des pages limitées en largeur.
+- **Les notions neuves ou fraîches du jour entrent en rotation dans quelques jours.**
+
+**⚠️ Mes erreurs**
+1. **Conclusion tirée d'une erreur de console ancienne** (« `X` is not defined ») : la console ne s'efface pas au rechargement de Vite. Correctif : vider la console avant de lire un résultat de test.
+
+**🗑️ Instruction à ajuster** : §7 CSS « Flexbox complet » ✅ — ne couvrait pas `flex-grow` / `flex-shrink` / `flex-basis` (enseignés S117).
+
+**🔄 Cycle de reprise** : flex-grow / shrink / basis → N+2 ≈ S119 · contrat générique d'un composant → fiche produit.
+
+**🔄 Rotation — à partir de quelques jours (décision de Frédéric)** : flex-grow / shrink / basis · `min-w-0` / `min-h-0` · `??` sur chaîne vide · template literal qui écrit `null` · `tabular-nums` · `inline-flex` · `items` / `self` · `items` vs `justify-items` en grille · `stretch` (case / élément) · `inset-y-0` · `overflow-y-auto` + `min-h-0` · élément toujours rendu pour l'animer · `startsWith` · précédence `&&` / `||` · sélecteur d'attribut et pseudo-éléments natifs · setter dans `value`. **Reste** : `${}` piège (une réussite, à confirmer) · liste S114.
+
+---
+
+### 🛒 Shopping Cart — reste à faire (~2h30 à 3h)
+1. `SelecteurQuantite` dans la **page Panier** (~10 min).
+2. **Fiche produit** : mise en page, `formatEuro`, `SelecteurQuantite`, `<Bouton>` — avec l'API, ou `public/produits.json` construit depuis le `localStorage` si la panne dure. Tester l'ouverture de la bande à l'ajout.
+3. **Responsive** : header en 3 colonnes, grille du panier, ligne d'article.
+4. **PR + fusion.**
+
+**⏭️ Prochaine étape** : finir Shopping Cart (liste ci-dessus), puis **hooks personnalisés + Context API**, avec le panier comme terrain.
+
+## Session 118 — Panier : `SelecteurQuantite`, fiche produit, débordement de ligne, début du responsive
+
+**Durée** : ~3h15 (mercredi, en deux blocs). Énergie bonne. API FakeStore revenue.
+
+**🎹 Raccourci** : Remove Brackets — peu utilisé, reconduit.
+
+---
+
+### Révision éclair (3 items, format code)
+- **Prédire `??` / `||` / `${}`** 🟢 5/5 : `??` sur chaîne vide **redressé** (raté en S117) · piège `${}` juste pour la 2ᵉ fois d'affilée.
+- **Déboguer `onChange={fn(...)}`** 🟢 : corrigé en fonction fléchée, mécanisme compris. Non cité : `e` n'existe pas à cet endroit (`ReferenceError` avant tout appel). **Remarque fondée de sa part** : l'exercice manquait de contexte (pas de code parent).
+- **Écrire `cn()`** 🟢 : `cn("… bg-green-100", stock === 0 && "bg-red-500 text-white")`. Il s'appuie sur l'arbitrage de `twMerge`, ce qui est valide. Variante en ternaire donnée.
+
+### 1. `SelecteurQuantite` dans la page Panier ✅
+Contrat générique respecté. Le `className` passé répétait la base du composant → la page ne fournit que ses ajustements (`gap-4 p-2`).
+**Factorisation `changerQuantite` dans le layout** : proposée (même décision métier écrite deux fois), tentée (`id.quantite` sur un `number`), correction demandée et donnée (poser la quantité au lieu d'appliquer un écart). **Abandonnée par lui : trop de DRY nuit à la lisibilité.** Choix défendable avec deux occurrences.
+`lienActif` annoté `{ isActive }: { isActive: boolean }` 🟢 : **la notion à 5 échecs est juste dans le code.**
+
+### 2. Fiche produit ✅
+- Retour en `<Link>` (adresse écrivable dans le JSX) 🟢 · `./shopping-cart/boutique` relatif → 404, corrigé en absolu 🟡.
+- Handler du sélecteur (refus sous 1, early return) 🟢. **`desactive` conservé par choix** (inutile aujourd'hui).
+- Image : principe boîte (hauteur fixe) / photo (`h-full w-full object-contain`) appliqué 🟢.
+- **Mode « Modifier le panier » ajouté de sa propre initiative** → bug : `useState` ne lit sa valeur de départ qu'une fois (F5 pendant le chargement → 1 ; fiche → fiche via la recherche → composant réutilisé, quantité conservée). Solution donnée (découpage en deux composants + `key={produit.id}`) **jugée trop complexe → retour à l'ancienne version.** Effet résiduel assumé : la quantité suit d'une fiche à l'autre.
+
+### 3. Ligne d'article qui déborde 🔴
+Titre long → groupe de droite et icône de suppression sortis de la carte. Cause : `min-w-0` absent sur la `div` intermédiaire + `w-full` au lieu de `flex-1`. **Non trouvé malgré l'indice** (« j'en sais rien »), correction donnée. Notion S117, reste en rotation.
+Message « error boundary » dans la console : trace probable de la version abandonnée. Vider la console et vérifier — **non confirmé**.
+
+### 4. Git : revenir à un état précédent (question de sa part) 🟡
+`git log --oneline` · `git restore` (non commité) · `git restore --source=<hash>` (un fichier) · `git switch --detach` (consulter) · `git revert` (annuler un commit) · **`reset --hard` à éviter**.
+
+### 5. Responsive — commencé
+- **Cours** : le designer livre des maquettes par taille, l'ordre du design dépend du produit (e-commerce → mobile ; outil métier → desktop, parfois desktop seul). **En code Tailwind, toujours mobile first, composant par composant, vérifié au fil de l'eau.** Une passe à la fin = inverser les classes (base mobile, actuel derrière `lg:`). `max-*` réservés aux exceptions. Un préfixe s'ajoute seulement là où la mise en page casse.
+- **Header** : burger menu écarté (3 liens, le panier ne doit pas être caché) → icônes seules en mobile (`hidden lg:block` sur les textes), recherche en 2ᵉ ligne avec **`order-last w-full`** (neuf). Padding fixe `px-40` qui écrase la recherche → **conteneur `mx-auto w-full max-w-6xl px-4`** recommandé. **Non appliqué, à reprendre.**
+
+---
+
+**Niveaux** : `??` sur chaîne vide 🟢 · `${}` piège 🟢 (2ᵉ réussite) · `fn` vs `fn()` 🟢 · `cn()` / `twMerge` 🟢 · annotation d'un paramètre déstructuré 🟢 (dans le code) · contrat générique d'un composant 🟢 · `/` absolu vs `./` relatif 🟡 · boîte / `object-contain` 🟢 · `useState` lit sa valeur de départ une seule fois 🟡 · `key` pour réinitialiser un state 🔴 (donné, non pratiqué) · chaîne `min-w-0` + `flex-1` vs `w-full` 🔴 · Git restore / revert 🟡 · mobile first en pratique 🟡 · `order` 🟡 (neuf).
+
+**🎓 Décisions de Frédéric** : pas de factorisation `changerQuantite` (lisibilité) · `desactive` conservé · pas de mode « Modifier le panier » · pas de burger.
+
+**🔄 Rotation** : **reste** — chaîne `min-w-0` (priorité). **Entrent** — `useState` et valeur de départ · lien relatif vs absolu · Git restore / revert · `order`. **Sortie possible** — `${}` piège (deux réussites d'affilée, à confirmer une fois).
+
+**⏭️ Prochaine étape — finir Shopping Cart**
+1. **Header responsive** : conteneur plafonné, icônes seules, recherche en 2ᵉ ligne (`order`), trois colonnes à `lg:`.
+2. Grille du panier · ligne d'article · fiche produit · vérification de la Boutique et de l'accueil.
+3. **PR + fusion.**
+4. Puis **hooks personnalisés + Context API**, avec le panier comme terrain.
+
+## Session 119 — Shopping Cart responsive (header, boutique, fiche, panier) — projet terminé
+
+**Durée** : ~2h50 (jeudi, 2h30). Énergie bonne.
+
+**🎹 Raccourci** : Remove Brackets — usage non renseigné, reconduit.
+
+---
+
+### Révision éclair (2 items, format code)
+- **Déboguer — chaîne `min-w-0`** 🟡 2/3 : `shrink-0` sur l'image et `flex-1 min-w-0` sur le `<p>` justes · **`div` intermédiaire manquée** (`w-full` au lieu de `flex-1 min-w-0`), même maillon que la veille. Règle reformulée seul : « un `min-w-0` par étage jusqu'au parent ».
+- **Prédire — `useState` et prop** 🟡 : réponse juste (5), **raison fausse** (« le second setter se met à jour au prochain rendu »). Corrigé : l'argument de `useState` n'est lu qu'au montage, il est ignoré ensuite ; une prop recopiée dans un state cesse de la suivre.
+
+### 1. Header ✅
+- 1ᵉʳ jet : `hidden xl:block` sur la recherche → fonctionnalité supprimée sous 1280 px. Corrigé : **le layout place la recherche** via une prop `className` + `cn()` (`order-last col-span-2 lg:order-0 lg:col-span-1`) 🟢. Règle appliquée : le composant porte sa base, la page décide de la disposition.
+- **Palier traité seul** : `lg:hidden xl:block` sur « Votre panier » (place manquante en 3 colonnes entre `lg` et `xl`) 🟢.
+- **`clamp()` — notion neuve** : cours complet (MIN / préféré / MAX, `vw`, calcul d'une droite entre deux points). Besoin exprimé par lui : `px-40` sur grand écran, resserrement progressif jusqu'au mobile. Appliqué : `px-[clamp(16px,13.09vw-41px,160px)]`. « Je ne comprends pas tout mais ça fonctionne » 🟡. Tailwind ajoute lui-même les espaces autour de l'opérateur.
+- `max-w-7xl` = taille nommée maximale ; au-delà, valeur arbitraire ou token `--container-*` 🟡 (non appliqué).
+
+### 2. Boutique ✅
+Le bug du titre qui dépasse est revenu avec le responsive : `h-14` calé sur `md:text-lg` (2 × 28 px), trop haut pour le texte de base (2 × 24 px). **`h-14` retiré**, l'alignement des prix tient par `flex-1` + `mt-auto` 🟢. Repère : une hauteur fixe sur un bloc de texte doit suivre sa taille de texte, ou disparaître.
+**Effet de survol** : bordure noire puis blanche → couleur de bordure par défaut `currentColor` en v4 + `transition-all`. Corrigé par **`border border-transparent` permanent + `hover:border-white`** 🟢 (plus de saut d'1 px).
+
+### 3. Fiche produit ✅
+Colonne en mobile, deux colonnes à `md`, bouton d'ajout `flex-1 md:flex-none` 🟢.
+
+### 4. Panier ✅
+Grille `grid-cols-1` → `md:grid-cols-3` · ligne d'article en **colonne en mobile**, en ligne à `md` · piège `items-start` en colonne expliqué (le titre prendrait sa largeur pleine, `truncate` inopérant ; on garde le `stretch`) · `grid-col-1` (classe inexistante, silencieuse) corrigé · prix et paddings allégés en mobile. **Rendu à 375 px validé** 🟢. Retouches visuelles faites seul (cadre des images, `gap-0 md:gap-4`).
+Reste facultatif : `shrink-0` à déplacer de l'`<img>` vers la `div` du cadre.
+
+---
+
+**🏁 Shopping Cart terminé.** Énoncé Odin couvert, plus : fiche produit, recherche, panier persistant, bande latérale, états de chargement / d'erreur, responsive complet. **PR + fusion faites par lui en fin de séance.**
+
+**Niveaux** : chaîne `min-w-0` 🟡 (2ᵉ échec en révision, juste en code) · `useState` et valeur de départ 🟡 · placement d'un composant par le parent (`className` + `cn()`) 🟢 · `order` / `col-span` responsive 🟢 · `clamp()` + `vw` 🟡 (neuf) · hauteur fixe vs taille de texte responsive 🟢 · `border-transparent` au survol 🟢 · flex en colonne / `stretch` vs `items-start` 🟡 · mobile first en pratique 🟢.
+
+**🔄 Rotation** : **restent** — chaîne `min-w-0` (priorité) · `useState` et valeur de départ. **Entrent** — `clamp()` + `vw` · `border-transparent` au survol · hauteur fixe sur texte responsive · `stretch` vs `items-start` en colonne.
+
+**⏭️ Prochaine étape** : **hooks personnalisés + Context API**, avec le panier de Shopping Cart comme terrain, sur une séance fraîche.
+
+## Session 119 bis — Chantier documentaire : registre, audit, projets réalisés, cap
+
+**Durée** : ~45 min (jeudi après-midi). Aucun apprentissage.
+
+**Fait** :
+- `dettes-apprentissage.md` actualisé à la S119 : 54 → **45 dettes**, 🔴 12 → **6**. 13 soldées (`children`, `useRef`, `<table>`, types fonction, `unknown`/`instanceof`, branches + PR, coercion, hoisting, debugger, `localStorage`, `Promise.all`/`.then`, `line-clamp`, `clamp()`). Ajouts : portails, ErrorBoundary, render props (le nom), `IntersectionObserver` version React. Debugger classé soldé mais « à surveiller ».
+- `audit-exercices-types.md` **durci sur sources officielles** (pages Odin fetchées le 08/10) et coupé en deux : **partie A** = canon vérifié, utilisable · **partie B** = liste générique, grille de lecture seulement. Constat : les 3 projets React d'Odin sont faits ; le nouveau trou est l'organisation du code JS (constructeurs, prototypes, classes).
+- `Projets_realises_Frederic_S119.md` régénéré (S57 → S119). **Supprimer la version S56 du projet.**
+- Instructions §6 et §10 : texte de remplacement livré pour la ligne sur l'audit.
+
+**🎓 Décisions** :
+- **Le bloc React se termine avant Next.js** : `useMemo` / `useCallback` / `React.memo` remontent avant Next.js (hooks de base sur roadmap.sh, dernière leçon React d'Odin). Next.js ne remplace pas React, il est construit dessus.
+- **Tests** (Vitest, React Testing Library, Playwright) **avant le déploiement du SaaS**.
+- **Figma en Phase 2**, avant le passage en Phase 3.
+- **shadcn/ui** au moment du SaaS optique (prérequis déjà acquis : Tailwind, `cn()`, tokens par rôle).
+
+**⏭️ Prochaines étapes (ordre théorique)**
+1. **Bloc React complet** : Context API + hooks personnalisés + `useReducer` (sur le panier du Shopping Cart) → `useMemo` / `useCallback` / `React.memo` (warning `exhaustive-deps` de la calculatrice) → portails + ErrorBoundary.
+2. **Todo List (Odin)** en React + TS, projet de synthèse (dates, état partagé, `localStorage`). Dark mode React possible dedans.
+3. En créneaux courts, en parallèle : cycles de reprise et rotation · event loop · `@keyframes` (retournement de carte Memory Card).
+4. **Next.js**.
+5. Base de données + authentification → Zod + React Hook Form → shadcn/ui → **SaaS optique**.
+6. **Tests**, puis déploiement du SaaS.
+7. **Figma**, `this` + classes (projet Library d'Odin, JS sans React), puis **Phase 3**.
+
+**📝 Edit post-séance (09/10) — cap et calendrier**
+
+- **Compte d'heures** : ~357h au 08/10 (~285h jusqu'à la S93 + ~72h de la S94 à la S119 bis), soit ~17h par semaine travaillée, au-dessus du plancher de 15h. Le volume est dans les temps : 61 % de ~585h.
+- **Retard de contenu** : Phase 2 faite côté React seulement. Reste estimé à ~130-180h (Next.js, base de données, authentification, Zod, Figma, tests, SaaS). Fin de Phase 2 prévue à l'origine au 22/10.
+- **Lecture retenue** : pas de retard réel. Le planning de 9 mois à 15-20h par semaine était ambitieux. En heures, le parcours représente environ un tiers d'un cursus d'école à temps plein (35h × 6-9 mois). Aucun impératif de délai.
+- **🎯 Décision** : **fin de Phase 2 au 31 janvier 2027**, puis Phase 3 allégée (une fonctionnalité IA greffée sur le SaaS, réactivation des outils d'IA de développement). Recalcul de la date à la fin du bloc React.
+- **Critère de candidature** : être « compétent et confiant ». Il sera traduit en conditions concrètes en fin de Phase 2 (SaaS déployé, choix techniques expliqués, tests en place, cycle branche + PR réflexe).
+- **Portfolio** : la vitrine principale est le **SaaS optique**. Les exercices canoniques ont une valeur pédagogique : en garder un ou deux soignés, sans qu'ils absorbent le temps du SaaS.
+
+## Session 120 — Context API : cours, typage, ThemeProvider (dark mode étape 1)
+
+**Durée** : ~3h10 (vendredi, en trois blocs avec pauses). Énergie bonne.
+
+**🎹 Raccourci** : Remove Brackets **abandonné** (jamais utilisé). Nouveau : **`Ctrl+Entrée`** (ligne en dessous sans couper la ligne en cours) — donné de mémoire.
+
+---
+
+### Révision éclair (2 items)
+- **Déboguer — chaîne `min-w-0`** 🟢 : `div` intermédiaire en `flex-1 min-w-0` trouvée (le maillon raté deux fois), `shrink-0` sur l'image, explication juste. Classes inutiles sur le `<p>` (parent non flex) · `ml-auto` au lieu de `shrink-0` sur la ville.
+- **Prédire — `useState` et prop** 🟢 : 10, raison juste. Correction = supprimer le state, afficher la prop.
+- Ressenti 8/10 : **bien calibré**.
+
+### 1. Context API — notion neuve
+- **⚠️ Premier message surchargé** (correction + raccourci + cours + exercice + note de version) → « je ne comprends rien ». Redécoupé : idée seule, sans code (analogie de l'écran au mur du magasin), puis les trois gestes un par un. **Ce format est passé.**
+- Exercice à trou (la balise du Context) ✅ · prédiction sans balise : valeur par défaut ✅, **effet du clic manqué** (plus relié au state).
+- `.Provider` vs forme courte : React 19 → **forme courte retenue**.
+- **Typer un Context qui transporte un objet** : `createContext<T | null>(null)` + garde + `throw` ✅ (trou rempli seul). Écran vide + erreur pointant le composant observé et compris.
+- Critères `useOutletContext` / `useContext` posés (portée, Next.js sans React Router, typage vérifié à la création).
+
+**🎓 Décision de Frédéric** : **Shopping Cart non modifié** (correct en `useOutletContext`, projet fini présentable). Terrain retenu : **dark mode de `projet-vite-local`**.
+
+### 2. Dark mode — étape 1 (thème qui bascule, sans couleurs)
+**🎓 Refus fondé** : squelette complet donné après deux exercices à trou → « je veux coder ». Consigne refaite en livrable + contraintes, avec indices à la demande.
+
+Écrit par lui : `contexts/ThemeContext.tsx` (`ThemeProvider` avec `children`, `BoutonTheme` exporté) · `main.tsx` (Provider dans `BrowserRouter`) · bouton dans la `<nav>` d'`App.tsx` ✅.
+Accroches, toutes corrigées : **interface de props réutilisée comme type du Context** (un rôle = une interface) · constante en minuscule (balise lue comme HTML) · `useState` non typé · **signature sans déstructuration** (`ThemeProvider(children: …)`) → question de fond : `props` est un nom libre, l'objet est fourni par React, `children` est une clé réservée · `<button>` vide laissé dans le Provider.
+**Test de persistance entre pages : à confirmer en ouverture.**
+
+### 3. `throw` hors `fetch` 🔴
+**Blocage mental exprimé** : `throw` collé au contexte `fetch`. Cours donné (`return` = sortie normale / `throw` = sortie anormale qui remonte jusqu'à un `try` ou plante ; deux usages : sauter au `catch`, refuser une situation impossible). Exemple `calculerRemise`. **À pratiquer, pas encore compris en situation.**
+
+---
+
+**Niveaux** : chaîne `min-w-0` 🟢 · `useState` et valeur de départ 🟢 · Context API (trois gestes) 🟢 compris / 🟡 en écriture · Context typé `T | null` + garde 🟡 · composant Provider avec `children` 🟡 (écrit avec indices) · interface de props vs interface de donnée 🟡 (rechute) · signature d'un composant = un objet 🟡 (rechute) · `throw` hors `fetch` 🔴.
+
+**📌 Constaté** : `index.css` de `projet-vite-local` = CSS de démonstration Vite **hors layer**, avec un dark mode automatique (`prefers-color-scheme`) et des variables déjà nommées par rôle.
+
+**⚠️ Mes erreurs**
+1. **Message d'ouverture du Context API surchargé** — cinq sujets dans une réponse. Récurrence du dosage.
+2. **Squelette complet donné alors qu'il était prêt à écrire seul** après deux trous réussis.
+3. Durée de séance mal comptée (« 2h dépassées » alors qu'il revenait de pause).
+
+**🔄 Cycle de reprise** : Context API → N+2 (étape 2 du dark mode) · interface de props vs donnée.
+**🔄 Rotation** : **entrent** — `throw` hors `fetch` (priorité) · Context typé avec `null` + garde. **Sortent** — chaîne `min-w-0` · `useState` et valeur de départ.
+
+**⏭️ Prochaine étape**
+1. Ouverture : confirmer le test de persistance du thème entre pages.
+2. **Dark mode étape 2** : faire réagir `dark:` à une classe (vérifier la syntaxe sur la page « Dark mode » de Tailwind) · classe `dark` posée sur `<html>` depuis le Provider · valeurs sombres des variables par rôle · `localStorage` + lazy initializer.
+3. **Étape 3 : hook personnalisé `useTheme`.**
+4. Plus tard, à décider : dark mode dans `projet-examen-blanc` (tokens pour Shopping Cart, conversion ou `dark:` pour les autres).

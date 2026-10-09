@@ -48,6 +48,9 @@ export default function Accueil() {
       <Link className="text-blue-600 hover:underline" to="/use-outlet-context">
         Exercice useOutletContext
       </Link>
+      <Link className="text-blue-600 hover:underline" to="/use-context">
+        Exercice createContext - useContext
+      </Link>
     </nav>
   );
 }
