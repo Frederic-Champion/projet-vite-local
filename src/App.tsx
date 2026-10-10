@@ -30,6 +30,7 @@ function App() {
   return (
     <div className="grid min-h-screen grid-rows-[auto_1fr]">
       <nav className="flex gap-3 p-1 font-semibold">
+        <BoutonTheme />
         <Link to="/" aria-label="Accueil" className="inline-block rounded-full border p-2 text-blue-500">
           <House size={20} />
         </Link>
@@ -43,7 +44,6 @@ function App() {
             <Undo2 size={20} />
           </button>
         )}
-        <BoutonTheme />
       </nav>
       <main className="p-4">
         <Routes>

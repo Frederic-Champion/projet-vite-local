@@ -2177,3 +2177,56 @@ Accroches, toutes corrigées : **interface de props réutilisée comme type du C
 2. **Dark mode étape 2** : faire réagir `dark:` à une classe (vérifier la syntaxe sur la page « Dark mode » de Tailwind) · classe `dark` posée sur `<html>` depuis le Provider · valeurs sombres des variables par rôle · `localStorage` + lazy initializer.
 3. **Étape 3 : hook personnalisé `useTheme`.**
 4. Plus tard, à décider : dark mode dans `projet-examen-blanc` (tokens pour Shopping Cart, conversion ou `dark:` pour les autres).
+
+## Session 121 — Dark mode étapes 2a/2b + `localStorage` + FOUC
+
+**Durée** : ~2h (samedi, en deux blocs). Énergie bonne.
+
+**🎹 Raccourci** : `Ctrl+Entrée` — **adopté**, « très bien », reconduit.
+
+---
+
+### Révision éclair (`throw` hors `fetch`)
+- **Écrire — `calculerRAC`** 🟢 : garde + `throw` + message avec la valeur fautive, juste du premier coup.
+- **Prédire — `try` / `catch`** 🟢 sur l'ordre. **Explication fausse** : « l'application a cassé ». Corrigé : le `throw` interrompt le `try` et saute au `catch`, puis le programme continue. **Ça ne plante que si aucun `try` n'attrape.**
+- **Niveau** : `throw` hors `fetch` 🟡 (écrit juste, modèle « remontée jusqu'au `try` » encore flou).
+
+Test de persistance d'hier confirmé : thème conservé entre pages, perdu au F5 (attendu avant le `localStorage`).
+
+### 1. Étape 2a — l'atelier suit une classe `dark` (CSS seul) ✅
+- **`prefers-color-scheme` expliqué à sa demande** : media query sur la préférence système (Windows → Chrome), émulable dans DevTools → Rendering. Limite = choix global, d'où le bouton.
+- `@custom-variant dark (&:where(.dark, .dark *));` — **source vérifiée** sur la page « Dark mode » de Tailwind v4.3.
+- **`:root.dark` trouvé seul** à partir de l'indice (élément + classe). Bloc `#social` de la démo supprimé.
+- **`color-scheme` expliqué en détail à sa demande** (ne règle que les éléments dessinés par le navigateur) : `light` dans `:root`, `dark` dans `:root.dark`, spécificité.
+- Test DevTools passé (classe ajoutée / retirée à la main).
+
+### 2. Étape 2b — le Provider pose la classe + `localStorage` ✅
+- Questions posées : `querySelector("html")` vs `document.documentElement` (même élément, la propriété est la convention) · `toggle` vs `replace` (aucune classe à échanger, `toggle` avec condition = `add` / `remove`).
+- **A enchaîné seul sur le `localStorage`** avant la consigne, avec icônes soleil / lune.
+- Accroches, corrigées par lui sur indices :
+  - **Dépendance `[modifierTheme]`** (fonction recréée à chaque rendu → effet à chaque rendu) → `[theme]` 🟢.
+  - **Garde `!== "dark" || !== "light"` toujours vraie** (tableau de vérité donné) → **forme positive** `=== "dark" || === "light"`, narrowing de `string | null` vers l'union 🟢.
+- **Critère de nettoyage appliqué seul** : pas de trace active, pas de nettoyage 🟢.
+- Restés : template literal superflu sur `theme` · **`aria-label` à ajouter** sur le bouton-icône *(fait ? à demander)*.
+
+### 3. FOUC — éclair blanc au F5 ✅
+Observé par lui. Explication : l'effet pose la classe **après** la première peinture. Remède : script inline dans le `<head>` d'`index.html`, même clé et même valeur que le Provider (recommandation vérifiée dans la doc Tailwind, script adapté de ma part). **Appliqué, éclair disparu.**
+
+### 4. Hook personnalisé — cours donné, exercice non fait
+Cours `useMutuelle` (fonction ordinaire, nom en `use`, appelle d'autres hooks, renvoie l'objet du Context, Context non exporté). Exercice `useTheme` **non commencé** (séance arrêtée).
+
+---
+
+**🎓 Constat de Frédéric en relisant son code** : **le Context API reste « assez vague »**. Les trois gestes ont été écrits avec indices sur deux séances, sans ancrage. **Décision : ouverture de la prochaine séance par une révision très détaillée de `createContext` / `useContext`, puis seulement le hook personnalisé.**
+
+**Niveaux** : `throw` hors `fetch` 🟡 · `prefers-color-scheme` 🟢 · `@custom-variant` / `:root.dark` 🟢 · `color-scheme` 🟡 · `classList.toggle` avec condition 🟢 · `document.documentElement` 🟢 · tableau de dépendances (fonction recréée) 🟡 · garde à la forme positive / narrowing d'une union 🟢 · critère de nettoyage 🟢 · lazy initializer + `localStorage` 🟢 · FOUC + script dans le `<head>` 🟡 · **Context API 🔴 à froid** (écrit en séance, vague à la relecture) · hook personnalisé : vu, non pratiqué.
+
+**⚠️ Mes erreurs** : aucune relevée cette séance.
+
+**🔄 Cycle de reprise** : **Context API → ouverture de la prochaine séance, révision détaillée (priorité)** · `useTheme` ensuite.
+**🔄 Rotation** : **entrent** — `||` / `&&` dans une garde (forme positive) · dépendance sur une fonction recréée · `color-scheme`. **Restent** — `throw` hors `fetch` · Context typé avec `null` + garde.
+
+**⏭️ Prochaine étape**
+1. **Révision très détaillée du Context API** : le problème (prop drilling), les trois gestes, le Provider avec `children`, le typage `T | null` + garde, sur le code réel de `ThemeContext.tsx`.
+2. **Hook personnalisé `useTheme`** (cours déjà donné, exercice à faire).
+3. Puis : `useReducer` → `useMemo` / `useCallback` / `React.memo` → portails + ErrorBoundary → Todo List.

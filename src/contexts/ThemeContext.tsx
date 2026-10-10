@@ -1,5 +1,6 @@
 import type React from "react";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { Sun, Moon } from "lucide-react";
 
 type Theme = "light" | "dark";
 
@@ -11,11 +12,21 @@ interface ThemeContexte {
 const ThemeContext = createContext<ThemeContexte | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>(() => {
+    const preference = localStorage.getItem("theme")
+    if (preference === "dark" || preference === "light") return preference;
+    return 'light';
+  });
 
   function modifierTheme() {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   }
+
+  useEffect(() => {
+    const page = document.documentElement;
+    page.classList.toggle("dark", theme === "dark")
+    localStorage.setItem('theme', `${theme}`)
+  }, [theme])
 
   return <ThemeContext value={{ theme, modifierTheme }}>{children}</ThemeContext>;
 }
@@ -26,8 +37,8 @@ export function BoutonTheme() {
 
   const { theme, modifierTheme } = themeAffiche;
   return (
-    <button type="button" onClick={modifierTheme} className="border p-2">
-      thème : {theme}
+    <button type="button" onClick={modifierTheme} className="inline-block cursor-pointer rounded-full border p-2 text-blue-500">
+      {theme === "light" ? <Sun size={20}/> : <Moon size={20}/>}
     </button>
   );
 }
