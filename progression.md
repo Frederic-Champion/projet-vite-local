@@ -2230,3 +2230,47 @@ Cours `useMutuelle` (fonction ordinaire, nom en `use`, appelle d'autres hooks, r
 1. **Révision très détaillée du Context API** : le problème (prop drilling), les trois gestes, le Provider avec `children`, le typage `T | null` + garde, sur le code réel de `ThemeContext.tsx`.
 2. **Hook personnalisé `useTheme`** (cours déjà donné, exercice à faire).
 3. Puis : `useReducer` → `useMemo` / `useCallback` / `React.memo` → portails + ErrorBoundary → Todo List.
+
+## Session 122 — Révision détaillée du Context API + hooks personnalisés (`useTheme`)
+
+**Durée** : 2h (1h40 avec Claude + 20 min de relecture solo d'anciens exercices). Énergie bonne.
+
+**🎹 Raccourci** : `Ctrl+Entrée` — reconduit.
+
+---
+
+### 1. Révision détaillée du Context API (décision S121), en trois parties
+Sur son propre `ThemeContext.tsx`, une partie à la fois, chacune vérifiée par une question.
+- **Vue d'ensemble et trajet de la donnée** (8 étapes, du clic au re-rendu des lecteurs) : « deuxième `BoutonTheme` dans le footer » → change aussi ✅. Raison imprécise (« il remonte l'info aux parents ») → précisé : seul le bouton cliqué signale ; **tous les lecteurs de l'écran sont re-rendus**.
+- **Le Provider** ligne par ligne : prédiction « `{children}` oublié » → page blanche ✅, raison juste. Ajouté : **la console reste muette** (pas une erreur pour React).
+- **Typage, lecture, garde** : survol de la variable avant / après la garde → `ThemeContexte | null` puis `ThemeContexte`, narrowing expliqué seul ✅. Noms proches signalés : `ThemeContexte` (interface) / `ThemeContext` (constante).
+- **Ressenti** : 6 à 6,5/10, « beaucoup moins flou, à confirmer à l'usage ».
+
+### 2. Hooks personnalisés
+- **Intérêt non vu avec un seul lecteur** → cours complémentaire demandé : deux usages — **hook d'accès à un Context** (une ligne par lecteur, garde centralisée, Context caché) · **logique réutilisable** (`useLocalStorage`, motif lazy initializer + effet de sauvegarde **repéré deux fois dans son propre code** : panier du Shopping Cart et thème).
+- **Chaque appel d'un hook crée son propre state** : prédiction juste (non partagé), **raison fausse** (« l'extérieur ne voit pas l'intérieur ») → corrigé. Repère : un hook regroupe du code, **seul un Context partage**.
+- **`useTheme` écrit seul** ✅, `ThemeContext` non exporté. Hoisting du hook déclaré sous son usage : signalé.
+- **« L'architecture ne doit pas être bonne »** → code juste ; le hook semblait inutile parce que le lecteur était dans le même fichier. `BoutonTheme` sorti dans `components/`.
+- **Réorganisation de `projet-vite-local`** : `contexts/` · `components/` · `components-exercices/` renommé en `exercices/`. `Accueil` est une page rangée dans `components/` (non bloquant).
+- **Deuxième lecteur** : phrase « mode sombre activé / désactivé » dans `Accueil` via `useTheme` ✅.
+- **Sa reformulation** : juste. Précision : « réutilisable », pas « générique » (sens TS de `<T>`).
+- Retouches données : déstructurer directement `useTheme()` · message d'erreur nommant le hook · **`aria-label` sur le bouton-icône** *(fait ? à demander)*.
+
+### 3. Divers
+- **`aria-label` vs `alt`** : même but ; `alt` réservé aux `<img>` (décrit l'image), `aria-label` sur tout élément (décrit l'action).
+- **`useParams` — mini-cours de rappel à sa demande** (« je m'en souviens plutôt bien ») : `path` / `to`, nom repris à l'identique, chaîne, `string | undefined`, garde, trajet. **Exercice reporté en révision éclair.**
+
+---
+
+**Niveaux** : trajet de la donnée dans un Context 🟢 · Provider + `children` 🟢 · `T | null` + garde + narrowing 🟢 (survol) · Context API dans son ensemble 🟡 (6,5/10, écrit avec aide, à confirmer à froid) · hook personnalisé d'accès à un Context 🟢 (écrit seul) · state propre à chaque appel de hook 🟡 · séparation contexte / composant d'affichage 🟡 · `aria-label` vs `alt` 🟢 · `useParams` 🟢 (rappel, non mesuré).
+
+**⚠️ Mes erreurs** : aucune relevée.
+
+**🔄 Cycle de reprise** : **Context API → N+2, exercice à écrire sur un autre terrain que le thème** · hook personnalisé → N+2 avec le Context.
+**🔄 Rotation** : **entre** — `useParams` (exercice à écrire) · hook partagé ou non (un appel = un state). **Restent** — `throw` hors `fetch` · `||` / `&&` dans une garde · dépendance sur une fonction recréée · `color-scheme`.
+
+**⏭️ Prochaine étape**
+1. Ouverture : **reprise du Context + hook personnalisé** sur un terrain neuf (exercice à écrire).
+2. **`useReducer`** — notion neuve, créneau frais.
+3. Puis `useMemo` / `useCallback` / `React.memo` → portails + ErrorBoundary → **Todo List (Odin)** → Next.js.
+4. Ouvert : dark mode dans `projet-examen-blanc`.

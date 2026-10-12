@@ -1,8 +1,14 @@
 import { Link } from "react-router";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function Accueil() {
+  const { theme } = useTheme();
+
   return (
     <nav className="flex flex-col gap-3 border border-b-blue-500 p-1 font-semibold">
+      {/* petite ligne d'exercice sur les hooks personnalisés : */}
+      <p className="pl-2 text-start">{ theme === "dark" ? "mode sombre activé" : "mode sombre désactivé"}</p>
+      {/* fin de l'exercice */}
       <Link className="text-blue-600 hover:underline" to="/brouillon2">
         Brouillon2
       </Link>
