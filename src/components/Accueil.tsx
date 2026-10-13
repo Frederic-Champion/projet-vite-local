@@ -7,7 +7,7 @@ export default function Accueil() {
   return (
     <nav className="flex flex-col gap-3 border border-b-blue-500 p-1 font-semibold">
       {/* petite ligne d'exercice sur les hooks personnalisés : */}
-      <p className="pl-2 text-start">{ theme === "dark" ? "mode sombre activé" : "mode sombre désactivé"}</p>
+      <p className="pl-2 text-start">{theme === "dark" ? "mode sombre activé" : "mode sombre désactivé"}</p>
       {/* fin de l'exercice */}
       <Link className="text-blue-600 hover:underline" to="/brouillon2">
         Brouillon2
@@ -56,6 +56,12 @@ export default function Accueil() {
       </Link>
       <Link className="text-blue-600 hover:underline" to="/use-context">
         Exercice createContext - useContext
+      </Link>
+      <Link className="text-blue-600 hover:underline" to="/context-hook">
+        Exercice createContext - useContext - HookPersonnalisé
+      </Link>
+      <Link className="text-blue-600 hover:underline" to="/use-reducer">
+        Exercice useReducer
       </Link>
     </nav>
   );

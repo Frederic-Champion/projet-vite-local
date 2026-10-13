@@ -1,5 +1,4 @@
+
 export function Brouillon2() {
-  return (
-    <div> Brouillon </div>
-  )
+  return <div> Brouillon </div>;
 }

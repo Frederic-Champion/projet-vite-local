@@ -21,6 +21,8 @@ import { Affichage, ListeMonturesExo, FicheMontureExo } from "./exercices/Exerci
 import { ListeFavoris, LayoutFavoris } from "./exercices/Exercice-useOutletContext";
 import { ExerciceUseContext } from "./exercices/Exercice-createContext-useContext";
 import { BoutonTheme } from "./components/BoutonTheme";
+import { ExerciceContextHook } from "./exercices/exercice-context-hook";
+import { ExerciceUseReducer } from "./exercices/exercice-use-reducer";
 
 function App() {
   // return <Brouillon2 />;
@@ -79,6 +81,8 @@ function App() {
             <Route index element={<ListeFavoris />} />
           </Route>
           <Route path="/use-context" element={<ExerciceUseContext />} />
+          <Route path="/context-hook" element={<ExerciceContextHook />} />
+          <Route path="/use-reducer" element={<ExerciceUseReducer />} />
         </Routes>
       </main>
     </div>
