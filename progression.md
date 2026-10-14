@@ -2399,3 +2399,53 @@ Paquets installés dans le projet, `utils/cn.ts` recopié.
 1. Révision sur le contenu de cette séance (Context, hook, `cn()`, `useReducer`).
 2. **Finir `ExerciceUseReducer`** : `onClick` + `dispatch` sur les 4 boutons · puis **upsert dans le reducer uniquement** (deux ajouts du même produit = clé dupliquée, à constater d'abord).
 3. Puis `useMemo` / `useCallback` / `React.memo` → portails + ErrorBoundary → **Todo List (Odin)** → Next.js.
+
+## Session 124 — `useReducer` en pratique : dispatch, upsert dans le reducer, compteur en autonomie
+
+**Durée** : ~2h (mercredi, en deux blocs, au travail). Énergie bonne. Exercice fetch commencé en fin de séance, à reprendre.
+
+**🎹 Raccourci** : `Ctrl+Entrée` — maintenu.
+
+**Ressenti en ouverture** : `useReducer` 3/10, « je n'ai vu que la forme longue » → **juste** (aucun `dispatch` écrit avant).
+
+---
+
+### Révision éclair (3 items, format code)
+- **Écrire `cn()`** 🟡 : rest, `ClassValue` importé, ordre `twMerge(clsx(...))` et spread **justes** — net progrès après 3 accroches. **`return` et `export` oubliés.**
+- **Déboguer un Provider + hook** 🟢 : signature déstructurée et `useContext` trouvés et corrigés.
+- **Écrire une union discriminée** 🟡 : structure juste. Noms hors contrat (`x` au lieu de `montant`, `"incrémenter"` avec accent) → deux résultats attendus refusés. Convention : valeurs de `type` sans accent.
+- **Question posée** : pourquoi `(children: React.ReactNode)` ne fonctionne pas → forme longue `props.children` donnée. Même famille que `({ isActive }: boolean)`.
+
+### 1. `ExerciceUseReducer` (panier)
+- **Premier `dispatch` : demande de guidage** (« je ne sais pas l'utiliser »). `dispatch({ type: "ajouter" })` écrit seul, données manquantes → union discriminée lue comme contrat. Les deux `dispatch` suivants écrits **seuls** 🟢.
+- **🌟 Calcul de l'écart déplacé de lui-même dans le reducer** (le bouton envoie +1). Champ renommé `ecart` pour que le contrat dise la vérité.
+- **Clé dupliquée constatée** (double ajout). Piste `crypto.randomUUID()` écartée (masque le symptôme, deux lignes restent) → **upsert dans le `case "ajouter"` seul**, écrit par lui (`some` + `map` + early return). Le bouton n'a pas changé : démonstration de l'intérêt de `useReducer`. `1` en dur → `action.quantite`.
+- Question : un `if` dans un `case` ? → oui ; piège des `const` dans un `case` signalé.
+
+### 2. Compteur `useReducer` — en autonomie ✅
+- **⚠️ Consigne trop maigre** (boutons sans action associée) → refaite en tableau action / transport / retour / bouton, efficace.
+- `useReducer(reducerCompteur, [])` → état de départ du mauvais type, corrigé.
+- **🔴 Paramètres du reducer inversés** `(action, compteur)` — long blocage, débloqué par la comparaison avec le reducer du panier. **Question de fond** : « l'ordre n'a pas d'importance dans un objet ? » → **objet = par nom / paramètres et tableaux = par position**. Repère : un reducer, c'est toujours `(état, action)`.
+- Réassignation du paramètre dans les `return` → `return compteur + 1`.
+- `switch` exhaustif sans `default` accepté par TS (expliqué).
+- `<hr>` à la place de deux `<div>` vides pour un séparateur : appliqué.
+
+### 3. Exercice fetch avec `useReducer` — consigne donnée, commencé seul
+État objet `{ chargement, erreur, montures }`, actions `debut` / `succes` / `echec`, objet complet dans chaque `case`, API DummyJSON sunglasses.
+
+---
+
+**Ressenti en fin de séance** : le reducer « ça va, c'est une fonction classique » · la ligne `useReducer` + `dispatch` « plus abstraite, à voir à l'usage ». Précisé : le reducer reste une fonction ordinaire ; `useReducer` = même ligne que `useState`, `dispatch` décrit ce qui s'est passé au lieu de donner la valeur.
+
+**Niveaux** : `cn()` 🟡 (structure juste, `return` / `export` oubliés) · Provider + hook (débogage) 🟢 · union discriminée 🟢 structure / 🟡 noms · `dispatch` 🟡 (guidé puis seul) · upsert dans un reducer 🟢 · reducer `(état, action)` 🔴 → corrigé · paramètres par position vs clés par nom 🟢 · `useReducer` en autonomie (compteur) 🟡 · état de départ selon la forme 🟢.
+
+**⚠️ Mes erreurs** : consigne du compteur sans dire ce que faisait chaque action ni quel bouton l'envoyait. Récurrence §9 — **le tableau action / données / retour / bouton est le format qui marche pour `useReducer`.**
+
+**🔄 Cycle de reprise** : `useReducer` → finir l'exercice fetch en ouverture, puis N+2 · Context API + hook → N+2 sur un 3ᵉ terrain.
+
+**🔄 Rotation** : **entrent** — ordre des paramètres d'un reducer · objet par nom / paramètres par position. **Restent** — `cn()` (`return` / `export`) · `type` propriété vs mot-clé · signature d'un Provider · `throw` hors `fetch` · `||` / `&&` dans une garde · dépendance sur une fonction recréée · `color-scheme`.
+
+**⏭️ Prochaine étape**
+1. Révision courte.
+2. **Finir l'exercice fetch avec `useReducer`** (état objet).
+3. Puis `useMemo` / `useCallback` / `React.memo` → portails + ErrorBoundary → **Todo List (Odin)** → Next.js.
