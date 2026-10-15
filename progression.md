@@ -2449,3 +2449,54 @@ Paquets installés dans le projet, `utils/cn.ts` recopié.
 1. Révision courte.
 2. **Finir l'exercice fetch avec `useReducer`** (état objet).
 3. Puis `useMemo` / `useCallback` / `React.memo` → portails + ErrorBoundary → **Todo List (Odin)** → Next.js.
+
+## Session 125 — `useReducer` : fetch avec état objet, révision, catalogue filtré et paginé
+
+**Durée** : ~3h15 (jeudi). Énergie bonne.
+
+**🎹 Raccourci** : `Ctrl+Entrée` — peu utilisé, maintenu.
+
+---
+
+### 1. Exercice fetch avec `useReducer` (consigne S124) ✅
+- **Types** (`Monture`, `Etat`, `ActionFetch`) justes du premier coup 🟢.
+- **`ETAT_INITIAL`** : rôle demandé avant d'écrire (expliqué par le lien avec `[]` et `0`, et avec `X_VIDE` du CV Application). **`chargement: false` → 3ᵉ occurrence** (S102, S107) : écran vide au premier rendu. Repère : donnée chargée au montage = état initial déjà « en chargement ». Annotation oubliée puis ajoutée.
+- **Question** : le reducer lance-t-il le fetch ? → non, fonction pure ; l'effet raconte, le reducer calcule.
+- **Reducer** : valeurs écrites en dur au 1ᵉʳ jet (`montures: []` partout, `new Error`). Débloqué par le tableau **« deux sources : `action` (donnée nouvelle) / `etat` (inchangé) »** → juste 🟢.
+- **Effet** : `dispatch` justes. 🔴 **`[]` glissé dans le corps de l'effet** (plus de tableau de dépendances → boucle de fetch) · branche silencieuse dans le `catch` → ternaire sur le message. Corrigés.
+- Message d'erreur calculé puis non affiché (récurrence S90).
+- **« Je ne vois pas le gain par rapport à 3 states »** → comparaison côte à côte : un seul `dispatch` par situation, objet complet garanti par l'annotation (d'où la disparition du `finally`), transitions lisibles au même endroit. **Dit honnêtement : gain modeste sur un fetch simple**, croissant avec le nombre de situations. Repère : `useState` si les champs changent indépendamment, `useReducer` s'ils changent ensemble.
+- Questions : `type` et `action` = noms libres à deux niveaux (paramètre = objet entier / clé = un champ) · une variable porte le nom de ce qu'elle contient.
+- **Ressenti** : « pas mal, reducer », à ancrer par la répétition comme le Context.
+
+### 2. Liste des 15 dernières notions neuves (demandée) + ressenti de Frédéric
+Fragiles selon lui : `clamp()` (mystère, accepté) · Context, hooks personnalisés, `useReducer` (à pratiquer) · **clic extérieur (S111) le plus fragile** · `focus-within`. Le reste ressenti stable.
+
+### 3. Révision (3 items) — tous 🟡, même constat : l'idée est là, la transcription au clavier non
+- **Élément toujours rendu pour l'animer** (ressenti stable) : `ouvert &&` conservé, **retrouvé avec un indice**. Écart ressenti / mesuré.
+- **Reducer de filtre** : `action.marque` et `ETAT_INITIAL` non repris (même point que le matin) — consigne sans contexte de ma part.
+- **`focus-within`** : « sur le parent » à l'oral, posé sur l'`<input>` dans le code.
+
+### 4. Catalogue filtré et paginé avec `useReducer` ✅
+- **⚠️ Consigne refaite trois fois** : empilement (filtre + pagination + 3 calculs dérivés + `disabled`), confusion **page en cours / nombre de pages** non levée, collisions de noms dans le fichier. **Règle des trois échecs appliquée** : cours complet donné (découpage en tranches, `(page - 1) * PAR_PAGE`, reducer, calculs dérivés). Explication de `slice` en forme longue demandée → tableau page / début / fin.
+- **Écrit ensuite seul et fonctionnel** : 4 `dispatch`, filtre, `Math.ceil`, tranche, deux `disabled` dérivés. « Toutes » via `marque: null` (type élargi), choix cohérent.
+- Retouches : `? true : false` superflu · grisé absent (`disabled:opacity-50`) · `reinitialiser` devenu mort · `ETAT_FILTRE_INITIAL` toujours non annoté.
+- **🎓 Constat de Frédéric** : la **logique pure** (règle → calcul, hors code) a été le vrai obstacle, pas `slice`. Méthode retenue : poser les cas concrets dans un tableau avant de chercher la formule.
+
+---
+
+**Niveaux** : `useReducer` 🟡 (4 circuits complets, toujours avec un appui) · union discriminée 🟢 · sources de valeur dans un reducer (`action` / `etat` / constante initiale) 🔴 · état initial de chargement 🔴 (3ᵉ) · tableau de dépendances 🟡 (rechute de placement) · branche silencieuse dans un `catch` 🟡 · élément toujours rendu pour l'animer 🟡 · `focus-within` 🟡 · calculs dérivés de pagination 🟡 · logique « règle → formule » 🔴 (à travailler).
+
+**🎓 Remarque explicite de Frédéric** : « avec des consignes floues je ne comprends rien — améliore tes consignes ».
+
+**⚠️ Mes erreurs**
+1. **Consigne du catalogue paginé floue et surchargée**, trois reformulations nécessaires. Récurrence §9. **Correctif retenu : visuel ASCII du résultat + tableau des actions dès la première consigne**, c'est ce qui a débloqué.
+2. Item 2 de révision sans contexte d'usage.
+
+**🔄 Cycle de reprise** : `useReducer` → N+2 sur un nouveau terrain · Context API + hook → N+2 sur un 3ᵉ terrain.
+
+**🔄 Rotation** : **entrent** — élément toujours rendu pour l'animer · `focus-within` (sur quel élément) · sources de valeur dans un reducer · état initial « en chargement » · `? true : false` superflu · règle → formule (poser les cas en tableau). **À recroiser sans détour** : clic extérieur + référence unique (au prochain composant qui s'y prête). **Restent** — `cn()` · ordre `(état, action)` · objet par nom / paramètres par position · signature d'un Provider · `throw` hors `fetch` · `||` / `&&` dans une garde · `color-scheme`.
+
+**⏭️ Prochaine étape**
+1. Reprises `useReducer` et Context (N+2).
+2. `useMemo` / `useCallback` / `React.memo` → portails + ErrorBoundary → **Todo List (Odin)** → Next.js.

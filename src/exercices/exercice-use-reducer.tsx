@@ -1,6 +1,6 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 
-// Trois exercices dans le même fichier voir dessous
+// Quatres exercices dans le même fichier voir dessous
 export function ExerciceUseReducer() {
   return (
     <div className="flex flex-col gap-16">
@@ -8,9 +8,7 @@ export function ExerciceUseReducer() {
 
       <div className="my-8 flex items-center">
         <hr className="grow border-t border-gray-300" />
-
         <span className="mx-4 shrink font-medium text-gray-600">Séparation des exercices</span>
-
         <hr className="grow border-t border-gray-300" />
       </div>
 
@@ -18,13 +16,19 @@ export function ExerciceUseReducer() {
 
       <div className="my-8 flex items-center">
         <hr className="grow border-t border-gray-300" />
-
         <span className="mx-4 shrink font-medium text-gray-600">Séparation des exercices</span>
-
         <hr className="grow border-t border-gray-300" />
       </div>
 
       <TroisiemeExercice />
+
+      <div className="my-8 flex items-center">
+        <hr className="grow border-t border-gray-300" />
+        <span className="mx-4 shrink font-medium text-gray-600">Séparation des exercices</span>
+        <hr className="grow border-t border-gray-300" />
+      </div>
+
+      <QuatriemeExercice />
     </div>
   );
 }
@@ -151,20 +155,135 @@ interface Monture {
 interface Etat {
   chargement: boolean;
   erreur: string | null;
-  monture: Monture;
+  montures: Monture[];
 }
+const ETAT_INITIAL: Etat = { chargement: true, erreur: null, montures: [] };
 
 type ActionFetch = { type: "debut" } | { type: "succes"; montures: Monture[] } | { type: "echec"; message: string };
 
-function reducerFetch(montures: Monture[], action: ActionFetch) {
-  const url = "https://dummyjson.com/products/category/sunglasses";
+function reducerFetch(etat: Etat, action: ActionFetch): Etat {
   switch (action.type) {
-    //continuer la function
+    case "debut":
+      return { chargement: true, erreur: null, montures: etat.montures };
+    case "succes":
+      return { chargement: false, erreur: null, montures: action.montures };
+    case "echec":
+      return { chargement: false, erreur: action.message, montures: etat.montures };
   }
 }
 
 function TroisiemeExercice() {
-  const [montures, dispatch] = useReducer(reducerFetch, [])
+  const [etat, dispatch] = useReducer(reducerFetch, ETAT_INITIAL);
 
-  return <div>Test</div>;
+  useEffect(() => {
+    const url = "https://dummyjson.com/products/category/sunglasses";
+    async function loadData() {
+      dispatch({ type: "debut" });
+      try {
+        const r = await fetch(url);
+        if (!r.ok) throw new Error("échec du fetch");
+        const data = await r.json();
+        dispatch({ type: "succes", montures: data.products });
+      } catch (e) {
+        dispatch({ type: "echec", message: e instanceof Error ? e.message : "une erreur inattendue s'est produite" });
+      }
+    }
+    loadData();
+  }, []);
+
+  if (etat.chargement) return <p>Une page de chargement</p>;
+  if (etat.erreur) return <p>Une page d'erreur : {etat.erreur}</p>;
+  return (
+    <ul>
+      {etat.montures.map((m) => (
+        <li key={m.id}>{m.title}</li>
+      ))}
+    </ul>
+  );
+}
+
+/* Quatrième Exercices */
+
+interface MontureCatalogue {
+  id: number;
+  modele: string;
+  marque: string;
+}
+
+const MONTURES: MontureCatalogue[] = [
+  { id: 1, modele: "Wayfarer", marque: "Ray-Ban" },
+  { id: 2, modele: "Clubmaster", marque: "Ray-Ban" },
+  { id: 3, modele: "Aviator", marque: "Ray-Ban" },
+  { id: 4, modele: "Erika", marque: "Ray-Ban" },
+  { id: 5, modele: "Holbrook", marque: "Oakley" },
+  { id: 6, modele: "Frogskins", marque: "Oakley" },
+  { id: 7, modele: "649", marque: "Persol" },
+  { id: 8, modele: "714", marque: "Persol" },
+];
+
+const PAR_PAGE = 3;
+
+interface EtatFiltre {
+  marque: string | null;
+  page: number;
+}
+const ETAT_FILTRE_INITIAL: EtatFiltre = { marque: null, page: 1 };
+
+type ActionFiltre =
+  | { type: "choisirMarque"; marque: string | null }
+  | { type: "pageSuivante" }
+  | { type: "pagePrecedente" };
+
+function reducerFiltre(etatFiltre: EtatFiltre, action: ActionFiltre): EtatFiltre {
+  switch (action.type) {
+    case "choisirMarque":
+      return { marque: action.marque, page: 1 };
+    case "pageSuivante":
+      return { ...etatFiltre, page: etatFiltre.page + 1 };
+    case "pagePrecedente":
+      return { ...etatFiltre, page: etatFiltre.page - 1 };
+  }
+}
+
+function QuatriemeExercice() {
+  const [etatFiltre, dispatch] = useReducer(reducerFiltre, ETAT_FILTRE_INITIAL);
+
+  const catalogueFiltre = etatFiltre.marque === null ? MONTURES : MONTURES.filter(m => m.marque === etatFiltre.marque) ;
+  const pageFiltre = Math.ceil(catalogueFiltre.length / PAR_PAGE)
+  const catalogueAffiche = catalogueFiltre.slice((etatFiltre.page - 1) * PAR_PAGE, etatFiltre.page * PAR_PAGE)
+
+
+  return (
+    <div>
+      <button onClick={() => dispatch({ type: "choisirMarque", marque: null })} className="border p-2">
+        Toutes
+      </button>
+      <button onClick={() => dispatch({ type: "choisirMarque", marque: "Ray-Ban" })} className="border p-2">
+        Ray-Ban
+      </button>
+      <button onClick={() => dispatch({ type: "choisirMarque", marque: "Oakley" })} className="border p-2">
+        Oakley
+      </button>
+      <button onClick={() => dispatch({ type: "choisirMarque", marque: "Persol" })} className="border p-2">
+        Persol
+      </button>
+      <ul>
+        {catalogueAffiche.map((m) => (
+          <li key={m.id}>
+            {m.modele}
+            {m.marque}
+          </li>
+        ))}
+      </ul>
+      <div className="flex justify-center">
+        <button disabled={etatFiltre.page <= 1} onClick={() => dispatch({type: "pagePrecedente"})} className="border p-2 disabled:opacity-50">
+          Précédent
+        </button>
+        <p>Page : {etatFiltre.page} / {pageFiltre}</p>
+        <button disabled={etatFiltre.page >= pageFiltre} onClick={() => dispatch({type: "pageSuivante"})} className="border p-2 disabled:opacity-50">
+          Suivant
+        </button>
+      </div>
+    </div>
+  );
 }
