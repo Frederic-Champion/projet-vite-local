@@ -23,6 +23,7 @@ import { ExerciceUseContext } from "./exercices/Exercice-createContext-useContex
 import { BoutonTheme } from "./components/BoutonTheme";
 import { ExerciceContextHook } from "./exercices/exercice-context-hook";
 import { ExerciceUseReducer } from "./exercices/exercice-use-reducer";
+import { ExerciceContextReducer } from "./exercices/Exercice-usecontext-usereducer";
 
 function App() {
   // return <Brouillon2 />;
@@ -83,6 +84,7 @@ function App() {
           <Route path="/use-context" element={<ExerciceUseContext />} />
           <Route path="/context-hook" element={<ExerciceContextHook />} />
           <Route path="/use-reducer" element={<ExerciceUseReducer />} />
+          <Route path="/use-context-reducer" element={<ExerciceContextReducer />} />
         </Routes>
       </main>
     </div>

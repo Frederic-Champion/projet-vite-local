@@ -2500,3 +2500,55 @@ Fragiles selon lui : `clamp()` (mystère, accepté) · Context, hooks personnali
 **⏭️ Prochaine étape**
 1. Reprises `useReducer` et Context (N+2).
 2. `useMemo` / `useCallback` / `React.memo` → portails + ErrorBoundary → **Todo List (Odin)** → Next.js.
+
+## Session 126 — Reprise combinée `useReducer` + Context + hook personnalisé : file d'attente du magasin
+
+**Durée** : ~2h30 (vendredi, en deux blocs). Énergie bonne.
+
+**🎹 Raccourci** : `Ctrl+Entrée` — reconduit.
+
+**Ressenti en ouverture** : `useReducer` 5/10 · Context + hook 6,5/10 (inchangé).
+
+---
+
+### Révision éclair (2 items, format code)
+- **Prédire — état initial de chargement** 🟡 : correction juste (`useState(true)`). **Prédiction du premier rendu fausse** : annoncé « page blanche », l'écran affiche en réalité « Aucun verre en stock » (les deux premiers `if` sautés, le 3ᵉ passe). Le problème est un **message faux**, pas un écran vide. `setChargement(true)` dans l'effet devient inutile.
+- **Déboguer — garde à deux conditions** 🟢 : appels fautifs trouvés, `&&` → `||`. **Sort de rotation.**
+
+### Reprise combinée — décision de Frédéric
+Proposé par lui : combiner `useReducer` et Context au lieu de deux exercices séparés. Confirmé : **assemblage de notions connues**, une seule pièce nouvelle (typer `dispatch` dans l'interface du Context, avec un type fonction déjà acquis).
+
+### Exercice `ExerciceContextReducer` (`projet-vite-local`) ✅
+File d'attente : `BandeauComptoir` (compteur), `Comptoir` (ajout), `Ecran` (liste + servir / vider), le tout sous un `FileProvider` détenant un `useReducer`.
+
+- **Union discriminée `ActionFile`** juste du premier coup 🟢.
+- Types : `id: number` → `string` (`crypto.randomUUID()`) · `dispatch: () => void` → `(action: ActionFile) => void`.
+- **Questions posées** : que représente `file` ? que représente `etat` dans le reducer ? → le state lui-même (`Client[]`), nom du paramètre libre.
+- Reducer : `slice(1)` et `[]` justes. **`crypto.randomUUID()` dans le reducer** → impur, déplacé dans le composant. Reconstruction manuelle de `action.client` → `action.client` tel quel.
+- **Blocage sur une erreur `file` introuvable** : le shorthand `{ file, dispatch }` exige une variable nommée `file`. Expliqué : **la clé obéit à l'interface, la valeur est la variable locale** → `{ file: listeClients, dispatch }` 🟢.
+- **Signature du Provider `({ children }: { children: React.ReactNode })` juste du premier coup** 🟢 — accroche en S120 et S123.
+- 🔴 **`{children}` placé à côté du Context** (balise auto-fermante) au lieu de dedans → les lecteurs auraient lu `null`.
+- **Hook `useFile` écrit seul** 🟢 (squelette nécessaire en S123).
+- 🔴 **Context lu dans la page qui le rend** (`useFile()` au-dessus du `FileProvider`) → garde levée. Règle posée : un composant ne lit pas le Context qu'il fournit dans son propre `return` ; seuls les composants placés dessous le peuvent.
+- `Comptoir` : handler nommé, garde `trim()`, `setNom("")` 🟢.
+- `Ecran` : liste `<ol>` + `key`, deux `dispatch` justes 🟢. **`disabled={file.length <= 1}`** → dernier client impossible à servir, corrigé en `=== 0` (règle → formule, tableau des cas).
+- Message vide placé dans le bandeau plutôt que dans `Ecran` : **choix conservé**.
+- `list-decimal` : fonctionnait sur les `<li>`, pas sur le `<ol>` selon lui ; cause non identifiée (code de la version testée non vu). Forme retenue `list-inside list-decimal` sur le `<ol>` → fonctionne.
+- **Correction complète commentée demandée en fin de séance**, donnée.
+
+**Organisation** : tout dans le même fichier (1 fichier = 1 exercice), rangé dans l'ordre du trajet de la donnée. En projet réel : `contexts/` pour types + reducer + Context + Provider + hook, `components/` pour les lecteurs.
+
+---
+
+**Niveaux** : état initial de chargement — correction 🟢 / prédiction 🟡 · garde `||` 🟢 · union discriminée 🟢 · reducer pur 🟡 (`randomUUID` dedans) · type fonction de `dispatch` 🟡 · shorthand vs `clé: valeur` imposée par l'interface 🟡 · signature du Provider 🟢 · `children` à l'intérieur du Provider 🔴 · hook d'accès à un Context 🟢 · lecture d'un Context hors Provider 🔴 · handler avec early return 🟢 · `disabled` dérivé 🟡 · **circuit `useReducer` + Context 🟡 (complet, construit en grande partie seul, plusieurs accroches)**.
+
+**⚠️ Mes erreurs** : consigne ne montrant pas quelle étape relevait de quelle notion — Frédéric a cru à un exercice `useReducer` seul. **Correctif : dans un exercice d'assemblage, indiquer la notion de chaque étape dès la consigne.**
+
+**🔄 Cycle de reprise** : `useReducer` + Context + hook → **N+2 ≈ S128**, à écrire sur un nouveau terrain.
+
+**🔄 Rotation** : **entrent** — un composant ne lit pas le Context qu'il fournit · `children` dedans / à côté du Provider · `return` + parenthèse JSX · shorthand vs `clé: valeur` · reducer pur (pas d'aléatoire dedans). **Sort** — `||` / `&&` dans une garde. **Restent** — état initial « en chargement » (prédiction) · sources de valeur dans un reducer · règle → formule · élément toujours rendu pour l'animer · `focus-within` · `cn()` · ordre `(état, action)` · `throw` hors `fetch` · `color-scheme`. **À recroiser** : clic extérieur + référence unique.
+
+**⏭️ Prochaine étape**
+1. Révision courte.
+2. **Ouverture de `useMemo`**, seul, sur un créneau frais.
+3. Puis `useCallback` + `React.memo` → portails + ErrorBoundary → **Todo List (Odin)** → Next.js.
