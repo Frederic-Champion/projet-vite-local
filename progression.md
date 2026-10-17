@@ -2552,3 +2552,48 @@ File d'attente : `BandeauComptoir` (compteur), `Comptoir` (ajout), `Ecran` (list
 1. Révision courte.
 2. **Ouverture de `useMemo`**, seul, sur un créneau frais.
 3. Puis `useCallback` + `React.memo` → portails + ErrorBoundary → **Todo List (Odin)** → Next.js.
+
+## Session 127 — Ouverture de `useMemo` + début de la reprise du clic extérieur
+
+**Durée** : ~2h30 (samedi, en deux blocs). Énergie bonne.
+
+**🎹 Raccourci** : `Ctrl+Entrée` — non renseigné, reconduit.
+
+---
+
+### Révision éclair (2 items, format code)
+- **Déboguer — élément toujours rendu pour l'animer** 🟢 : `ouvert &&` retiré, valeur par défaut surchargée par `cn()`, durée ajoutée de lui-même. Le « pourquoi » n'est pas formulé, mais le code le montre. **Sort de rotation** (🟡 avec indice en S125).
+- **Écrire — `focus-within`** 🟢 : posé sur le parent, le bon élément. **Sort de rotation.**
+
+### `useMemo` — notion neuve, ouverte
+- **Problème posé sans code** (tri de 5 000 montures refait à chaque frappe dans un champ sans rapport), analogie de la liste de stock imprimée. Question de contrôle : deux réponses justes mais incomplètes, chacune une moitié. Réunies, elles donnent les dépendances (`montures` **et** `critereTri`).
+- **Syntaxe** : fonction de calcul donnée à React, `return` obligatoire, valeur renvoyée (pas la fonction), spread toujours nécessaire devant `sort`.
+- **`localeCompare` non reconnu** (« ne me dit rien du tout ») alors qu'il était noté soldé (S69, S88). Réexpliqué : retour négatif / 0 / positif = contrat du comparateur, `sort()` simple mal classé dès que casse ou accents varient. 🟡
+- **Exercice à un trou** ✅ : `[critereTri]`, et `MONTURES` (constante hors composant) **exclue à raison**. Tests passés (silence pendant la frappe, un recalcul au clic).
+- **Exercice de décision A → E** : A, C, E justes. **B et D 🔴, même confusion** : `aideOuverte` mis en dépendance (B, et `verres` oublié) · horloge lue comme « les ventes changent chaque seconde » (D). Règle posée : **les dépendances sont ce que le calcul lit, pas ce qui fait re-rendre le composant** — la valeur qui change souvent est la raison d'utiliser `useMemo`, jamais une dépendance.
+- **Malentendu levé** : « `useMemo` empêche de mettre à jour ». Précisé : le composant se re-rend toujours, seul le calcul est sauté ou refait. Vocabulaire : le composant **se re-rend**, la valeur **se recalcule**.
+- **Tableau de bord (cas D) écrit seul** : partie `useMemo` juste du premier coup (`[ventes]`, objet en shorthand, ajout immuable `(prev) =>`). Consigne lue en partie (moyenne non protégée, `console.log` absent) — signalé par lui.
+- 🔴 **Horloge qui marchait par accident** : `new Date()` hors du callback de `setInterval` + dépendance `[date]` → intervalle recréé chaque seconde, heure en retard d'une seconde. Nom `date` masquant le state. `useState("")` → heure vide la première seconde. Corrigé : photo prise dans le callback, `[]`, lazy initializer.
+- **Reformulation de Frédéric** : « un `useEffect` dans une constante ». Juste sur la forme, nuancée sur le rôle (après l'affichage / action vs pendant le rendu / valeur pure ; jamais d'effet de bord dans un `useMemo`).
+- **Ressenti** : « la notion neuve la plus facile récemment ». Juste pour le mécanisme ; le jugement (quand l'utiliser, quelles dépendances) a accroché sur B et D. **Ne pas surévaluer.**
+
+### Reprise du clic extérieur — commencée, à finir seul
+Menu déroulant des marques (`Exercice-clic-exterieur-useRef-contains.tsx`). **Premier jet en `<select>` natif** : bon réflexe pro (le natif gère ouverture, clic extérieur, clavier, accessibilité), mais il supprimait l'objet de l'exercice. Version manuelle (`<button>` + `<ul>` + ref + `contains` + écouteur sur `document`) commencée. **Non terminée, à finir plus tard.**
+
+**🎓 Convention de nommage de Frédéric (atelier)** : fichiers d'exercice nommés d'après la notion (`Exercice-useParams.tsx`, `Exercice-use-context-reducer.tsx`) pour retrouver une notion facilement.
+
+---
+
+**Niveaux** : élément toujours rendu pour l'animer 🟢 · `focus-within` 🟢 · `useMemo` mécanisme 🟢 · `useMemo` choix des dépendances 🔴 → corrigé · quand utiliser `useMemo` 🟡 · `localeCompare` 🟡 (oublié) · `setInterval` : capture de la valeur dans le callback 🔴 · masquage d'un nom de state 🟡 · réflexe élément natif 🟢.
+
+**⚠️ Mes erreurs** : aucune relevée.
+
+**🔄 Cycle de reprise** : `useReducer` + Context + hook → **N+2 ≈ S128** · `useMemo` → **N+2 ≈ S129** · clic extérieur → à finir.
+
+**🔄 Rotation** : **entrent** — dépendances de `useMemo` (ce que le calcul lit) · `setInterval` : la valeur se calcule dans le callback · `localeCompare`. **Sortent** — élément toujours rendu pour l'animer · `focus-within`. **Restent** — un composant ne lit pas le Context qu'il fournit · `children` dedans / à côté du Provider · `return` + parenthèse JSX · shorthand vs `clé: valeur` · reducer pur · état initial « en chargement » · sources de valeur dans un reducer · règle → formule · `cn()` · ordre `(état, action)` · `throw` hors `fetch` · `color-scheme`.
+
+**⏭️ Prochaine étape**
+1. Finir l'exercice du clic extérieur (s'il ne l'est pas d'ici là, en ouverture).
+2. **Reprise combinée `useReducer` + Context** (N+2), terrain neuf.
+3. **`useCallback` + `React.memo`** (mémoriser une fonction, éviter le re-rendu d'un enfant).
+4. Puis portails + ErrorBoundary → **Todo List (Odin)** → Next.js.

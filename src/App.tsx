@@ -24,6 +24,8 @@ import { BoutonTheme } from "./components/BoutonTheme";
 import { ExerciceContextHook } from "./exercices/exercice-context-hook";
 import { ExerciceUseReducer } from "./exercices/exercice-use-reducer";
 import { ExerciceContextReducer } from "./exercices/Exercice-usecontext-usereducer";
+import { ExerciceUseMemo } from "./exercices/Exercice-useMemo";
+import { ExerciceUseRefContains } from "./exercices/Exercice-contrains-useRef";
 
 function App() {
   // return <Brouillon2 />;
@@ -70,6 +72,7 @@ function App() {
           <Route path="/exercice-children-refacto" element={<FicheClient2 />} />
           <Route path="/exercice-children-ts" element={<FicheOrdonnance />} />
           <Route path="/exercice-useref" element={<ExerciceUseRef />} />
+          <Route path="/use-ref-contains" element={<ExerciceUseRefContains />} />
           <Route path="/exercice-navigation" element={<LayoutClients />}>
             <Route index element={<ListeClients3 />} />
             <Route path="fiche-client/:id" element={<FicheClients3 />} />
@@ -85,6 +88,7 @@ function App() {
           <Route path="/context-hook" element={<ExerciceContextHook />} />
           <Route path="/use-reducer" element={<ExerciceUseReducer />} />
           <Route path="/use-context-reducer" element={<ExerciceContextReducer />} />
+          <Route path="/use-memo" element={<ExerciceUseMemo />} />
         </Routes>
       </main>
     </div>

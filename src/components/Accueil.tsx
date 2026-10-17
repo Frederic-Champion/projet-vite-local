@@ -45,6 +45,9 @@ export default function Accueil() {
       <Link className="text-blue-600 hover:underline" to="/exercice-useref">
         Exercice useRef
       </Link>
+      <Link className="text-blue-600 hover:underline" to="/use-ref-contains">
+        Exercice useRef et contains : le clic extérieur
+      </Link>
       <Link className="text-blue-600 hover:underline" to="/exercice-navigation">
         Exercice Navigation
       </Link>
@@ -65,6 +68,9 @@ export default function Accueil() {
       </Link>
       <Link className="text-blue-600 hover:underline" to="/use-context-reducer">
         Exercice useReducer et useContext
+      </Link>
+      <Link className="text-blue-600 hover:underline" to="/use-memo">
+        Exercice useMemo
       </Link>
     </nav>
   );

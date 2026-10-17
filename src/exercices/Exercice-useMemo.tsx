@@ -1,0 +1,109 @@
+import { useEffect, useMemo, useState } from "react";
+import { formatEuro } from "../utils/format";
+
+export function ExerciceUseMemo() {
+  return (
+    <div>
+      <PremierExercice />
+      <div className="my-8 flex items-center">
+        <hr className="grow border-t border-gray-300" />
+        <span className="mx-4 shrink font-medium text-gray-600">Séparation des exercices</span>
+        <hr className="grow border-t border-gray-300" />
+      </div>
+      <DeuxiemeExercice />
+    </div>
+  );
+}
+
+interface Monture {
+  id: number;
+  nom: string;
+  prix: number;
+}
+
+const MONTURES: Monture[] = [
+  { id: 1, nom: "Ray-Ban Clubmaster", prix: 159 },
+  { id: 2, nom: "Oakley Holbrook", prix: 129 },
+  { id: 3, nom: "Lindberg Air", prix: 420 },
+];
+
+function PremierExercice() {
+  const [critereTri, setCritereTri] = useState<"prix" | "nom">("prix");
+  const [note, setNote] = useState("");
+
+  const monturesTriees = useMemo(() => {
+    console.log("Tri recalculé");
+    return [...MONTURES].sort((a, b) => (critereTri === "prix" ? a.prix - b.prix : a.nom.localeCompare(b.nom)));
+  }, [critereTri]);
+
+  return (
+    <div className="flex flex-col gap-4 p-4">
+      <div className="flex gap-2">
+        <button onClick={() => setCritereTri("prix")} className="border p-2">
+          Par prix
+        </button>
+        <button onClick={() => setCritereTri("nom")} className="border p-2">
+          Par nom
+        </button>
+      </div>
+      <input
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        className="border p-2"
+        placeholder="Note pour le client"
+      />
+      <ul>
+        {monturesTriees.map((m) => (
+          <li key={m.id}>
+            {m.nom} — {m.prix} €
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* Séparation d'exercice
+
+┌─────────────────────────────────┐
+│  🕐 13:42:07                     │
+│  Ventes : 3                      │
+│  Total : 870 €                   │
+│  Moyenne : 290 €                 │
+│  [ Ajouter une vente de 150 € ]  │
+└─────────────────────────────────┘
+
+*/
+
+const statDepart = [320, 410, 140];
+
+function DeuxiemeExercice() {
+  const [ventes, setVentes] = useState(statDepart);
+  const [date, setDate] = useState(() => new Date().toLocaleTimeString("fr-FR"));
+
+  useEffect(() => {
+    const intervalle = setInterval(() => {
+      setDate(new Date().toLocaleTimeString("fr-FR"));
+    }, 1000);
+    return () => clearInterval(intervalle);
+  }, []);
+
+  const calcul = useMemo(() => {
+    console.log("Stats recalculées")
+    const total = ventes.reduce((acc, a) => a + acc, 0);
+    const moyenne = ventes.length === 0 ? 0 : total / ventes.length;
+    return { total, moyenne };
+  }, [ventes]);
+
+  return (
+    <div className="flex max-w-fit flex-col gap-2 rounded-lg border p-4 text-left">
+      <div>Heure avec useEffect {date}</div>
+      <h3>Ventes : {ventes.length}</h3>
+      <p>Total : {formatEuro(calcul.total)}</p>
+      <p>Moyenne : {formatEuro(calcul.moyenne)}</p>
+      <button onClick={() => setVentes((prev) => [...prev, 150])} className="cursor-pointer border p-2">
+        Ajouter une vente de 150€
+      </button>
+    </div>
+  );
+}
