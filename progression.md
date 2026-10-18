@@ -2597,3 +2597,43 @@ Menu déroulant des marques (`Exercice-clic-exterieur-useRef-contains.tsx`). **P
 2. **Reprise combinée `useReducer` + Context** (N+2), terrain neuf.
 3. **`useCallback` + `React.memo`** (mémoriser une fonction, éviter le re-rendu d'un enfant).
 4. Puis portails + ErrorBoundary → **Todo List (Odin)** → Next.js.
+
+## Session 128 — Clic extérieur terminé + reprise combinée `useReducer` + Context : commandes de verres
+
+**Durée** : ~3h30 (dimanche). Énergie bonne.
+**Ressenti de Frédéric** : séance productive mais compliquée — beaucoup de notions ont eu du mal à revenir, mais la séance les a réactivées.
+
+**🎹 Raccourci** : `Ctrl+Entrée` — reconduit.
+
+---
+
+### 1. Clic extérieur (exercice S127) — terminé, correction demandée
+Premier jet : référence unique de l'écouteur **juste** (`handleClick` déclarée dans l'effet, même fonction pour `add` / `remove`) — **le point 🔴 de S111 tient**.
+🔴 **L'effet faisait tout** : deux branches en `setAfficher(true)` (liste impossible à fermer), aucun `onClick` sur le bouton, `<ul>` dans le `<button>`, `marqueAffiche` typé en tableau pour une valeur unique, `e` non typé. Indice puis correction complète donnés.
+**Reformulé par lui** : l'erreur était de tout faire passer par le `useEffect`. Précisé : l'écouteur sur `document` ne gère que ce qui se passe **dehors** (fermer) ; ouvrir et choisir passent par les `onClick`.
+
+### 2. Révision éclair (2 items)
+- **Écrire — tri sans mutation** 🟢 : **`toSorted()` découvert seul sur MDN**, `localeCompare` revenu juste (oublié la veille).
+- **Prédire — `return` seul sur sa ligne** 🔴 : 20 min sans trouver, réponse donnée. **Règle inconnue** : l'insertion automatique de point-virgule (`return` seul → `return;` → `undefined`). Même bug que `Comptoir` en S126, non reconnu hors éditeur. Repère : un `return` ne termine jamais sa ligne.
+
+### 3. Reprise combinée `useReducer` + Context (N+2) — terrain neuf, écrite en grande partie seul ✅
+Commandes de verres au labo (commandé → reçu → livré), consigne avec la notion de chaque étape (correctif S126 appliqué).
+- **Les trois accroches de S126 n'ont pas réapparu** : `children` dans le Provider, aucun composant lisant le Context qu'il fournit, signature du Provider juste. 🟢
+- Union de valeurs pour le statut, union discriminée des actions, reducer immuable (`map` + spread, `filter`), hook avec garde, `disabled` dérivé sur « Livré ». 🟢
+- **Neuf — élargissement des littéraux** : `"Reçu"` élargi en `string` dans un objet construit → erreur `useReducer`. Réglé par l'**annotation de retour du reducer** (`: Commande[]`). Proposition facultative : fonction pure `statutSuivant(statut: Statut): Statut` pour sortir le ternaire imbriqué. 🟡
+- **Compteurs dérivés** : deux demandes d'aide (« quel outil ? », « le calcul c'est quoi ? »), une ligne donnée (`filter` + `.length`), les deux autres écrites seul. Donnée dérivée 🟢, outil 🟡.
+- **Garde du nom vide oubliée** (test 4 de la consigne), ajoutée après signalement.
+
+---
+
+**Niveaux** : clic extérieur — référence unique 🟢 / rôle de l'effet 🔴 → corrigé · `toSorted()` 🟢 (neuf, trouvé seul) · `localeCompare` 🟢 · insertion automatique de point-virgule 🔴 (neuf) · `children` dans le Provider 🟢 · lecture du Context sous le Provider 🟢 · signature du Provider 🟢 · élargissement des littéraux + annotation de retour 🟡 (neuf) · compteurs dérivés `filter` + `length` 🟡 · garde dans un handler 🟡 (oubli) · **circuit `useReducer` + Context 🟢 (2ᵉ terrain, construit seul hors compteurs)**.
+
+**🔄 Cycle de reprise** : `useReducer` + Context → **N+5 ≈ S131** · `useMemo` → **N+2 = S129** · clic extérieur (rôle de l'effet) → N+2.
+
+**🔄 Rotation** : **entrent** — `return` seul sur sa ligne (point-virgule automatique) · élargissement des littéraux / annotation de retour · `toSorted()`. **Sortent** — un composant ne lit pas le Context qu'il fournit · `children` dedans / à côté du Provider · signature d'un Provider. **Restent** — `localeCompare` (une réussite après un oubli) · dépendances de `useMemo` · `setInterval` : valeur calculée dans le callback · shorthand vs `clé: valeur` · reducer pur · état initial « en chargement » · sources de valeur dans un reducer · règle → formule · `cn()` · ordre `(état, action)` · `throw` hors `fetch` · `color-scheme`.
+
+**⏭️ Prochaine étape — lundi**
+1. Révision + **reprise `useMemo`** (N+2).
+2. **Ouverture de `useCallback` + `React.memo`**.
+3. Si le temps le permet : application à la calculatrice (warning `exhaustive-deps`).
+4. Puis portails + ErrorBoundary → **Todo List (Odin)** → Next.js.

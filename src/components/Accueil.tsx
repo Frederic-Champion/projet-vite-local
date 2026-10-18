@@ -69,6 +69,9 @@ export default function Accueil() {
       <Link className="text-blue-600 hover:underline" to="/use-context-reducer">
         Exercice useReducer et useContext
       </Link>
+      <Link className="text-blue-600 hover:underline" to="/use-context-reducer2">
+        Exercice 2 : useReducer et useContext
+      </Link>
       <Link className="text-blue-600 hover:underline" to="/use-memo">
         Exercice useMemo
       </Link>
