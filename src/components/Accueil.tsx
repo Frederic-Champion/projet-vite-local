@@ -75,6 +75,9 @@ export default function Accueil() {
       <Link className="text-blue-600 hover:underline" to="/use-memo">
         Exercice useMemo
       </Link>
+      <Link className="text-blue-600 hover:underline" to="/use-callback">
+        Exercice React.memo et useCallback
+      </Link>
     </nav>
   );
 }

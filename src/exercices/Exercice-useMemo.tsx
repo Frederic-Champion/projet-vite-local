@@ -11,6 +11,12 @@ export function ExerciceUseMemo() {
         <hr className="grow border-t border-gray-300" />
       </div>
       <DeuxiemeExercice />
+      <div className="my-8 flex items-center">
+        <hr className="grow border-t border-gray-300" />
+        <span className="mx-4 shrink font-medium text-gray-600">Séparation des exercices</span>
+        <hr className="grow border-t border-gray-300" />
+      </div>
+      <TroisiemeExercice />
     </div>
   );
 }
@@ -89,7 +95,7 @@ function DeuxiemeExercice() {
   }, []);
 
   const calcul = useMemo(() => {
-    console.log("Stats recalculées")
+    console.log("Stats recalculées");
     const total = ventes.reduce((acc, a) => a + acc, 0);
     const moyenne = ventes.length === 0 ? 0 : total / ventes.length;
     return { total, moyenne };
@@ -104,6 +110,59 @@ function DeuxiemeExercice() {
       <button onClick={() => setVentes((prev) => [...prev, 150])} className="cursor-pointer border p-2">
         Ajouter une vente de 150€
       </button>
+    </div>
+  );
+}
+
+/* ------------ Séparation d'exercices --------------- */
+
+interface Verre {
+  id: number;
+  nom: string;
+  prix: number;
+}
+
+const VERRES: Verre[] = [
+  { id: 1, nom: "Unifocal standard", prix: 45 },
+  { id: 2, nom: "Progressif confort", prix: 320 },
+  { id: 3, nom: "Unifocal aminci", prix: 110 },
+  { id: 4, nom: "Progressif premium", prix: 540 },
+  { id: 5, nom: "Mi-distance bureau", prix: 210 },
+];
+
+function TroisiemeExercice() {
+  const [recherche, setRecherche] = useState("");
+  const [ordre, setOrdre] = useState<"croissant" | "decroissant">("croissant");
+  const [afficherId, setAfficherId] = useState(false);
+
+  const verresAffiches = useMemo(() => {
+    const V = VERRES.filter((v) => v.nom.toLowerCase().includes(recherche.toLowerCase()));
+    return [...V.sort((a, b) => (ordre === "croissant" ? a.prix - b.prix : b.prix - a.prix))];
+  }, [ordre, recherche]);
+
+  return (
+    <div className="flex flex-col gap-4 p-6">
+      <input
+        value={recherche}
+        onChange={(e) => setRecherche(e.target.value)}
+        placeholder="Rechercher un verre"
+        className="border p-2"
+      />
+      <button onClick={() => setOrdre((prev) => (prev === "croissant" ? "decroissant" : "croissant"))}>
+        Tri : {ordre}
+      </button>
+      <label>
+        <input type="checkbox" checked={afficherId} onChange={(e) => setAfficherId(e.target.checked)} />
+        Afficher les identifiants
+      </label>
+      <ul>
+        {verresAffiches.map((v) => (
+          <li key={v.id}>
+            {afficherId && `#${v.id} `}
+            {v.nom} : {v.prix} €
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

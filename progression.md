@@ -2637,3 +2637,76 @@ Commandes de verres au labo (commandé → reçu → livré), consigne avec la n
 2. **Ouverture de `useCallback` + `React.memo`**.
 3. Si le temps le permet : application à la calculatrice (warning `exhaustive-deps`).
 4. Puis portails + ErrorBoundary → **Todo List (Odin)** → Next.js.
+
+## Session 129 — Reprise `useMemo` + ouverture de `React.memo` et `useCallback` + warning `exhaustive-deps`
+
+**Durée** : ~2h (mardi). Énergie bonne.
+
+**🎹 Raccourci** : `Ctrl+Entrée` — usage non renseigné, reconduit.
+
+**Ressenti en ouverture** : `useMemo` 4/10, « pas sûr de m'en souvenir ».
+
+---
+
+### Révision éclair (2 items, format code)
+- **Prédire — `return` seul sur sa ligne** 🔴 : objet annoncé, `undefined` + `TypeError` en réalité. **2ᵉ échec** (S128). Repère redonné : ce qu'on renvoie commence sur la même ligne que `return`.
+- **Déboguer — chrono `setInterval` + `[]`** : correction **juste du premier coup** (`(prev) => prev + 1`) 🟢. Diagnostic non trouvé (« pour moi tout va bien ») 🟡 : la flèche garde le `secondes` du premier rendu, affichage bloqué à `1 s`.
+
+### 1. Reprise `useMemo` (N+2) — calcul juste, dépendances 🔴
+Exercice à un trou (catalogue de verres : recherche + tri + case sans rapport). **Filtre insensible à la casse et tri dans les deux sens écrits seul et justes** 🟢, à partir d'un ressenti 4/10.
+- 🔴 **`afficherId` en dépendance** alors que le calcul ne la lit pas. **3ᵉ occurrence de la même confusion** (cas B et D en S127). Geste fixé : **ne mettre dans le tableau que les noms qui apparaissent dans les accolades du calcul** (hors constantes hors composant).
+- `console.log("calcul")` de la consigne oublié → test 3 impossible.
+- Spread superflu après `filter` (déjà une copie) ; `toSorted()` rappelé.
+
+**🎓 Remarque de Frédéric** : « t'es dur ». Juste : reprise réussie depuis 4/10, résumée en une ligne avant les corrections. **Règle S105 réaffirmée : commencer par ce qui est réussi.**
+
+### 2. `React.memo` — notion neuve, ouverte
+Problème (un parent re-rendu re-rend tous ses enfants), `memo` compare chaque prop avec `===`. Distinction `useMemo` (une valeur) / `memo` (le rendu d'un composant).
+- Question `verres={[...VERRES]}` 🔴 : « memo réutilise le précédent ». Faux : nouveau tableau à chaque rendu → référence différente. Débloqué par valeur / référence (Phase 1) et l'image des deux photocopies.
+- Question A → D (nombre, chaîne, objet littéral, fonction fléchée) **4/4** 🟢.
+
+### 3. `useCallback` — notion neuve, ouverte
+- **Question de fond** : différence concrète avec `useMemo` → `useMemo` **exécute** la fonction et garde son retour, `useCallback` la **range telle quelle**. `useCallback(fn, d)` = `useMemo(() => fn, d)`. Reformulé juste (« la version courte »), précision : courte pour `useMemo`, utile avec `memo`.
+- Exercice (boutons de verres en `memo` + panier) : 1ᵉʳ jet sans paramètre `id`, `prev + 1` sur un `number[]`, `[panier]`. 2ᵉ jet : paramètre et ajout immuable justes 🟢. `[]` ensuite.
+- **Question : « on met quoi dans le tableau ? »** → tableau de tri donné : **state ou prop lu directement → oui · setter, `prev`, paramètre, constante hors composant → non.** Même règle pour `useMemo`, `useCallback`, `useEffect`.
+- Contre-épreuve (sans `useCallback`) : re-rendus des boutons à chaque frappe constatés, aucun avec 🟢.
+- **Quand l'utiliser** : seulement si la fonction est passée à un enfant `memo` ou placée dans des dépendances. **React Compiler** (source vérifiée : v1.0 stable, octobre 2025, recommandé pour les nouvelles apps, supporté par Next.js 16) mémoïse automatiquement. Décision d'activation à prendre au moment du SaaS.
+
+### 4. Warning `exhaustive-deps` de la calculatrice — expliqué, non corrigé
+Code collé (`projet-examen-blanc`). Le warning n'était pas connu de nom.
+- Jaune = **avertissement ESLint**, pas une erreur. Règle mécanique : l'effet clavier lit 5 fonctions absentes du tableau.
+- **Pourquoi ça marche quand même** : le tableau contient les states que **lisent** ces fonctions. Risque : un state ajouté plus tard et oublié.
+- **Pourquoi `useCallback` ne règle rien ici** : les fonctions lisent des states qui changent à chaque touche.
+- **Solution : `useReducer`** → l'écouteur n'utilise que `dispatch` (stable) → `[]`. Le reducer reçoit l'état à jour en paramètre, comme `prev`.
+
+---
+
+**Niveaux** : `return` seul sur sa ligne 🔴 (2ᵉ) · `prev` dans un setter 🟢 / diagnostic de la valeur figée 🟡 · `useMemo` calcul 🟢 / dépendances 🔴 (3ᵉ) · `memo` + comparaison par référence 🟡 · `useMemo` vs `useCallback` 🟢 · `useCallback` en exercice 🟡 · tri des dépendances 🟡 (donné, à appliquer seul) · lecture d'un warning ESLint 🟡.
+
+**🆕 Notions ouvertes ce jour** : `React.memo` · `useCallback` · règle `exhaustive-deps`.
+
+**⚠️ Mes erreurs**
+1. **Correction de la reprise `useMemo` sans encouragement d'abord** — relevé par lui.
+2. **Contre-épreuve formulée sans les gestes** (« combien de logs ? ») → « je dois faire quoi ? ». Reformulée en étapes, efficace.
+3. **Explication du warning empilée** (règle + diagnostic + `useCallback` + `useReducer` + question) → « j'ai rien compris ». Reprise une idée à la fois.
+
+**🔄 Cycle de reprise** : `memo` / `useCallback` / `useMemo` → rejoués sur la calculatrice (S130) · `useReducer` → N+5 tenu sur la calculatrice · Context + hook → dark mode `projet-examen-blanc` (S131).
+
+**🔄 Rotation** : **entrent** — tri des dépendances (priorité) · `memo` et comparaison par référence · `useMemo` vs `useCallback` · diagnostic d'une valeur figée dans un callback. **Restent** — `return` seul sur sa ligne (priorité) · élargissement des littéraux · `toSorted()` · `localeCompare` · shorthand vs `clé: valeur` · reducer pur · état initial « en chargement » · sources de valeur dans un reducer · règle → formule · `cn()` · ordre `(état, action)` · `throw` hors `fetch` · `color-scheme`. **Sort** — `setInterval` : valeur calculée dans le callback (fusionné dans le diagnostic ci-dessus).
+
+**📌 Registre** : `dettes-apprentissage.md` périmé sur 5 lignes (Context API, hooks personnalisés, `useReducer` soldés ; `useMemo` / `useCallback` / `React.memo` enseignés). Mise à jour en fin de chapitre React.
+
+---
+
+### 🗺️ Avant Next.js — liste établie ensemble (croisée avec le registre)
+
+1. **Calculatrice en `useReducer`** + `memo` / `useCallback` / `useMemo`, sur une branche de `projet-examen-blanc` avec PR. *Greffes : `e.key` vs `e.code` · flottants (la ligne `toFixed(10)`).*
+2. **Dark mode en Context sur le Shopping Cart** (périmètre limité à ce projet). *Greffe : audit accessibilité (Lighthouse, clavier, contraste).*
+3. **Portails + ErrorBoundary.** *Greffes : propagation des événements · `<dialog>`.*
+4. **Todo List (The Odin Project)** en React + TS. *Greffes : `reduce` accumulateur objet (compteur par projet) · dates (écarts, comparaisons).*
+5. **En créneaux courts** : event loop · `@keyframes` (retournement de carte Memory Card) · récursion.
+6. **Next.js.**
+
+Laissés après : `this` + classes (avant la Phase 3) · regex (formulaires du SaaS) · micro-tâches 🔵.
+
+**⏭️ Prochaine étape** : calculatrice en `useReducer`, consigne étape par étape (tableau des actions dès le départ), puis `memo` sur `Touche` et `touches` stabilisé.

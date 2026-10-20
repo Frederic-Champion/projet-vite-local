@@ -27,6 +27,7 @@ import { ExerciceContextReducer } from "./exercices/Exercice-usecontext-usereduc
 import { ExerciceUseMemo } from "./exercices/Exercice-useMemo";
 import { ExerciceUseRefContains } from "./exercices/Exercice-contrains-useRef";
 import { ExerciceContextReducer2 } from "./exercices/Exercice-usecontext-usereducer2";
+import { ExerciceUseCallback } from "./exercices/Exercice-Reactmemo-useCallback";
 
 function App() {
   // return <Brouillon2 />;
@@ -91,6 +92,7 @@ function App() {
           <Route path="/use-context-reducer" element={<ExerciceContextReducer />} />
           <Route path="/use-context-reducer2" element={<ExerciceContextReducer2 />} />
           <Route path="/use-memo" element={<ExerciceUseMemo />} />
+          <Route path="/use-callback" element={<ExerciceUseCallback />} />
         </Routes>
       </main>
     </div>
