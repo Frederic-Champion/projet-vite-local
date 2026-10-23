@@ -1,13 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
-
-type Magasin = "Tours" | "Amboise";
-
-interface MagasinContexte {
-  magasin: Magasin;
-  modifierMagasin: (valeur: Magasin) => void;
-}
-
-const MagasinContext = createContext<MagasinContexte | null>(null);
+import React, { useState } from "react";
+import { MagasinContext, type Magasin } from "./hookContext";
 
 export function MagasinProvider({children}: {children: React.ReactNode}) {
   const [magasin, setMagasin] = useState<Magasin>("Tours");
@@ -19,8 +11,3 @@ export function MagasinProvider({children}: {children: React.ReactNode}) {
   return <MagasinContext value={{magasin, modifierMagasin}}>{children}</MagasinContext>;
 }
 
-export function useMagasin() {
-  const contexte = useContext(MagasinContext);
-  if (!contexte) throw new Error("useMagasin doit être utilisé dans un MagasinProvider");
-  return contexte;
-}

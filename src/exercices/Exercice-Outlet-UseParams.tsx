@@ -1,4 +1,4 @@
-import { Outlet, Link, useParams, Navigate, useNavigate, useLocation, replace } from "react-router";
+import { Outlet, Link, useParams, Navigate, useNavigate, useLocation } from "react-router";
 import { formatEuro } from "../utils/format";
 import { useState, useEffect } from "react";
 
@@ -26,7 +26,7 @@ function ListeMonturesExo() {
     if (location.state) {
       naviguer(location.pathname, {replace: true})
     }
-  }, [location.state, replace, naviguer])
+  }, [location.state, location.pathname, naviguer])
 
   return (
     <div>
