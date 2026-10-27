@@ -2411,18 +2411,21 @@ Paquets installés dans le projet, `utils/cn.ts` recopié.
 ---
 
 ### Révision éclair (3 items, format code)
+
 - **Écrire `cn()`** 🟡 : rest, `ClassValue` importé, ordre `twMerge(clsx(...))` et spread **justes** — net progrès après 3 accroches. **`return` et `export` oubliés.**
 - **Déboguer un Provider + hook** 🟢 : signature déstructurée et `useContext` trouvés et corrigés.
 - **Écrire une union discriminée** 🟡 : structure juste. Noms hors contrat (`x` au lieu de `montant`, `"incrémenter"` avec accent) → deux résultats attendus refusés. Convention : valeurs de `type` sans accent.
 - **Question posée** : pourquoi `(children: React.ReactNode)` ne fonctionne pas → forme longue `props.children` donnée. Même famille que `({ isActive }: boolean)`.
 
 ### 1. `ExerciceUseReducer` (panier)
+
 - **Premier `dispatch` : demande de guidage** (« je ne sais pas l'utiliser »). `dispatch({ type: "ajouter" })` écrit seul, données manquantes → union discriminée lue comme contrat. Les deux `dispatch` suivants écrits **seuls** 🟢.
 - **🌟 Calcul de l'écart déplacé de lui-même dans le reducer** (le bouton envoie +1). Champ renommé `ecart` pour que le contrat dise la vérité.
 - **Clé dupliquée constatée** (double ajout). Piste `crypto.randomUUID()` écartée (masque le symptôme, deux lignes restent) → **upsert dans le `case "ajouter"` seul**, écrit par lui (`some` + `map` + early return). Le bouton n'a pas changé : démonstration de l'intérêt de `useReducer`. `1` en dur → `action.quantite`.
 - Question : un `if` dans un `case` ? → oui ; piège des `const` dans un `case` signalé.
 
 ### 2. Compteur `useReducer` — en autonomie ✅
+
 - **⚠️ Consigne trop maigre** (boutons sans action associée) → refaite en tableau action / transport / retour / bouton, efficace.
 - `useReducer(reducerCompteur, [])` → état de départ du mauvais type, corrigé.
 - **🔴 Paramètres du reducer inversés** `(action, compteur)` — long blocage, débloqué par la comparaison avec le reducer du panier. **Question de fond** : « l'ordre n'a pas d'importance dans un objet ? » → **objet = par nom / paramètres et tableaux = par position**. Repère : un reducer, c'est toujours `(état, action)`.
@@ -2431,6 +2434,7 @@ Paquets installés dans le projet, `utils/cn.ts` recopié.
 - `<hr>` à la place de deux `<div>` vides pour un séparateur : appliqué.
 
 ### 3. Exercice fetch avec `useReducer` — consigne donnée, commencé seul
+
 État objet `{ chargement, erreur, montures }`, actions `debut` / `succes` / `echec`, objet complet dans chaque `case`, API DummyJSON sunglasses.
 
 ---
@@ -2446,6 +2450,7 @@ Paquets installés dans le projet, `utils/cn.ts` recopié.
 **🔄 Rotation** : **entrent** — ordre des paramètres d'un reducer · objet par nom / paramètres par position. **Restent** — `cn()` (`return` / `export`) · `type` propriété vs mot-clé · signature d'un Provider · `throw` hors `fetch` · `||` / `&&` dans une garde · dépendance sur une fonction recréée · `color-scheme`.
 
 **⏭️ Prochaine étape**
+
 1. Révision courte.
 2. **Finir l'exercice fetch avec `useReducer`** (état objet).
 3. Puis `useMemo` / `useCallback` / `React.memo` → portails + ErrorBoundary → **Todo List (Odin)** → Next.js.
@@ -2459,6 +2464,7 @@ Paquets installés dans le projet, `utils/cn.ts` recopié.
 ---
 
 ### 1. Exercice fetch avec `useReducer` (consigne S124) ✅
+
 - **Types** (`Monture`, `Etat`, `ActionFetch`) justes du premier coup 🟢.
 - **`ETAT_INITIAL`** : rôle demandé avant d'écrire (expliqué par le lien avec `[]` et `0`, et avec `X_VIDE` du CV Application). **`chargement: false` → 3ᵉ occurrence** (S102, S107) : écran vide au premier rendu. Repère : donnée chargée au montage = état initial déjà « en chargement ». Annotation oubliée puis ajoutée.
 - **Question** : le reducer lance-t-il le fetch ? → non, fonction pure ; l'effet raconte, le reducer calcule.
@@ -2470,14 +2476,17 @@ Paquets installés dans le projet, `utils/cn.ts` recopié.
 - **Ressenti** : « pas mal, reducer », à ancrer par la répétition comme le Context.
 
 ### 2. Liste des 15 dernières notions neuves (demandée) + ressenti de Frédéric
+
 Fragiles selon lui : `clamp()` (mystère, accepté) · Context, hooks personnalisés, `useReducer` (à pratiquer) · **clic extérieur (S111) le plus fragile** · `focus-within`. Le reste ressenti stable.
 
 ### 3. Révision (3 items) — tous 🟡, même constat : l'idée est là, la transcription au clavier non
+
 - **Élément toujours rendu pour l'animer** (ressenti stable) : `ouvert &&` conservé, **retrouvé avec un indice**. Écart ressenti / mesuré.
 - **Reducer de filtre** : `action.marque` et `ETAT_INITIAL` non repris (même point que le matin) — consigne sans contexte de ma part.
 - **`focus-within`** : « sur le parent » à l'oral, posé sur l'`<input>` dans le code.
 
 ### 4. Catalogue filtré et paginé avec `useReducer` ✅
+
 - **⚠️ Consigne refaite trois fois** : empilement (filtre + pagination + 3 calculs dérivés + `disabled`), confusion **page en cours / nombre de pages** non levée, collisions de noms dans le fichier. **Règle des trois échecs appliquée** : cours complet donné (découpage en tranches, `(page - 1) * PAR_PAGE`, reducer, calculs dérivés). Explication de `slice` en forme longue demandée → tableau page / début / fin.
 - **Écrit ensuite seul et fonctionnel** : 4 `dispatch`, filtre, `Math.ceil`, tranche, deux `disabled` dérivés. « Toutes » via `marque: null` (type élargi), choix cohérent.
 - Retouches : `? true : false` superflu · grisé absent (`disabled:opacity-50`) · `reinitialiser` devenu mort · `ETAT_FILTRE_INITIAL` toujours non annoté.
@@ -2490,6 +2499,7 @@ Fragiles selon lui : `clamp()` (mystère, accepté) · Context, hooks personnali
 **🎓 Remarque explicite de Frédéric** : « avec des consignes floues je ne comprends rien — améliore tes consignes ».
 
 **⚠️ Mes erreurs**
+
 1. **Consigne du catalogue paginé floue et surchargée**, trois reformulations nécessaires. Récurrence §9. **Correctif retenu : visuel ASCII du résultat + tableau des actions dès la première consigne**, c'est ce qui a débloqué.
 2. Item 2 de révision sans contexte d'usage.
 
@@ -2498,6 +2508,7 @@ Fragiles selon lui : `clamp()` (mystère, accepté) · Context, hooks personnali
 **🔄 Rotation** : **entrent** — élément toujours rendu pour l'animer · `focus-within` (sur quel élément) · sources de valeur dans un reducer · état initial « en chargement » · `? true : false` superflu · règle → formule (poser les cas en tableau). **À recroiser sans détour** : clic extérieur + référence unique (au prochain composant qui s'y prête). **Restent** — `cn()` · ordre `(état, action)` · objet par nom / paramètres par position · signature d'un Provider · `throw` hors `fetch` · `||` / `&&` dans une garde · `color-scheme`.
 
 **⏭️ Prochaine étape**
+
 1. Reprises `useReducer` et Context (N+2).
 2. `useMemo` / `useCallback` / `React.memo` → portails + ErrorBoundary → **Todo List (Odin)** → Next.js.
 
@@ -2512,13 +2523,16 @@ Fragiles selon lui : `clamp()` (mystère, accepté) · Context, hooks personnali
 ---
 
 ### Révision éclair (2 items, format code)
+
 - **Prédire — état initial de chargement** 🟡 : correction juste (`useState(true)`). **Prédiction du premier rendu fausse** : annoncé « page blanche », l'écran affiche en réalité « Aucun verre en stock » (les deux premiers `if` sautés, le 3ᵉ passe). Le problème est un **message faux**, pas un écran vide. `setChargement(true)` dans l'effet devient inutile.
 - **Déboguer — garde à deux conditions** 🟢 : appels fautifs trouvés, `&&` → `||`. **Sort de rotation.**
 
 ### Reprise combinée — décision de Frédéric
+
 Proposé par lui : combiner `useReducer` et Context au lieu de deux exercices séparés. Confirmé : **assemblage de notions connues**, une seule pièce nouvelle (typer `dispatch` dans l'interface du Context, avec un type fonction déjà acquis).
 
 ### Exercice `ExerciceContextReducer` (`projet-vite-local`) ✅
+
 File d'attente : `BandeauComptoir` (compteur), `Comptoir` (ajout), `Ecran` (liste + servir / vider), le tout sous un `FileProvider` détenant un `useReducer`.
 
 - **Union discriminée `ActionFile`** juste du premier coup 🟢.
@@ -2549,6 +2563,7 @@ File d'attente : `BandeauComptoir` (compteur), `Comptoir` (ajout), `Ecran` (list
 **🔄 Rotation** : **entrent** — un composant ne lit pas le Context qu'il fournit · `children` dedans / à côté du Provider · `return` + parenthèse JSX · shorthand vs `clé: valeur` · reducer pur (pas d'aléatoire dedans). **Sort** — `||` / `&&` dans une garde. **Restent** — état initial « en chargement » (prédiction) · sources de valeur dans un reducer · règle → formule · élément toujours rendu pour l'animer · `focus-within` · `cn()` · ordre `(état, action)` · `throw` hors `fetch` · `color-scheme`. **À recroiser** : clic extérieur + référence unique.
 
 **⏭️ Prochaine étape**
+
 1. Révision courte.
 2. **Ouverture de `useMemo`**, seul, sur un créneau frais.
 3. Puis `useCallback` + `React.memo` → portails + ErrorBoundary → **Todo List (Odin)** → Next.js.
@@ -2562,10 +2577,12 @@ File d'attente : `BandeauComptoir` (compteur), `Comptoir` (ajout), `Ecran` (list
 ---
 
 ### Révision éclair (2 items, format code)
+
 - **Déboguer — élément toujours rendu pour l'animer** 🟢 : `ouvert &&` retiré, valeur par défaut surchargée par `cn()`, durée ajoutée de lui-même. Le « pourquoi » n'est pas formulé, mais le code le montre. **Sort de rotation** (🟡 avec indice en S125).
 - **Écrire — `focus-within`** 🟢 : posé sur le parent, le bon élément. **Sort de rotation.**
 
 ### `useMemo` — notion neuve, ouverte
+
 - **Problème posé sans code** (tri de 5 000 montures refait à chaque frappe dans un champ sans rapport), analogie de la liste de stock imprimée. Question de contrôle : deux réponses justes mais incomplètes, chacune une moitié. Réunies, elles donnent les dépendances (`montures` **et** `critereTri`).
 - **Syntaxe** : fonction de calcul donnée à React, `return` obligatoire, valeur renvoyée (pas la fonction), spread toujours nécessaire devant `sort`.
 - **`localeCompare` non reconnu** (« ne me dit rien du tout ») alors qu'il était noté soldé (S69, S88). Réexpliqué : retour négatif / 0 / positif = contrat du comparateur, `sort()` simple mal classé dès que casse ou accents varient. 🟡
@@ -2578,6 +2595,7 @@ File d'attente : `BandeauComptoir` (compteur), `Comptoir` (ajout), `Ecran` (list
 - **Ressenti** : « la notion neuve la plus facile récemment ». Juste pour le mécanisme ; le jugement (quand l'utiliser, quelles dépendances) a accroché sur B et D. **Ne pas surévaluer.**
 
 ### Reprise du clic extérieur — commencée, à finir seul
+
 Menu déroulant des marques (`Exercice-clic-exterieur-useRef-contains.tsx`). **Premier jet en `<select>` natif** : bon réflexe pro (le natif gère ouverture, clic extérieur, clavier, accessibilité), mais il supprimait l'objet de l'exercice. Version manuelle (`<button>` + `<ul>` + ref + `contains` + écouteur sur `document`) commencée. **Non terminée, à finir plus tard.**
 
 **🎓 Convention de nommage de Frédéric (atelier)** : fichiers d'exercice nommés d'après la notion (`Exercice-useParams.tsx`, `Exercice-use-context-reducer.tsx`) pour retrouver une notion facilement.
@@ -2593,6 +2611,7 @@ Menu déroulant des marques (`Exercice-clic-exterieur-useRef-contains.tsx`). **P
 **🔄 Rotation** : **entrent** — dépendances de `useMemo` (ce que le calcul lit) · `setInterval` : la valeur se calcule dans le callback · `localeCompare`. **Sortent** — élément toujours rendu pour l'animer · `focus-within`. **Restent** — un composant ne lit pas le Context qu'il fournit · `children` dedans / à côté du Provider · `return` + parenthèse JSX · shorthand vs `clé: valeur` · reducer pur · état initial « en chargement » · sources de valeur dans un reducer · règle → formule · `cn()` · ordre `(état, action)` · `throw` hors `fetch` · `color-scheme`.
 
 **⏭️ Prochaine étape**
+
 1. Finir l'exercice du clic extérieur (s'il ne l'est pas d'ici là, en ouverture).
 2. **Reprise combinée `useReducer` + Context** (N+2), terrain neuf.
 3. **`useCallback` + `React.memo`** (mémoriser une fonction, éviter le re-rendu d'un enfant).
@@ -2608,16 +2627,20 @@ Menu déroulant des marques (`Exercice-clic-exterieur-useRef-contains.tsx`). **P
 ---
 
 ### 1. Clic extérieur (exercice S127) — terminé, correction demandée
+
 Premier jet : référence unique de l'écouteur **juste** (`handleClick` déclarée dans l'effet, même fonction pour `add` / `remove`) — **le point 🔴 de S111 tient**.
 🔴 **L'effet faisait tout** : deux branches en `setAfficher(true)` (liste impossible à fermer), aucun `onClick` sur le bouton, `<ul>` dans le `<button>`, `marqueAffiche` typé en tableau pour une valeur unique, `e` non typé. Indice puis correction complète donnés.
 **Reformulé par lui** : l'erreur était de tout faire passer par le `useEffect`. Précisé : l'écouteur sur `document` ne gère que ce qui se passe **dehors** (fermer) ; ouvrir et choisir passent par les `onClick`.
 
 ### 2. Révision éclair (2 items)
+
 - **Écrire — tri sans mutation** 🟢 : **`toSorted()` découvert seul sur MDN**, `localeCompare` revenu juste (oublié la veille).
 - **Prédire — `return` seul sur sa ligne** 🔴 : 20 min sans trouver, réponse donnée. **Règle inconnue** : l'insertion automatique de point-virgule (`return` seul → `return;` → `undefined`). Même bug que `Comptoir` en S126, non reconnu hors éditeur. Repère : un `return` ne termine jamais sa ligne.
 
 ### 3. Reprise combinée `useReducer` + Context (N+2) — terrain neuf, écrite en grande partie seul ✅
+
 Commandes de verres au labo (commandé → reçu → livré), consigne avec la notion de chaque étape (correctif S126 appliqué).
+
 - **Les trois accroches de S126 n'ont pas réapparu** : `children` dans le Provider, aucun composant lisant le Context qu'il fournit, signature du Provider juste. 🟢
 - Union de valeurs pour le statut, union discriminée des actions, reducer immuable (`map` + spread, `filter`), hook avec garde, `disabled` dérivé sur « Livré ». 🟢
 - **Neuf — élargissement des littéraux** : `"Reçu"` élargi en `string` dans un objet construit → erreur `useReducer`. Réglé par l'**annotation de retour du reducer** (`: Commande[]`). Proposition facultative : fonction pure `statutSuivant(statut: Statut): Statut` pour sortir le ternaire imbriqué. 🟡
@@ -2633,6 +2656,7 @@ Commandes de verres au labo (commandé → reçu → livré), consigne avec la n
 **🔄 Rotation** : **entrent** — `return` seul sur sa ligne (point-virgule automatique) · élargissement des littéraux / annotation de retour · `toSorted()`. **Sortent** — un composant ne lit pas le Context qu'il fournit · `children` dedans / à côté du Provider · signature d'un Provider. **Restent** — `localeCompare` (une réussite après un oubli) · dépendances de `useMemo` · `setInterval` : valeur calculée dans le callback · shorthand vs `clé: valeur` · reducer pur · état initial « en chargement » · sources de valeur dans un reducer · règle → formule · `cn()` · ordre `(état, action)` · `throw` hors `fetch` · `color-scheme`.
 
 **⏭️ Prochaine étape — lundi**
+
 1. Révision + **reprise `useMemo`** (N+2).
 2. **Ouverture de `useCallback` + `React.memo`**.
 3. Si le temps le permet : application à la calculatrice (warning `exhaustive-deps`).
@@ -2649,11 +2673,14 @@ Commandes de verres au labo (commandé → reçu → livré), consigne avec la n
 ---
 
 ### Révision éclair (2 items, format code)
+
 - **Prédire — `return` seul sur sa ligne** 🔴 : objet annoncé, `undefined` + `TypeError` en réalité. **2ᵉ échec** (S128). Repère redonné : ce qu'on renvoie commence sur la même ligne que `return`.
 - **Déboguer — chrono `setInterval` + `[]`** : correction **juste du premier coup** (`(prev) => prev + 1`) 🟢. Diagnostic non trouvé (« pour moi tout va bien ») 🟡 : la flèche garde le `secondes` du premier rendu, affichage bloqué à `1 s`.
 
 ### 1. Reprise `useMemo` (N+2) — calcul juste, dépendances 🔴
+
 Exercice à un trou (catalogue de verres : recherche + tri + case sans rapport). **Filtre insensible à la casse et tri dans les deux sens écrits seul et justes** 🟢, à partir d'un ressenti 4/10.
+
 - 🔴 **`afficherId` en dépendance** alors que le calcul ne la lit pas. **3ᵉ occurrence de la même confusion** (cas B et D en S127). Geste fixé : **ne mettre dans le tableau que les noms qui apparaissent dans les accolades du calcul** (hors constantes hors composant).
 - `console.log("calcul")` de la consigne oublié → test 3 impossible.
 - Spread superflu après `filter` (déjà une copie) ; `toSorted()` rappelé.
@@ -2661,11 +2688,14 @@ Exercice à un trou (catalogue de verres : recherche + tri + case sans rapport).
 **🎓 Remarque de Frédéric** : « t'es dur ». Juste : reprise réussie depuis 4/10, résumée en une ligne avant les corrections. **Règle S105 réaffirmée : commencer par ce qui est réussi.**
 
 ### 2. `React.memo` — notion neuve, ouverte
+
 Problème (un parent re-rendu re-rend tous ses enfants), `memo` compare chaque prop avec `===`. Distinction `useMemo` (une valeur) / `memo` (le rendu d'un composant).
+
 - Question `verres={[...VERRES]}` 🔴 : « memo réutilise le précédent ». Faux : nouveau tableau à chaque rendu → référence différente. Débloqué par valeur / référence (Phase 1) et l'image des deux photocopies.
 - Question A → D (nombre, chaîne, objet littéral, fonction fléchée) **4/4** 🟢.
 
 ### 3. `useCallback` — notion neuve, ouverte
+
 - **Question de fond** : différence concrète avec `useMemo` → `useMemo` **exécute** la fonction et garde son retour, `useCallback` la **range telle quelle**. `useCallback(fn, d)` = `useMemo(() => fn, d)`. Reformulé juste (« la version courte »), précision : courte pour `useMemo`, utile avec `memo`.
 - Exercice (boutons de verres en `memo` + panier) : 1ᵉʳ jet sans paramètre `id`, `prev + 1` sur un `number[]`, `[panier]`. 2ᵉ jet : paramètre et ajout immuable justes 🟢. `[]` ensuite.
 - **Question : « on met quoi dans le tableau ? »** → tableau de tri donné : **state ou prop lu directement → oui · setter, `prev`, paramètre, constante hors composant → non.** Même règle pour `useMemo`, `useCallback`, `useEffect`.
@@ -2673,7 +2703,9 @@ Problème (un parent re-rendu re-rend tous ses enfants), `memo` compare chaque p
 - **Quand l'utiliser** : seulement si la fonction est passée à un enfant `memo` ou placée dans des dépendances. **React Compiler** (source vérifiée : v1.0 stable, octobre 2025, recommandé pour les nouvelles apps, supporté par Next.js 16) mémoïse automatiquement. Décision d'activation à prendre au moment du SaaS.
 
 ### 4. Warning `exhaustive-deps` de la calculatrice — expliqué, non corrigé
+
 Code collé (`projet-examen-blanc`). Le warning n'était pas connu de nom.
+
 - Jaune = **avertissement ESLint**, pas une erreur. Règle mécanique : l'effet clavier lit 5 fonctions absentes du tableau.
 - **Pourquoi ça marche quand même** : le tableau contient les states que **lisent** ces fonctions. Risque : un state ajouté plus tard et oublié.
 - **Pourquoi `useCallback` ne règle rien ici** : les fonctions lisent des states qui changent à chaque touche.
@@ -2686,6 +2718,7 @@ Code collé (`projet-examen-blanc`). Le warning n'était pas connu de nom.
 **🆕 Notions ouvertes ce jour** : `React.memo` · `useCallback` · règle `exhaustive-deps`.
 
 **⚠️ Mes erreurs**
+
 1. **Correction de la reprise `useMemo` sans encouragement d'abord** — relevé par lui.
 2. **Contre-épreuve formulée sans les gestes** (« combien de logs ? ») → « je dois faire quoi ? ». Reformulée en étapes, efficace.
 3. **Explication du warning empilée** (règle + diagnostic + `useCallback` + `useReducer` + question) → « j'ai rien compris ». Reprise une idée à la fois.
@@ -2700,16 +2733,360 @@ Code collé (`projet-examen-blanc`). Le warning n'était pas connu de nom.
 
 ### 🗺️ Avant Next.js — liste établie ensemble (croisée avec le registre)
 
-1. **Calculatrice en `useReducer`** + `memo` / `useCallback` / `useMemo`, sur une branche de `projet-examen-blanc` avec PR. *Greffes : `e.key` vs `e.code` · flottants (la ligne `toFixed(10)`).*
-2. **Dark mode en Context sur le Shopping Cart** (périmètre limité à ce projet). *Greffe : audit accessibilité (Lighthouse, clavier, contraste).*
-3. **Portails + ErrorBoundary.** *Greffes : propagation des événements · `<dialog>`.*
-4. **Todo List (The Odin Project)** en React + TS. *Greffes : `reduce` accumulateur objet (compteur par projet) · dates (écarts, comparaisons).*
+1. **Calculatrice en `useReducer`** + `memo` / `useCallback` / `useMemo`, sur une branche de `projet-examen-blanc` avec PR. _Greffes : `e.key` vs `e.code` · flottants (la ligne `toFixed(10)`)._
+2. **Dark mode en Context sur le Shopping Cart** (périmètre limité à ce projet). _Greffe : audit accessibilité (Lighthouse, clavier, contraste)._
+3. **Portails + ErrorBoundary.** _Greffes : propagation des événements · `<dialog>`._
+4. **Todo List (The Odin Project)** en React + TS. _Greffes : `reduce` accumulateur objet (compteur par projet) · dates (écarts, comparaisons)._
 5. **En créneaux courts** : event loop · `@keyframes` (retournement de carte Memory Card) · récursion.
 6. **Next.js.**
 
 Laissés après : `this` + classes (avant la Phase 3) · regex (formulaires du SaaS) · micro-tâches 🔵.
 
 **⏭️ Prochaine étape** : calculatrice en `useReducer`, consigne étape par étape (tableau des actions dès le départ), puis `memo` sur `Touche` et `touches` stabilisé.
+
+## Session 130 — Calculatrice en `useReducer` + mémoïsation (`memo`, `useMemo`)
+
+**Durée** : 2h (mercredi). Énergie bonne. Frustration en fin de séance sur la mémoïsation.
+
+**🎹 Raccourci** : `Ctrl+Entrée` — utilisé quelques fois, reconduit.
+
+**Ressenti en ouverture** : `useReducer` 7/10 « pas sûr » → **sous-évalué** (reducer traduit quasi parfaitement).
+
+---
+
+### Révision éclair (2 items)
+
+- **Prédire — `return` seul sur sa ligne** 🟡 : **piège repéré** (2 échecs avant), résultat annoncé « une erreur » au lieu de `undefined` (l'erreur n'apparaît que si on lit une propriété dessus). `return (` → `90` 🟢.
+- **Écrire des dépendances** : `useMemo` → `[panier]`, **`remise` (prop lue) oubliée** 🔴 · `useCallback` → `[]` 🟢 implicitement. **Remarque fondée** : `useCallback` sans enfant `memo` ne sert à rien, exemple mal choisi de ma part.
+
+### 1. Calculatrice `useReducer` (`projet-examen-blanc`, sur branche) ✅
+
+Tableau des actions donné dès la consigne (fonction actuelle → action → données) : **format efficace**.
+
+- **Types** : `Etat`, union discriminée `Action` justes du premier coup 🟢. **`ETAT_INITIAL` non annoté** (récurrence S125), ajouté.
+- **Question avant d'écrire** : déstructurer `etat` dans la signature du reducer ? → possible, **annotation `: Etat` placée juste spontanément** 🟢 (le point à 5 échecs). Déconseillé : perte du spread. Alternative : déstructurer dans un `case`.
+- **Reducer** : traduction des 6 fonctions en `case` 🟢 (`etat.` pour lire, un seul objet renvoyé, `return etat` à la place du `return` nu, accolades sur le `case` à `const`). **Un vrai bug** 🟡 : `action.operateur` au lieu de `etat.operateur` dans le calcul intermédiaire, corrigé après indice.
+- **Branchement** 🟢 : `useReducer`, déstructuration d'`etat`, 6 fonctions supprimées, 18 `dispatch`, effet à `[]`. **Le warning `exhaustive-deps` de la S73 disparaît.** Le composant décrit, le reducer décide.
+- Constat expliqué : avec `[]`, l'effet garde le `touches` du premier rendu et ça marche **par chance** (il ne contient que `dispatch`, stable).
+
+### 2. Mémoïsation sur la calculatrice — écrite 🟢, comprise 🔴
+
+- `useMemo` sur `touches` avec **`[dispatch]` trouvé seul** par le geste des noms (équivalent à `[]`). `memo` sur `Touche`, `[touches]` dans l'effet : **code complet et juste**.
+- **« J'ai copié sans comprendre »** — arrêt fondé. Trois explications : (1) deuxième usage de `useMemo` = **garder la même référence**, pas éviter un calcul → « vaguement » ; (2) **`useMemo` fait maison en JS pur → « c'est pire »** ; (3) **gardien / fournisseur** → plus lisible.
+- **Repère retenu** : `memo` = le **gardien** côté enfant · `useCallback` (fonction seule) ou `useMemo` (tableau / objet) = le **fournisseur** côté parent. **`memo` a besoin d'un fournisseur.** Ici, `useMemo` joue le rôle de `useCallback` d'hier : les 18 `onClick` vivent dans le tableau gardé.
+- Question : « pas de `useCallback` ? » → fonctions déjà stables dans le tableau mémoïsé.
+- Contre-épreuve : en retirant `useMemo`, **ESLint souligne le tableau en jaune** et propose de l'envelopper dans `useMemo` — illustration directe. **Résultats des tests 2 et 3 (nombre de logs) non relevés.**
+- **Ressenti exprimé** : « super flou », « j'ai du mal à visualiser `useMemo`, encore plus `useCallback` ».
+
+---
+
+**Niveaux** : `return` seul sur sa ligne 🟡 (repéré, pas encore exact) · dépendances : prop oubliée 🔴 / geste appliqué sur `touches` 🟢 · union discriminée 🟢 · annotation d'un paramètre déstructuré 🟢 · traduction fonctions → reducer 🟢 · `etat` vs `action` dans un reducer 🟡 · `useReducer` branché 🟢 · `memo` / `useMemo` (référence) / `useCallback` : **écriture 🟢, compréhension 🔴**.
+
+**🎓 Décision de Frédéric** : `useMemo`, `useCallback` et `React.memo` **restent tous les trois en rotation**, au format **observation** (console, contre-épreuve, warning ESLint) plutôt qu'explication.
+
+**⚠️ Mes erreurs**
+
+1. **Exemple de révision mal choisi** (`useCallback` sans enfant `memo`) — relevé par lui.
+2. **Simulation d'un `useMemo` fait maison** pour expliquer : nouvelle couche au lieu d'en retirer. **Correctif : sur une notion abstraite qui ne passe pas, revenir à une image (rôles) ou à l'observation, jamais ajouter du mécanisme.**
+
+**🔄 Cycle de reprise** : `useReducer` → N+5 tenu (calculatrice) · **mémoïsation → N+2 ≈ S132, par l'observation** · Context + hook → dark mode (S131).
+
+**🔄 Rotation** : **restent (priorité)** — `memo` / `useMemo` / `useCallback` (rôles gardien / fournisseur, format observation) · tri des dépendances (props lues) · `return` seul sur sa ligne. **Entrent** — annotation de `ETAT_INITIAL` · `etat` vs `action` dans un reducer. **Restent** — élargissement des littéraux · `toSorted()` · `localeCompare` · shorthand vs `clé: valeur` · reducer pur · état initial « en chargement » · règle → formule · `cn()` · ordre `(état, action)` · `throw` hors `fetch` · `color-scheme`.
+
+**📌 Reporté** : greffes prévues sur la calculatrice non faites — **`e.key` vs `e.code`** · **flottants** (la ligne `toFixed(10)`). À caler en révision éclair.
+
+**⏭️ Prochaine étape**
+
+1. **Dark mode en Context sur le Shopping Cart** (`projet-examen-blanc`, branche) + **audit accessibilité** (contraste, clavier).
+2. En ouverture : une observation courte sur la mémoïsation (console ou React DevTools).
+3. Puis portails + ErrorBoundary (+ propagation, `<dialog>`) → **Todo List** → Next.js.
+
+## Session 131 — Dépendances (cours complet), reprise mémoïsation en observation, dark mode du Shopping Cart en Context
+
+**Durée** : ~3h (jeudi, en deux blocs avec pause repas). Énergie bonne.
+
+**🎹 Raccourci** : `Ctrl+Entrée` **acté 🟢**. Nouveau, sur un besoin exprimé (retirer des délimiteurs) : **Remove Brackets** (`Ctrl+Alt+Retour arrière`, vérifié en S112, abandonné faute d'occasion) pour `()` `{}` `[]`, et **`Emmet: Remove Tag`** pour les balises : pas de raccourci par défaut, `Alt+Maj+M` proposé (symétrique de Wrap). **Assignation et comportement sur un fragment `<>` : à confirmer.**
+
+**Ressenti en ouverture** : mémoïsation 4/10, « je ne sais pas ce que je dois mettre dans le tableau de dépendances ».
+
+---
+
+### Révision éclair (2 items)
+
+- **Prédire — flottants** 🟢 2,5/3 : `false` / `true` justes avec la bonne raison. **Type de `toFixed` manqué** : renvoie une **chaîne** (`"0.30"`), d'où le `Number()` autour. Valeur exacte : `0.30000000000000004`. Greffe « flottants » de la calculatrice : **faite**.
+- **Écrire — dépendances d'un `useMemo`** : blocage révélateur, il cherchait **l'origine** des données (API, input, parent) pour décider. **4ᵉ accroche sur les dépendances → cours complet donné directement.** Règle : une valeur entre si elle est **lue** dans le calcul **et** peut **changer** d'un rendu à l'autre. Tableau posé : prop, state, `const` dérivée → dedans · constante hors composant, setter, `dispatch`, fonction importée, paramètres du callback → dehors. **L'origine d'une prop ne compte pas.** Geste en trois temps : lister les noms, regarder où ils sont déclarés, trier. → `[lignes, tauxTVA]` **juste**, exclusions justes. « C'est mieux maintenant. »
+
+### 1. Reprise mémoïsation (N+2) — format observation
+
+Enfant `memo` + trois façons de fournir un tableau (constante hors composant / spread / `useMemo`), prédiction puis console. **2/3** : étape 1 prédite fausse, **erreur diagnostiquée seul** en observant. Précision : le parent se re-rend bien, c'est le gardien qui bloque (même référence).
+**Sans `memo` mais avec `useMemo` → 10 rendus (5 × 2 StrictMode)** 🟢 : un fournisseur sans gardien ne sert à rien.
+**Question de fond** : quand `useMemo` seul, quand avec `memo` ? → deux rôles : **1. éviter un calcul lourd** (valeur utilisée dans le composant, seul) · **2. garder la même référence** (valeur passée à un enfant `memo` ou dans des dépendances). Test : _où va la valeur ?_ `useCallback` n'a que le rôle 2 → **seul, il ne sert jamais à rien**. Demande explicite : **reprendre `useCallback` + `memo` ensemble**.
+
+### 2. Dark mode du Shopping Cart en Context ✅ (`projet-examen-blanc`, branche `DarkMode-ShoopingCart`)
+
+**Questions de conception, posées avant de coder** :
+
+- _Pourquoi le Shopping Cart seul ?_ → la classe est globale par nature, seule la **couverture visuelle** est limitée : seul le Shopping Cart a des tokens par rôle.
+- **🎓 Décision de Frédéric** : bouton dans le **header du Shopping Cart**, pas dans la barre d'`App.tsx` (il promettrait un effet que les autres pages n'ont pas).
+- _Pourquoi pas le Provider autour des `<Route>` ?_ → `<Routes>` n'accepte que des `<Route>`. Idée juste derrière : **Provider le plus bas possible tant qu'il couvre ses lecteurs** → le layout. Classe posée sur la **`div` racine du layout**, pas sur `<html>` (aucune trace en quittant la section).
+
+**CSS** : `:root` compris comme « racine du dossier » → c'est la balise `<html>`. Après indice, **`.dark` trouvé seul**. Token `--color-shop-fond` ajouté. Valeurs sombres **données à sa demande**. Astuce : la palette Tailwind v4 est en `oklch`, pas en hex (survol IntelliSense / DevTools Calculé). Double `@import` d'Oswald retiré.
+
+**Context + Provider + hook écrits seul et justes** : union de valeurs, `null` + garde, lazy initializer avec garde positive, `(prev) =>`, `{children}` dedans, clé `localStorage` distincte de `projet-vite-local` (même origine `localhost:5173`). En S123, le hook demandait un squelette.
+
+**Accroches, toutes corrigées** :
+
+- **Classe inversée** (`theme === "light" ? "dark" : …`), masquée par une icône inversée elle aussi. Étourderie. Classe `"light"` inutile retirée.
+- **Provider dans le layout lu par le layout lui-même** → garde levée (cause déduite, version cassée non vue). Règle S126 recroisée. **Choix de Frédéric** : composant enfant `DivDarkTheme`, préféré à la coupe `LayoutPage` / `LayoutContenu` (un rôle par `div`, plus lisible pour lui). Valide.
+- **ESLint `react-refresh/only-export-components`** : un fichier exportant un composant et un hook désactive le Fast Refresh. → dossier `theme-context/` en trois fichiers (`useTheme.ts` avec interface, Context et hook · `ProviderDarkTheme.tsx` · `Bouton-DarkTheme.tsx`). **0 erreur, 0 avertissement.**
+- Test 5 : couleurs en dur de la bande latérale passées en tokens.
+
+**🔎 Découverte** : `eslint.config.js` de `projet-vite-local` vise `files: ['**/*.{js,jsx}']` et n'a pas `typescript-eslint` → **aucun fichier `.tsx` n'est vérifié depuis la migration TS**. Explique l'absence d'erreur sur le même code.
+
+**PR + fusion faites en fin de séance.**
+
+---
+
+**Niveaux** : flottants 🟢 · `toFixed` renvoie une chaîne 🟡 · **tri des dépendances 🟢 (règle comprise, appliquée une fois — à confirmer à froid)** · `memo` + référence 🟢 (observé) · `useMemo` rôle 1 / rôle 2 🟡 · `useCallback` 🟡 (pas repratiqué) · `:root` = `<html>` 🟡 · redéfinir des tokens sous `.dark` 🟢 · **Context + Provider + hook 🟢 (écrits seul, 3ᵉ terrain)** · Provider au plus bas / lecture sous le Provider 🟡 · `only-export-components` 🟡 (neuf) · une classe « A ou rien » sans classe inutile 🟢.
+
+**⚠️ Mes erreurs** : item 2 de révision sans préciser que `lignes` et `tauxTVA` sont des props venues du parent (relevé par lui) · couleurs sombres proposées **sans mesure de contraste** (à vérifier à l'audit).
+
+**🔄 Cycle de reprise** : Context + hook → **cycle fermé** (S126, S128, S131, écrit seul) · tri des dépendances → à froid, N+2 · **`useCallback` + `memo` → N+2 ≈ S133, format observation (demande explicite)**.
+
+**🔄 Rotation** : **entrent** — `toFixed` renvoie une chaîne · `:root` = `<html>` · `<Routes>` n'accepte que des `<Route>` · un `.tsx` de composants n'exporte que des composants · `useMemo` rôle 1 / rôle 2. **Sort** — flottants (greffe faite). **Restent** — `memo` / `useMemo` / `useCallback` · tri des dépendances · `return` seul sur sa ligne · annotation de `ETAT_INITIAL` · `etat` vs `action` · élargissement des littéraux · `toSorted()` · `localeCompare` · shorthand vs `clé: valeur` · reducer pur · état initial « en chargement » · règle → formule · `cn()` · ordre `(état, action)` · `throw` hors `fetch` · `color-scheme`.
+
+**📌 Registre** : toujours 5 lignes périmées depuis S129 (Context API, hooks personnalisés, `useReducer`, `useMemo` / `useCallback` / `React.memo`) → mise à jour en fin de chapitre React. **Ajout** : ESLint de `projet-vite-local` non branché sur TS.
+
+---
+
+### 🗺️ Avant Next.js — état
+
+1. Calculatrice `useReducer` + mémoïsation ✅ · greffe flottants ✅ · **greffe `e.key` vs `e.code` ⏳**
+2. Dark mode Shopping Cart ✅ · PR ✅ · **greffe audit accessibilité ⏳** (Lighthouse, clavier, contraste)
+3. Portails + ErrorBoundary (+ propagation, `<dialog>`) ⏳
+4. Todo List (Odin) (+ `reduce` accumulateur objet, dates) ⏳
+5. Créneaux courts : event loop · `@keyframes` · récursion ⏳
+6. **Next.js**
+
+**⏭️ Prochaine étape**
+
+1. **Ouverture** : reprise `useCallback` + `memo` (observation) · reconfiguration ESLint de `projet-vite-local` si séance sur ce projet.
+2. **Audit accessibilité** du Shopping Cart, avec `e.key` vs `e.code` en révision éclair.
+3. **Portails + ErrorBoundary**, séance fraîche.
+4. Todo List → Next.js.
+
+## Session 132 — ESLint de `projet-vite-local` réparé, reprise `useCallback` + `memo`, audit accessibilité complet du Shopping Cart
+
+**Durée** : ~3h (vendredi, en deux blocs avec pause repas). Énergie bonne.
+
+**🎹 Raccourci** : `Alt+Maj+M` assigné à `Emmet: Remove Tag`, en cours. **Comportement sur un fragment `<>` : jamais confirmé, à demander.**
+
+**Ressenti en ouverture** : `useCallback` + `memo` 6/10.
+
+---
+
+### Révision éclair (2 items)
+
+- **Prédire — `e.key` vs `e.code`** 🟡 : intuition juste (« l'un suit AZERTY, l'autre QWERTY »), valeurs inexactes (`q` au lieu de `"KeyQ"`). **Cours complet demandé et donné** : `e.key` = caractère produit (disposition, `Maj`, noms des touches spéciales) · `e.code` = emplacement physique nommé d'après le QWERTY, toujours préfixé · piège des chiffres en AZERTY (`"&"` / `"Digit1"`) · repère : **`e.key` par défaut, `e.code` quand la position sous les doigts compte (jeux)**. Greffe de la calculatrice : **faite**.
+- **Prédire — `return` seul sur sa ligne** : `undefined` ✅ (2ᵉ fois d'affilée). `undefined + 10` annoncé « erreur » → **`NaN`** (même confusion qu'en S130). Repère : `undefined` dans un calcul → `NaN` silencieux · suivi d'un `.` ou de `()` → `TypeError`.
+
+### 1. ESLint de `projet-vite-local` reconfiguré ✅
+
+- `npm audit fix` lancé **sans `--force`** : bon réflexe.
+- **`npm install -D typescript-eslint` refusé (ERESOLVE)** : le projet était en **TypeScript 7** (portage natif en Go), hors de la plage acceptée par typescript-eslint (`<6.1.0`). **Source vérifiée** : TS 7 non pris en charge, demande fermée comme « non prévue ». **Pas de `--force` relancé, réflexe juste.** Cours court : **peer dependency** · `~` (correctifs seulement) vs `^` (mineures comprises).
+- TypeScript redescendu à `~6.0.2` (version de `projet-examen-blanc`), puis `typescript-eslint` installé, config alignée sur celle de `projet-examen-blanc` (`files: ['**/*.{ts,tsx}']` + `tseslint.configs.recommended`).
+- **11 problèmes révélés, triés puis tous corrigés** :
+  - **`exhaustive-deps`** : effet lisant `location.pathname` sans le déclarer → corrigé **seul**, règle des dépendances appliquée sur du vrai code (pas un exercice). 🟢
+  - **`only-export-components`** (×2) : Contexts et hooks sortis dans un `.ts`. Il a réuni les deux Contexts (magasin + thème) dans un seul fichier → remarque « on regroupe ce qui change ensemble », choix laissé.
+  - **`no-unused-vars`** (×8, exercices de typage) : traités.
+
+### 2. Reprise `useCallback` + `memo` (N+2) — format observation
+
+**3/3 en prédiction**, plus rapide qu'en S131. Question bonus (3 clics, `total` change à l'écran) : 6 rendus annoncés et observés… sur une version **sans `memo`** (étape 3 non annulée). Une fois `memo` remis : **0**. Phrase retenue : **un enfant `memo` ne se re-rend que si ses propres props changent**. Repère consolidé : `useMemo` fournit un tableau ou un objet, `useCallback` une fonction, `memo` est le gardien.
+DevTools du navigateur de VS Code : `⋮` → **Dock side** existe (vérifié par lui).
+
+### 3. Audit accessibilité du Shopping Cart ✅ (greffe faite)
+
+**Lighthouse** (une page à la fois, mode Instantané pour tester un état) :
+
+- **Accueil 91 → 100** : `aria-label` sur les boutons-icônes de navigation · footer passé de `text-shop-texte-doux` à `text-shop-texte`. Remarque : foncer le token lui-même aurait gardé la hiérarchie visuelle.
+- **Boutique 100** · `label` de `<Bouton>` enrichi avec le nom du produit (`` `Ajouter ${produit.title} au panier` ``). Question posée : `label` vs `aria-label` → prop inventée sur un composant / attribut DOM sur une balise.
+- **Panier 96 → 100** : token `--color-shop-prix` foncé avec le **sélecteur de contraste des DevTools** (courbe = frontière du seuil, calculée contre le fond, seuil 4,5:1 ou 3:1 selon la taille). Bonne pratique : **on corrige le token, pas l'élément.**
+- **Thème sombre** : bouton Paiement à **3,67** → **mon erreur de palette** (un même token `primaire` servait de texte clair et de fond de bouton, deux besoins opposés en sombre). **Trois tokens créés par rôle** : `--color-shop-bouton`, `--color-shop-bouton-survol` (fonce au survol), `--color-shop-sur-bouton`. **100 % sur toutes les pages, dans les deux thèmes.**
+- Lien « Accueil » en double (atelier / boutique) : bonne pratique « liens identiques, même fonction » → `aria-label` distinct.
+
+**Test au clavier** : parcours complet réussi.
+
+- **Focus invisible sur les cartes** : hypothèse `overflow-hidden` sur l'`<article>` qui coupe le contour → **confirmée par lui dans le code**. Cours `focus:` vs **`focus-visible:`**, `outline-offset` négatif, alternative `focus-within:`. **Choix de Frédéric** : garder l'indicateur par défaut de Chrome (accessible par conception). Défendable.
+- **Bande latérale fermée encore focusable** (`translate-x-full` déplace le dessin, ne retire rien de la page) → attribut **`inert`**. 🔴 1ᵉʳ jet `!afficherBande && !bandeOuverte` (faux sur le cas testé) → **loi de De Morgan** : `!(A && B)` = `!A || !B`. Corrigé. `const` de condition non créée (2 occurrences, choix assumé).
+- Erreurs console du Panier : disparues.
+
+**Questions de fond** : catégories Lighthouse (Performances seulement en build de production · SEO avec Next.js · Bonnes pratiques utiles dès maintenant · Lighthouse CI avec les tests) · **branches** : elles servent à **isoler**, pas à marquer un gros changement (`main` toujours stable, historique propre, PR). Audit commité **directement sur `main`** → règle posée : **branche systématique dans `projet-examen-blanc`**, commit direct toléré dans l'atelier.
+
+**`@keyframes`** : cours rédigé en fin de séance, **non lu, notion non ouverte**. Branche déjà créée.
+
+---
+
+**Niveaux** : `e.key` vs `e.code` 🟡 (cours donné, à rejouer) · `undefined` dans un calcul → `NaN` 🔴 (2ᵉ) · `return` seul sur sa ligne 🟢 (2ᵉ réussite) · peer dependency / `~` vs `^` 🟡 · règle des dépendances sur du vrai code 🟢 · **`memo` + `useCallback` 🟢 (observation)** · `label` (prop) vs `aria-label` (attribut) 🟢 · contraste et tokens par rôle 🟢 · `focus` vs `focus-visible` 🟡 · `overflow-hidden` qui coupe l'outline 🟢 (vérifié seul) · `inert` 🟡 · De Morgan 🔴 → corrigé · branches = isolation 🟢.
+
+**🔄 Cycle de reprise** : `useCallback` + `memo` → N+5 ≈ S135 · règle des dépendances → tenue sur du vrai code.
+
+**🔄 Rotation** : **entrent** — `e.key` vs `e.code` · `undefined` + nombre → `NaN` · De Morgan (`!(A && B)`) · `focus-visible` vs `focus` · `inert` · peer dependency / `~` vs `^`. **Restent** — `memo` / `useMemo` / `useCallback` (priorité baissée) · tri des dépendances · `return` seul sur sa ligne (à confirmer une fois) · `toFixed` renvoie une chaîne · `:root` = `<html>` · `<Routes>` n'accepte que des `<Route>` · `.tsx` de composants n'exporte que des composants · `useMemo` rôle 1 / rôle 2 · annotation de `ETAT_INITIAL` · `etat` vs `action` · élargissement des littéraux · `toSorted()` · `localeCompare` · shorthand vs `clé: valeur` · reducer pur · état initial « en chargement » · règle → formule · `cn()` · ordre `(état, action)` · `throw` hors `fetch` · `color-scheme`.
+
+**📌 Registre** : `e.key` vs `e.code` → greffe faite · audit accessibilité → fait · ESLint de `projet-vite-local` → réparé. Toujours 5 lignes périmées depuis S129 (Context API, hooks personnalisés, `useReducer`, `useMemo` / `useCallback` / `React.memo`) → mise à jour en fin de chapitre React.
+**Petits restes** : `bg-stone-50 dark:bg-stone-800` en dur dans les cartes de la Boutique · indicateur de focus personnalisé (`focus-visible:` sur `Bouton`), facultatif.
+
+---
+
+### 🗺️ Avant Next.js — état
+
+1. Calculatrice `useReducer` + mémoïsation ✅ · flottants ✅ · `e.key` vs `e.code` ✅
+2. Dark mode Shopping Cart ✅ · PR ✅ · audit accessibilité ✅
+3. Portails + ErrorBoundary (+ propagation, `<dialog>`) ⏳
+4. Todo List (Odin) (+ `reduce` accumulateur objet, dates) ⏳
+5. Créneaux courts : **`@keyframes` (prochain, branche créée)** · event loop · récursion ⏳
+6. **Next.js**
+
+**⏭️ Prochaine étape**
+
+1. **`@keyframes` sur Memory Card** (secousse quand la partie est perdue) - cours complet à faire.
+2. **Portails + ErrorBoundary**, séance fraîche.
+3. Todo List → Next.js.
+
+## Session 133 — `@keyframes` (cours + secousse de Memory Card) + organisation du CSS en Tailwind v4
+
+**Durée** : ~1h30 (samedi, 50 min le midi + 40 min le soir). Énergie bonne.
+
+**🎹 Raccourci** : `Alt+Maj+M` (Emmet : Remove Tag) **fonctionne sur un fragment `<>`**, peu utilisé pour l'instant. Reconduit.
+
+---
+
+### Révision éclair (2 items)
+
+- **Prédire — coercion / argument manquant** 🟡 : `"90"` converti par `-` 🟢 · `+ undefined` → `NaN` 🟢 · **argument manquant annoncé comme une erreur** 🔴 : JS ne lève jamais d'erreur, le paramètre vaut `undefined`, donc `250 - undefined` → `NaN` (c'est TS qui arrêterait). Il a bien vu que le résultat était un `number`.
+- **Écrire — De Morgan** 🟢 2/2. **Sort de rotation.**
+
+### 1. `@keyframes` — notion neuve, ouverte
+
+- Cours : `transition` (2 états, déclenchée par un changement) vs `animation` (N étapes, part à l'application de la classe) · scénario (`@keyframes`) + lecture (`animation`) · forme longue puis forme courte · en Tailwind v4, token `--animate-*` dans `@theme` → classe `animate-*`. _Syntaxe Tailwind reconstruite de mémoire, non vérifiée._
+- **Neuf** : `animation-timing-function` et les courbes (`linear`, `ease-in`, `ease-out`, `ease-in-out`) 🟡.
+- **🌟 Vérification sur MDN de sa propre initiative** (ordre différent du mien) → ordre libre dans la forme courte, valeurs reconnues par leur type ; **seule règle : 1ʳᵉ durée = durée, 2ᵉ = délai** 🟡.
+- **1ᵉʳ jet, trois erreurs** : nom du scénario ≠ nom lu par le token · **`translate-x` (classe Tailwind) écrit dans un `@keyframes`** · `2` sans unité. **Corrigés seul**, avec la propriété moderne `translate` 🟢. Test `hover:animate-memory-secousse` ✅.
+- **Secousse complète écrite seul, amortie (10px puis 5px)** 🟢.
+- Question : `@apply` dans un `@keyframes` → déconseillé (CSS pur attendu, classes v4 passant par des variables internes). _Possibilité technique non vérifiée._
+- **Reste à faire** : nom du scénario non préfixé (`secousse` → `memory-secousse`, aux deux endroits), signalé deux fois.
+
+### 2. Organisation du CSS en Tailwind v4 — flou de fond exprimé
+
+**Constat de Frédéric** : le fonctionnement du fichier CSS est flou **depuis le début de Tailwind** ; il ne sait pas l'organiser.
+
+- **Carte des cinq endroits** (importer / `@theme` / `@custom-variant` / `@layer base` / sélecteur normal pour remplacer une valeur) : « éclaircit légèrement » 🟡.
+- `@theme` = `:root` + fabrication des classes 🟢 · `@layer base` pour un style vrai pour 100 % des balises (`button { cursor: pointer }`) 🟢.
+- **`@layer theme` et les étages** (_cascade layers_) : 1ʳᵉ explication non comprise → reformulé (« le tiroir où Tailwind range tes variables, inutile à écrire soi-même »). **Compréhension non confirmée** 🔴.
+- **Organisation en projet réel** : le style d'une page vit dans son JSX, aucun CSS par page · un seul fichier (`index.css` / `app/globals.css`), coupé **par rôle** s'il grossit · pas de préfixe (une seule marque) · CSS Modules = autre école. Le fichier par exercice et le préfixe ne se justifient que dans l'atelier.
+- **Décision** : `memory-card.css` créé sur le modèle de `shopping-cart.css`.
+- Remarques sur `index.css` : `@import` à placer avant `@custom-variant` _(appliqué ? à demander)_ · le `@layer base` de `shopping-cart.css` s'applique à toute l'app.
+
+**📌 Demande explicite** : **séance dédiée** « organiser son CSS en Tailwind v4 », sur ses propres fichiers, avec **une page prête comparant trois cas : CSS classique / Tailwind forme longue / Tailwind forme courte**.
+
+---
+
+**Niveaux** : argument manquant → `undefined` 🔴 · De Morgan 🟢 · `@keyframes` + token `--animate-*` 🟢 (écrit seul après correction) · CSS pur dans un `@keyframes` vs classes Tailwind 🟡 · courbes de vitesse 🟡 · ordre de la forme courte 🟡 · `@theme` vs `:root` 🟢 · carte du fichier CSS 🟡 · étages / `@layer theme` 🔴 · organisation CSS en projet réel 🟡.
+
+**🎓 Règle posée par Frédéric** : les entrées de `progression.md` sont **toujours livrées dans un bloc de code markdown prêt à coller**, avec la même structure d'une séance à l'autre.
+
+**⚠️ Mes erreurs**
+
+1. Entrée de séance livrée d'abord en texte mis en forme au lieu du bloc prêt à coller.
+
+**🔄 Cycle de reprise** : `@keyframes` → N+2 (déclenchement à la défaite) · `useCallback` + `memo` → N+5 ≈ S135.
+
+**🔄 Rotation** : **entrent** — argument manquant → `undefined`, pas d'erreur · CSS pur dans un `@keyframes` · deux durées dans la forme courte (durée puis délai) · `@theme` vs `:root`. **Sort** — De Morgan. **Restent** — `undefined` + nombre → `NaN` (juste cette fois) · `e.key` vs `e.code` · `focus-visible` vs `focus` · `inert` · peer dependency / `~` vs `^` · `memo` / `useMemo` / `useCallback` · tri des dépendances · `return` seul sur sa ligne · `toFixed` renvoie une chaîne · `:root` = `<html>` · `<Routes>` n'accepte que des `<Route>` · `.tsx` de composants n'exporte que des composants · `useMemo` rôle 1 / rôle 2 · annotation de `ETAT_INITIAL` · `etat` vs `action` · élargissement des littéraux · `toSorted()` · `localeCompare` · shorthand vs `clé: valeur` · reducer pur · état initial « en chargement » · règle → formule · `cn()` · ordre `(état, action)` · `throw` hors `fetch` · `color-scheme`.
+
+---
+
+### 🗺️ Avant Next.js — état
+
+1. Calculatrice `useReducer` + mémoïsation ✅
+2. Dark mode Shopping Cart + audit accessibilité ✅
+3. **`@keyframes` sur Memory Card** 🔄 (scénario fait, déclenchement à faire)
+4. Portails + ErrorBoundary (+ propagation, `<dialog>`) ⏳
+5. Todo List (Odin) (+ `reduce` accumulateur objet, dates) ⏳
+6. Créneaux courts : event loop · récursion ⏳
+7. **Next.js**
+
+**⏭️ Prochaine étape**
+
+1. Préfixer le nom du scénario (`memory-secousse`).
+2. **Déclencher la secousse à la défaite** → coller le composant Memory Card (`onAjouter` + JSX de la grille) en ouverture. Problème à traiter : rejouer une animation déjà jouée.
+3. **Séance dédiée organisation CSS** (page comparative CSS classique / Tailwind forme longue / forme courte).
+4. Puis portails + ErrorBoundary.
+
+## Session 134 — Memory Card : secousse à la défaite, minuteur en `useEffect` + `@layer` / `@apply` enfin clarifiés
+
+**Durée** : ~2h20 (dimanche matin). Énergie bonne.
+
+**🎹 Raccourci** : `Alt+Maj+M` (Emmet : Remove Tag) — usage non renseigné cette séance, reconduit.
+
+---
+
+### 1. Secousse à la défaite — trouvée seul (20 min avant la séance) ✅
+
+- **State `defaite` + classe conditionnelle** : mécanisme compris seul (une animation part quand la classe apparaît). Fonctionne **grâce aux règles du jeu** (une réussite sépare toujours deux défaites, donc la classe disparaît et réapparaît) — le problème « rejouer une animation » ne se pose pas ici, expliqué.
+- **Variante carte fautive seule** (question de curiosité) : `useState<number | null>` remplace le booléen, comparaison dans le `.map()`, `key` stable qui suit la carte malgré le mélange 🟢.
+- **🌟 Initiative** : mélange retardé d'1 s par `setTimeout`, pour que la carte fautive tremble **à sa place**. Décision d'expérience utilisateur.
+- **Bug introduit par le délai** (clics pris en compte pendant la seconde, puis effacés) → **`disabled={carteFausse !== null}` trouvé seul** 🟢, avec `disabled:cursor-not-allowed disabled:opacity-70 disabled:grayscale` de lui-même. Explication du bug **imprécise** (« pris en mémoire ») → précisé : **`setTimeout` planifie, il ne bloque pas** 🟡.
+- **Minuteur déplacé dans un `useEffect`** qui observe `carteFausse` : « c'est quoi le problème avec `setTimeout` ? » → expliqué (trace active, aucun bug visible ici, mais danger si le minuteur navigue ou joue un son). Puis **écrit seul et juste du premier coup** : garde, identifiant rangé, `clearTimeout`, **`[carteFausse]` seul** (setters, ref et `melanger` exclus) 🟢.
+- **Neuf** : `motion-safe:` (préférence « réduire les animations ») 🟡. `cn()` réutilisé spontanément 🟢.
+- **Debugger** : voulait s'entraîner seul, ne retrouvait pas où poser un point d'arrêt (avait ouvert la page HTML `memory-card` au lieu du `.tsx`). Procédure redonnée (`Ctrl+P` dans Sources). **Utilisation effective non confirmée.**
+- Question : liste des animations courantes (fade-in, slide-in, scale-in, spin, pulse, ping, bounce, shake ; `transform` + `opacity` uniquement).
+
+**🏁 `@keyframes` sur Memory Card terminé.** _(PR de la branche : à demander.)_
+
+### 2. Révision éclair (3 items)
+
+- **Prédire — `toFixed` + coercion** 🟢 3/3 (`"0.30"`, `string`, `"0.301"`). **Sort de rotation.**
+- **Prédire — `e.key` / `e.code`** : `e.key` 3/3 🟢 · `e.code` idée juste, format non connu (`"KeyQ"`, `"Digit1"`). **Sort de rotation, décision de Frédéric** (le principe compte, les noms se vérifient dans la doc).
+- **Écrire — `throw` + `try` / `catch`** 🔴 : fonction juste. **Appel sans `try`** → page blanche + `Uncaught Error` (constaté à l'écran). **Puis `try` / `catch` placé dans la fonction elle-même** → la fonction s'attrape seule et renvoie la valeur invalide. **Correction demandée et donnée.** Repère : `throw` dans la fonction qui **détecte**, `try` / `catch` chez celui qui **décide**.
+
+### 3. Organisation du CSS en Tailwind v4 — flou de fond levé ✅
+
+- **Page comparative publiée** (« Atlas CSS Tailwind » : six cas en CSS classique / Tailwind forme longue / forme courte, étages, réflexe, fichier rangé). Retour : bon support de rappel, **mais le vrai doute était ailleurs**.
+- **Vrai doute : quand écrire `@apply` et `@layer`.** Expliqué :
+  - **`@layer base`** : toujours pour du CSS écrit à la main sur des balises — sinon, hors étage, il écrase les classes (exemple : `button { cursor: pointer }` hors étage annulerait `disabled:cursor-not-allowed`) 🟢.
+  - **`@layer theme`** : facultatif, pour ranger le remplacement `.dark { --… }` (portfolio rigoureux, Shopping Cart hors étage : les deux valides, une variable n'entre en conflit avec aucune classe) 🟢.
+  - **`@layer components`** : HTML pur (le bloc du portfolio était **juste** dans son contexte : factoriser sans composant, classes basculées par `classList`) · en React, seulement pour du **HTML non contrôlé** (Markdown, CMS, bibliothèque) 🟢.
+  - **`@layer utilities`** : jamais. `@utility` (v4) mentionné, _non vérifié_.
+  - **`@apply`** : vocabulaire Tailwind dans un fichier CSS, surtout avec `@layer base`. En React, le composant remplace `.btn`.
+- **Retour de Frédéric** : « ça éclaire les zones d'ombre que j'ai depuis des semaines sur Tailwind ».
+
+---
+
+**Niveaux** : classe conditionnelle pour déclencher une animation 🟢 · `number | null` à la place d'un booléen 🟢 · `disabled` + variantes `disabled:` 🟢 · `setTimeout` planifie / ne bloque pas 🟡 · minuteur dans un effet + nettoyage 🟢 · tri des dépendances 🟢 (vrai code, seul) · `motion-safe:` 🟡 · `toFixed` 🟢 · `e.key` / `e.code` 🟢 principe · **`throw` / `try` / `catch` : placement 🔴** · `@layer base` vs hors étage 🟢 · `@layer components` (HTML pur / non contrôlé) 🟢 · `@apply` 🟢 · organisation CSS Tailwind 🟢 (compris, à confirmer à l'usage).
+
+**Registre** : **`@keyframes` soldée** (enseignée et pratiquée) · flou « organisation du CSS » levé.
+
+**🔄 Cycle de reprise** : `@keyframes` + `animate` → N+5 ≈ S139 (ressenti « pas du tout acquis », demande explicite de recroiser) · `useCallback` + `memo` → ≈ S135.
+
+**🔄 Rotation** : **entrent** — `throw` / `try` / `catch` : où placer le `catch` (priorité) · `setTimeout` planifie, ne bloque pas · `animate` + `@keyframes` (demande explicite) · `motion-safe:` · `@layer base` vs hors étage. **Sortent** — `toFixed` renvoie une chaîne · `e.key` vs `e.code`. **Restent** — argument manquant → `undefined` · CSS pur dans un `@keyframes` · deux durées dans la forme courte · `@theme` vs `:root` · `undefined` + nombre → `NaN` · `focus-visible` vs `focus` · `inert` · peer dependency / `~` vs `^` · `memo` / `useMemo` / `useCallback` · `return` seul sur sa ligne · `:root` = `<html>` · `<Routes>` n'accepte que des `<Route>` · `.tsx` de composants n'exporte que des composants · `useMemo` rôle 1 / rôle 2 · annotation de `ETAT_INITIAL` · `etat` vs `action` · élargissement des littéraux · `toSorted()` · `localeCompare` · shorthand vs `clé: valeur` · reducer pur · état initial « en chargement » · règle → formule · `cn()` · ordre `(état, action)` · `color-scheme`.
+
+---
+
+### 🗺️ Avant Next.js — état
+
+1. Calculatrice `useReducer` + mémoïsation ✅
+2. Dark mode Shopping Cart + audit accessibilité ✅
+3. `@keyframes` sur Memory Card ✅
+4. **Portails + ErrorBoundary** (+ propagation, `<dialog>`) ⏳
+5. Todo List (Odin) (+ `reduce` accumulateur objet, dates) ⏳
+6. Créneaux courts : event loop (le « `setTimeout` ne bloque pas » d'aujourd'hui en est l'entrée) · récursion ⏳
+7. **Next.js**
+
+**⏭️ Prochaine étape**
+
+1. Ouverture : reprise **`useCallback` + `memo`** (N+5) + révision `throw` / `try` / `catch` sur un autre code.
+2. **Portails + ErrorBoundary**, séance fraîche.
+3. Puis Todo List → Next.js.
 
 ## Session 135 — Reprises `memo` / `useCallback` et `throw` / `try` / `catch` + portails + `<dialog>`
 
@@ -2724,6 +3101,7 @@ Laissés après : `this` + classes (avant la Phase 3) · regex (formulaires du S
 ---
 
 ### 1. Reprise `memo` + `useCallback` (N+5) — format prédiction
+
 - **A, B, C : résultats justes** (3 rendus / 0 / 3). Raison de C juste (nouveau tableau à chaque rendu).
 - 🔴 **Raison de B fausse** : « il vérifie si la fonction est appelée ». Corrigé : `memo` ne regarde jamais ce qui se passe dans les props, il compare chaque prop par **référence** (`===`). Image du gardien redonnée.
 - **D faussé** : spread du cas C resté dans le code (consigne incomplète, voir erreurs). Interprétation fausse : « seule la ligne du `.map()` se rend » → **un composant se rend en entier ou pas du tout**.
@@ -2732,11 +3110,14 @@ Laissés après : `this` + classes (avant la Phase 3) · regex (formulaires du S
 - **Ressenti exprimé** : « encore assez vague, même si je comprends le principe ».
 
 ### 2. `throw` / `try` / `catch` — placement 🟢 (le point S134 redressé)
+
 `throw` dans la fonction qui détecte, `try` / `catch` dans le handler qui décide, `instanceof` bien placé.
 Corrections : **états non vidés** (résultat et erreur affichés ensemble, test 3) · message `"<indice>"` littéral au lieu d'un template literal (consigne ambiguë en partie) · `String()` superflu · `catch` silencieux si l'erreur n'est pas une `Error` → ternaire. Facultatif : lire directement `PRIX[indice]` et tester `undefined` au lieu du détour `Object.keys` + `find`.
 
 ### 3. Portails — notion neuve, ouverte
-*Source vérifiée : react.dev, `createPortal`.*
+
+_Source vérifiée : react.dev, `createPortal`._
+
 - Définition d'une **modale** posée (par-dessus, bloque le reste ; ≠ popup = nouvelle fenêtre ; menu, infobulle, bande latérale = non modaux).
 - **Code juste du premier coup** 🟢 (`createPortal(jsx, document.body)`).
 - **Intérêt non vu au départ**. Débloqué par : échapper aux **contraintes CSS des ancêtres** (`overflow-hidden` coupe · `transform` capture le `fixed` · ordre de peinture / `z-index`). Bug observé sans portail : la carte Oakley passe **par-dessus** le fond sombre.
@@ -2745,13 +3126,16 @@ Corrections : **états non vidés** (résultat et erreur affichés ensemble, tes
 - Retour : « j'ai compris `createPortal`, je devrais m'en souvenir ».
 
 ### 4. `<dialog>` — notion neuve, ouverte
-*Source vérifiée : MDN, `showModal()` et `::backdrop`.*
+
+_Source vérifiée : MDN, `showModal()` et `::backdrop`._
 `showModal()` → top layer, reste de la page `inert`, `::backdrop`, Échap, focus gardé puis rendu. Piège de l'attribut `open`. Pas de state `ouverte` (le navigateur est la source de vérité).
+
 - **Cinq trous justes** 🟢 : ref typée `HTMLDialogElement`, `showModal()` dans le handler, `ref` posée, `close()`, `setSupprimee`. **Critère de la ref DOM déclenché seul.** « Ça marche. »
 - Cohérence : `?.close()` comme `?.showModal()`.
 - **Question non répondue** : dans Éléments, le `<dialog>` reste-t-il dans l'article ?
 
 ### 5. Tailwind
+
 - `transform-translateZ(0)` sans crochets → classe inexistante, silencieuse. **C'est ce qui empêchait le piège du `transform` de se déclencher.**
 - **Propriété arbitraire** `[transform:…]` vs **valeur arbitraire** `transform-[…]` (préférée par l'extension quand une classe existe) 🟡.
 
@@ -2767,6 +3151,7 @@ Corrections : **états non vidés** (résultat et erreur affichés ensemble, tes
 ---
 
 ### 🗺️ Avant Next.js — état
+
 1. Calculatrice `useReducer` + mémoïsation ✅
 2. Dark mode Shopping Cart + audit accessibilité ✅
 3. `@keyframes` sur Memory Card ✅ · PR ✅
@@ -2776,6 +3161,7 @@ Corrections : **états non vidés** (résultat et erreur affichés ensemble, tes
 7. **Next.js**
 
 **⏭️ Prochaine étape — reprendre ici**
+
 1. Question Éléments (où est le `<dialog>` ?) + vérification Échap / Tab / retour du focus.
 2. **Portail ou `<dialog>` : critère de choix** (et pourquoi shadcn/ui passe par un portail).
 3. **ErrorBoundary** — repose sur un composant classe (`class`, `this`, jamais vus) : décider entre un détour par les classes et la bibliothèque standard, doc vérifiée avant.

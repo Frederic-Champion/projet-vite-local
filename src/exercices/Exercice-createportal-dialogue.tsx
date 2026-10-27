@@ -74,7 +74,7 @@ function CarteMontureDialog({ nom }: { nom: string }) {
         Supprimer
       </button>
 
-      <dialog ref={refModale} className="rounded p-6 backdrop:bg-black/50">
+      <dialog ref={refModale} className="m-auto rounded p-6 backdrop:bg-black/50">
         <div className="flex flex-col gap-3">
           <p>Supprimer {nom} ?</p>
           <div className="flex gap-2">
