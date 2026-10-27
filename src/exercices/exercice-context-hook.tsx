@@ -1,4 +1,5 @@
-import { MagasinProvider, useMagasin } from "../contexts/MagasinContext";
+import { useMagasin } from "../contexts/hookContext";
+import { MagasinProvider } from "../contexts/MagasinContext";
 import { cn } from "../utils/cn";
 
 /* Voir le composant MagasinContext.tsx pour avoir la suite de l'exercice */

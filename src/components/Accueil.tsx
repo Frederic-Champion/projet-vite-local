@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../contexts/hookContext";
 
 export default function Accueil() {
   const { theme } = useTheme();
