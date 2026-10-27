@@ -1,5 +1,5 @@
-import { Sun, Moon } from "lucide-react";
 import { useTheme } from "../contexts/hookContext";
+import { Sun, Moon } from "lucide-react";
 
 
 export function BoutonTheme() {

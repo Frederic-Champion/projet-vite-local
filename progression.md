@@ -2710,3 +2710,72 @@ Code collé (`projet-examen-blanc`). Le warning n'était pas connu de nom.
 Laissés après : `this` + classes (avant la Phase 3) · regex (formulaires du SaaS) · micro-tâches 🔵.
 
 **⏭️ Prochaine étape** : calculatrice en `useReducer`, consigne étape par étape (tableau des actions dès le départ), puis `memo` sur `Touche` et `touches` stabilisé.
+
+## Session 135 — Reprises `memo` / `useCallback` et `throw` / `try` / `catch` + portails + `<dialog>`
+
+**Durée** : ~2h35 (lundi matin). Énergie bonne.
+
+**🎹 Raccourci** : `Alt+Maj+M` (Emmet : Remove Tag) — pas d'occasion, reconduit.
+
+**Ressenti en ouverture** : « correct, à voir sur un exercice ».
+
+**PR de la branche `@keyframes` Memory Card** : faite. Le bandeau « Compare & pull request » disparaît peu après le push → passer par **Branches → New pull request**.
+
+---
+
+### 1. Reprise `memo` + `useCallback` (N+5) — format prédiction
+- **A, B, C : résultats justes** (3 rendus / 0 / 3). Raison de C juste (nouveau tableau à chaque rendu).
+- 🔴 **Raison de B fausse** : « il vérifie si la fonction est appelée ». Corrigé : `memo` ne regarde jamais ce qui se passe dans les props, il compare chaque prop par **référence** (`===`). Image du gardien redonnée.
+- **D faussé** : spread du cas C resté dans le code (consigne incomplète, voir erreurs). Interprétation fausse : « seule la ligne du `.map()` se rend » → **un composant se rend en entier ou pas du tout**.
+- **Reformulation juste de sa part** : le composant est « **responsable mais pas concerné** » (déclenche le changement, ses props ne changent pas).
+- `useCallback` écrit juste avec `[]` 🟢. **La question du tableau oubliée** (« qu'est-ce que la fonction lit, qui peut changer d'un rendu à l'autre ? ») → redonnée.
+- **Ressenti exprimé** : « encore assez vague, même si je comprends le principe ».
+
+### 2. `throw` / `try` / `catch` — placement 🟢 (le point S134 redressé)
+`throw` dans la fonction qui détecte, `try` / `catch` dans le handler qui décide, `instanceof` bien placé.
+Corrections : **états non vidés** (résultat et erreur affichés ensemble, test 3) · message `"<indice>"` littéral au lieu d'un template literal (consigne ambiguë en partie) · `String()` superflu · `catch` silencieux si l'erreur n'est pas une `Error` → ternaire. Facultatif : lire directement `PRIX[indice]` et tester `undefined` au lieu du détour `Object.keys` + `find`.
+
+### 3. Portails — notion neuve, ouverte
+*Source vérifiée : react.dev, `createPortal`.*
+- Définition d'une **modale** posée (par-dessus, bloque le reste ; ≠ popup = nouvelle fenêtre ; menu, infobulle, bande latérale = non modaux).
+- **Code juste du premier coup** 🟢 (`createPortal(jsx, document.body)`).
+- **Intérêt non vu au départ**. Débloqué par : échapper aux **contraintes CSS des ancêtres** (`overflow-hidden` coupe · `transform` capture le `fixed` · ordre de peinture / `z-index`). Bug observé sans portail : la carte Oakley passe **par-dessus** le fond sombre.
+- **Deux arbres** observés : Éléments → la `div` après `#root` · Components → `Modale` toujours sous `CarteMonture`. Le state de la carte reste modifiable.
+- Questions : `react` (calcule) vs `react-dom` (applique au DOM) — **corrigé : pas deux langages**, deux bibliothèques JS · `div` dédiée dans `index.html` + `getElementById(...)!` (cas légitime du `!`), raison = organisation seulement.
+- Retour : « j'ai compris `createPortal`, je devrais m'en souvenir ».
+
+### 4. `<dialog>` — notion neuve, ouverte
+*Source vérifiée : MDN, `showModal()` et `::backdrop`.*
+`showModal()` → top layer, reste de la page `inert`, `::backdrop`, Échap, focus gardé puis rendu. Piège de l'attribut `open`. Pas de state `ouverte` (le navigateur est la source de vérité).
+- **Cinq trous justes** 🟢 : ref typée `HTMLDialogElement`, `showModal()` dans le handler, `ref` posée, `close()`, `setSupprimee`. **Critère de la ref DOM déclenché seul.** « Ça marche. »
+- Cohérence : `?.close()` comme `?.showModal()`.
+- **Question non répondue** : dans Éléments, le `<dialog>` reste-t-il dans l'article ?
+
+### 5. Tailwind
+- `transform-translateZ(0)` sans crochets → classe inexistante, silencieuse. **C'est ce qui empêchait le piège du `transform` de se déclencher.**
+- **Propriété arbitraire** `[transform:…]` vs **valeur arbitraire** `transform-[…]` (préférée par l'extension quand une classe existe) 🟡.
+
+---
+
+**Niveaux** : `memo` compare par référence 🟡 (raison fausse, résultats justes) · un composant se rend en entier 🟡 · `useCallback` + dépendances 🟢 écrit / 🟡 la question · `throw` / `try` / `catch` placement 🟢 · vider l'état opposé 🟡 · `createPortal` 🟢 · intérêt du portail 🟡 · `react` vs `react-dom` 🟡 · `<dialog>` + `showModal()` 🟢 (un passage, guidé) · propriété vs valeur arbitraire 🟡.
+
+**🆕 Notions ouvertes ce jour** : `createPortal` · `<dialog>` / `showModal()` / `::backdrop` · top layer.
+
+**🔄 Cycle de reprise** : portails + `<dialog>` → N+2 ≈ S137 (« compris, à recroiser pour être sûr ») · `memo` / `useCallback` → reste en rotation (la raison).
+**🔄 Rotation** : **entrent** — `memo` compare des références · un composant se rend en entier · vider l'état opposé dans `try` / `catch` · propriété vs valeur arbitraire · `react` vs `react-dom`. **`throw` / `try` / `catch`** : redressé, à confirmer une fois. Le reste de la liste S134 inchangé.
+
+---
+
+### 🗺️ Avant Next.js — état
+1. Calculatrice `useReducer` + mémoïsation ✅
+2. Dark mode Shopping Cart + audit accessibilité ✅
+3. `@keyframes` sur Memory Card ✅ · PR ✅
+4. **Portails ✅ + `<dialog>` ✅ (à finir) · ErrorBoundary ⏳** · propagation des événements ⏳
+5. Todo List (Odin) (+ `reduce` accumulateur objet, dates) ⏳
+6. Créneaux courts : event loop · récursion ⏳
+7. **Next.js**
+
+**⏭️ Prochaine étape — reprendre ici**
+1. Question Éléments (où est le `<dialog>` ?) + vérification Échap / Tab / retour du focus.
+2. **Portail ou `<dialog>` : critère de choix** (et pourquoi shadcn/ui passe par un portail).
+3. **ErrorBoundary** — repose sur un composant classe (`class`, `this`, jamais vus) : décider entre un détour par les classes et la bibliothèque standard, doc vérifiée avant.
