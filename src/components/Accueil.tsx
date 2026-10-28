@@ -81,6 +81,9 @@ export default function Accueil() {
       <Link className="text-blue-600 hover:underline" to="/create-portal">
         Exercice Modales : CreatePortal et "dialogue"
       </Link>
+      <Link className="text-blue-600 hover:underline" to="/error-boundary">
+        Exercice Error Boundary
+      </Link>
     </nav>
   );
 }
