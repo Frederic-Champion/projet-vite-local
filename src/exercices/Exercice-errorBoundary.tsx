@@ -10,7 +10,7 @@ const VERRES = [
   { id: "v2", nom: "prog" },
 ];
 
-function CarteVerre({ verre }: {verre: Verre | undefined}) {
+function CarteVerre({ verre }: { verre: Verre | undefined }) {
   return <p>{verre!.nom}</p>;
 }
 
@@ -23,7 +23,22 @@ export function ExerciceErrorBoundary() {
       <h1>Atelier Verres</h1>
       <button onClick={() => setId("v1")}>v1</button>
       <button onClick={() => setId("v9")}>v9</button>
-      <ErrorBoundary fallback={<p>Cette zone a rencontré un problème.</p>}>
+      <ErrorBoundary
+        fallbackRender={({ resetErrorBoundary }) => (
+          <div>
+            <p>Cette zone a rencontré un problème.</p>
+            <button
+              onClick={() => {
+                resetErrorBoundary();
+                console.log("bouton cliqué");
+              }}
+            >
+              Réessayer
+            </button>
+          </div>
+        )}
+        resetKeys={[id]}
+      >
         <CarteVerre verre={verre} />
       </ErrorBoundary>
     </div>

@@ -100,6 +100,52 @@ export function ExerciceDialog() {
   );
 }
 
+/* ------------------------------------ Séparation des exercices ------------------------------------ */
+
+function ExerciceDialog2() {
+  const refModale = useRef<HTMLDialogElement>(null);
+  const [affichage, setAffichage] = useState("Mme Martin — mardi 14h — examen de vue");
+
+  return (
+    <div className="flex flex-col gap-4 p-6">
+      <h1 className="text-2xl font-bold">Rendez-vous</h1>
+
+      <div className="flex items-center justify-between gap-4 rounded-lg border p-4">
+        <p>{affichage}</p>
+        {affichage !== "Rendez-vous annulé." && (
+          <button
+            onClick={() => refModale.current?.showModal()}
+            className="cursor-pointer rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+          >
+            Annuler le rendez-vous
+          </button>
+        )}
+
+        <dialog
+          onClick={(e) => e.target === e.currentTarget && refModale.current?.close()}
+          ref={refModale}
+          className="m-auto backdrop:bg-black/50"
+        >
+          <div className="rounded-lg border p-4">
+            <p>Souhaitez-vous annuler le rendez-vous ?</p>
+            <div className="flex justify-center gap-2">
+              <button
+                onClick={() => {
+                  setAffichage("Rendez-vous annulé.");
+                  refModale.current?.close();
+                }}
+              >
+                Confirmer
+              </button>
+              <button onClick={() => refModale.current?.close()}>Retour</button>
+            </div>
+          </div>
+        </dialog>
+      </div>
+    </div>
+  );
+}
+
 /* Affichage des exercices sur la même page */
 
 export function ExerciceModales() {
@@ -114,6 +160,14 @@ export function ExerciceModales() {
       </div>
 
       <ExerciceDialog />
+
+      <div className="flex items-center gap-6">
+        <hr className="grow" />
+        <p>Séparation des exercices</p>
+        <hr className="grow" />
+      </div>
+
+      <ExerciceDialog2 />
     </div>
   );
 }

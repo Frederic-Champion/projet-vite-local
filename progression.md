@@ -3287,3 +3287,59 @@ _Source vérifiée : MDN, `showModal()` et `::backdrop`._
 2. **ErrorBoundary, partie 3** : bouton « Réessayer » (`resetErrorBoundary`), puis un ErrorBoundary dans le Shopping Cart.
 3. Reprise `<dialog>` + portails sur terrain neuf.
 4. Puis Todo List → Next.js.
+
+## Session 138 — ErrorBoundary terminé (reset, Shopping Cart, validation du `localStorage`) + reprise `<dialog>` sans squelette
+
+**Durée** : 2h (jeudi, 1h10 le midi + 50 min le soir). Énergie bonne, frustration passagère le midi (extraction de la bande latérale).
+
+**🎹 Raccourci** : `Alt+Maj+M` — peu utilisé, reconduit.
+
+**Confirmés en ouverture** : PR de la branche dialog faite · tests 1 et 2 de l'ErrorBoundary passés.
+
+---
+
+### Révision éclair (2 items)
+- **Écrire — signature de composant** 🟢 : `({ client, onModifier }: { client: Client; onModifier: … })`. **L'annotation porte enfin sur ce qui arrive, du premier coup, après 6 occurrences.** Seul écart : `() => void` au lieu de `(nom: string) => void`.
+- **Écrire — tri sans mutation** 🟢 : `toSorted` + `localeCompare`. Nommage (`trier` = verbe → `triees`).
+
+### 1. ErrorBoundary — fin du cycle
+- **`resetKeys`** : 1ᵉʳ jet `resetKeys={verre}` → tableau attendu, `[id]` (la source plutôt que la valeur déduite). Questions posées : pourquoi un tableau (plusieurs valeurs possibles, même raison que les dépendances d'un effet) · `{[id]}` = accolades JSX + crochets du tableau. 🟢
+- **`fallbackRender` + `resetErrorBoundary`** : structure juste, rattachée au motif `NavLink`. 🔴 **`onReset` sur un `<button>`** (événement de formulaire, échec silencieux, famille `onSubmit` sur un bouton) → `onClick`. Test « Réessayer replante tant que la cause est là » compris. 🟢
+- Points donnés sans exercice : placement par zone (pas un seul en haut) · dev / prod · `onError` + Sentry · `useErrorBoundary` (mentionné).
+- **Shopping Cart** : question de fond fondée (« à quoi ça sert, les fetch sont déjà traités ? ») → cas réel du **panier `localStorage` d'une ancienne version**. Schéma « disjoncteur par pièce » pour le rôle autour de `<Outlet />`. **Initiative de sa part : vider le panier dans le bouton** → corrigé en `setPanier([])` (le state est déjà chargé, `localStorage.clear()` effaçait tout) + `resetKeys={[location.pathname, panier]}`.
+- **Test réel** (panier cassé dans l'onglet Application) → page blanche malgré l'ErrorBoundary : le `reduce` et le `.map()` de l'`<aside>` sont **exécutés par `LayoutPage`**. Règle : **un ErrorBoundary protège les composants qu'il enveloppe, pas le code calculé par le parent dans son JSX.** Expliquée le soir avec un schéma en deux temps. 🟡
+- **Extraction `BandePanier` refusée par lui** (retour en arrière). **Solution pro retenue : valider à l'entrée** → fonction pure `lirePanier()` (`try` / `catch` autour de `JSON.parse`, `Array.isArray`, `every`) passée en lazy initializer. **Test passé** : panier cassé remplacé par `[]`. Solutions entreprise données par ordre : valider à l'entrée (Zod, clé versionnée) → ErrorBoundary par zone → ErrorBoundary racine + suivi. Ne pas semer des `?.` pour masquer.
+- **Neuf** : `Array.isArray` 🟡 (cours détaillé demandé : `JSON.parse` renvoie ce que le texte décrit ; `typeof` ne distingue pas tableau / objet / `null`) · `every` 🟡.
+
+### 2. Reprise `<dialog>` — terrain neuf, sans squelette ✅
+Ref typée, `showModal()` / `close()`, `backdrop:`, fermeture au clic sur le fond en `&&`, bouton masqué après annulation. **6 tests passés dans Chrome.** Échap ne fonctionne pas dans l'**aperçu de VS Code**, qui intercepte la touche → repère : clavier et accessibilité se testent dans un vrai navigateur.
+
+### 3. `===` vs `!==` dans le test du fond — enfin compris ✅
+Bloqué depuis S137. Deux explications par tableau n'avaient pas suffi. **Ce qui a débloqué** : sa lecture supposait le fond **en dehors** du dialog ; or **le fond appartient au dialog** (un clic dessus est rapporté comme un clic sur le dialog lui-même), tandis que la boîte est couverte d'enfants. Vérification proposée par `console.log(e.target)`. Repère annexe : `&&` / `if` → condition pour **agir** · early return → condition pour **partir**.
+
+---
+
+**Niveaux** : annotation d'un paramètre déstructuré 🟢 (enfin) · type fonction avec paramètre 🟡 · `toSorted` / `localeCompare` 🟢 · `resetKeys` 🟢 · `fallbackRender` 🟢 · `onReset` vs `onClick` 🔴 → corrigé · placement d'un ErrorBoundary 🟢 · ce que protège un ErrorBoundary (composants vs code du parent) 🟡 · valider à l'entrée 🟢 (appliqué, compris) · `Array.isArray` / `every` 🟡 · **`<dialog>` 🟢 (sans squelette, terrain neuf)** · fermeture au clic sur le fond 🟢 · `target === currentTarget` sur un dialog 🟢 (compris) · state = donnée, pas phrase 🟡.
+
+**⚠️ Mes erreurs**
+1. **Extraction de `BandePanier` proposée trop vite**, en fin de créneau et sur un code non vu en entier → rejetée, retour en arrière. La validation à l'entrée était la solution la plus simple et la plus pro : elle aurait dû venir en premier.
+2. Explications de `===` / `!==` reprises deux fois sous le même angle avant de chercher où était le malentendu.
+
+**🔄 Cycle de reprise** : ErrorBoundary → N+2 · `<dialog>` → N+5 ≈ S143 · propagation → N+2 ≈ S139 · portails → à recroiser.
+
+**🔄 Rotation** : **entrent** — ErrorBoundary ne protège pas le code du parent · `onReset` (formulaire) vs `onClick` · `Array.isArray` / `every` · state = donnée, pas phrase · tests clavier hors aperçu VS Code. **Sortent** — annotation d'un paramètre déstructuré (à confirmer une fois, plus en priorité) · `toSorted` / `localeCompare`. **Restent** — `!` assertion vs négation · `::backdrop` appartient au dialog · vider l'état opposé dans `try` / `catch` · `show()` vs `showModal()` · `npm ci` vs `npm install` · le reste de la liste S136.
+
+---
+
+### 🗺️ Avant Next.js — état
+1. Calculatrice `useReducer` + mémoïsation ✅
+2. Dark mode Shopping Cart + audit accessibilité ✅
+3. `@keyframes` sur Memory Card ✅
+4. Portails ✅ · `<dialog>` ✅ · propagation ✅ · **ErrorBoundary ✅**
+5. **Todo List (Odin)** (+ `reduce` accumulateur objet, dates) ⏳
+6. Créneaux courts : event loop · récursion ⏳
+7. **Next.js**
+
+**⏭️ Prochaine étape**
+1. **Todo List (The Odin Project)** : énoncé à vérifier sur theodinproject.com avant de cadrer, en React + TS, sur branche.
+2. En ouverture : reprises propagation et ErrorBoundary (N+2).

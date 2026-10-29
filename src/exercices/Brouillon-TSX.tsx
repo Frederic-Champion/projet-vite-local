@@ -42,3 +42,8 @@ export function Brouillon2() {
     </div>
   );
 }
+
+const marques = ["Éyewear", "Lacoste", "alain mikli", "Ray-Ban"];
+const trier = marques.toSorted((a, b) => a.localeCompare(b))
+
+console.log(trier)
