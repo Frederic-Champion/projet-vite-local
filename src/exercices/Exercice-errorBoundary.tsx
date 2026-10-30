@@ -14,7 +14,7 @@ function CarteVerre({ verre }: { verre: Verre | undefined }) {
   return <p>{verre!.nom}</p>;
 }
 
-export function ExerciceErrorBoundary() {
+function Exercice1() {
   const [id, setId] = useState("v1");
   const verre = VERRES.find((v) => v.id === id);
 
@@ -41,6 +41,61 @@ export function ExerciceErrorBoundary() {
       >
         <CarteVerre verre={verre} />
       </ErrorBoundary>
+    </div>
+  );
+}
+
+/*--------------- Séparation d'exercice -------------- */
+
+interface Client {
+  id: number;
+  nom: string;
+  mutuelle?: { nom: string };
+}
+
+const CLIENTS: Client[] = [
+  { id: 1, nom: "Martin", mutuelle: { nom: "MGEN" } },
+  { id: 2, nom: "Durand" },
+  { id: 3, nom: "Petit", mutuelle: { nom: "Harmonie" } },
+];
+
+function FicheClient({ client }: { client: Client }) {
+  return (
+    <article>
+      <h3>{client.nom}</h3>
+      <p>Mutuelle : {client.mutuelle!.nom}</p>
+    </article>
+  );
+}
+
+function Exercice2() {
+  return (
+    <ul>
+      {CLIENTS.map((c) => (
+        <ErrorBoundary fallback={<li>Une erreur est survenue.</li>} key={c.id}>
+          <li>
+            <FicheClient client={c} />
+          </li>
+        </ErrorBoundary>
+      ))}
+    </ul>
+  );
+}
+
+/* --------------- Fusion des exercices ------------ */
+
+export function ExerciceErrorBoundary() {
+  return (
+    <div className="flex flex-col gap-8">
+      <Exercice1 />
+
+      <div className="flex items-center gap-6">
+        <hr className="grow" />
+        <p>Séparation des exercices</p>
+        <hr className="grow" />
+      </div>
+
+      <Exercice2 />
     </div>
   );
 }
