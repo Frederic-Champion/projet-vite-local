@@ -3177,16 +3177,19 @@ _Source vérifiée : MDN, `showModal()` et `::backdrop`._
 ---
 
 ### 1. Incident Git deux machines (midi)
+
 - **`projet-examen-blanc`** : `npm install` a **réécrit le `package-lock.json`** (paquets propres à chaque système, ex. `1.2.3` → `1.2.15`), ce qui bloquait le pull. Cause probable : **versions de npm / Node différentes** entre les deux PC. **Comparaison `node -v` / `npm -v` non faite → à demander.**
 - **`projet-vite-local`** : pull refusé à cause de **4 fichiers de code modifiés et jamais commités sur le fixe**. Commit, pull, 2 conflits (`BoutonTheme.tsx` résolu en Accept Both → import en double à supprimer ; `Brouillon-TSX.tsx`). **Résolu.** Frustration forte en cours de résolution.
 - **Cause racine** : fin de séance sans commit + push sur le PC utilisé.
-- **Rituel proposé** : `git pull` → **`npm ci`** (installe exactement le lock, ne le réécrit jamais) → `npm run dev`. `npm install` réservé à l'ajout d'un paquet. *Adoption à confirmer.*
+- **Rituel proposé** : `git pull` → **`npm ci`** (installe exactement le lock, ne le réécrit jamais) → `npm run dev`. `npm install` réservé à l'ajout d'un paquet. _Adoption à confirmer._
 
 ### 2. Révision éclair (2 items)
+
 - **Prédire — argument manquant** 🟢 3/3 (`NaN`, `"100 €"`, `number`). Raté en S133 → **sort de rotation.**
 - **Prédire — `memo` + objet littéral** : 3 rendus ✅. 🔴 **Raison fausse, 2ᵉ séance d'affilée** : `useCallback` posé sur une fonction qui n'est **pas transmise** à l'enfant. La prop en cause était l'**objet `client` recréé à chaque rendu**. Correction la plus simple : sortir l'objet du composant. **Geste posé : lire la balise de l'enfant `memo`, et pour chaque prop se demander « même référence qu'au rendu précédent ? ».**
 
 ### 3. Fin de `<dialog>` (midi)
+
 - **Le `<dialog>` reste dans l'`<article>`** (vérifié seul) : le portail **déplace** dans le DOM, le dialog est seulement **peint** dans le top layer.
 - **Tests clavier** : focus rendu à « Supprimer » ✅ · Tab ne revient jamais dans la page (va dans l'interface du navigateur) ✅ · Échap ferme ✅. Le portail n'offre rien de tout ça.
 - **Critère posé** : modale bloquante → `<dialog>` + `showModal()` · élément flottant non bloquant qui doit échapper à ses ancêtres → portail · bibliothèque (shadcn/ui) → elle choisit. **Ce ne sont pas deux versions du même outil.**
@@ -3194,6 +3197,7 @@ _Source vérifiée : MDN, `showModal()` et `::backdrop`._
 - `::backdrop` défini (pseudo-élément fabriqué par le navigateur). Aucun des deux ne ferme au clic sur le fond par défaut → propagation.
 
 ### 4. Confirmation de suppression sur le Shopping Cart (soir, branche) ✅
+
 - **Conception** : un seul `<dialog>` pour la page + state `aRetirer: Article | null` (un `useRef` par ligne = hook dans un `.map()`, interdit).
 - **Écrit seul** 🟢 : ref + state **déclarés avant les early returns** · `demandeSuppression` / `confirmationSuppression` en fonctions nommées · type `Article` trouvé · tokens du shop · `m-auto` · `<Bouton>`.
 - **Erreur TS** (`number | undefined`) : **garde dans le handler** trouvée après un indice 🟢.
@@ -3210,6 +3214,7 @@ _Source vérifiée : MDN, `showModal()` et `::backdrop`._
 ---
 
 ### 🗺️ Avant Next.js — état
+
 1. Calculatrice `useReducer` + mémoïsation ✅
 2. Dark mode Shopping Cart + audit accessibilité ✅
 3. `@keyframes` sur Memory Card ✅ · PR ✅
@@ -3219,6 +3224,7 @@ _Source vérifiée : MDN, `showModal()` et `::backdrop`._
 7. **Next.js**
 
 **⏭️ Prochaine étape (décidée avec lui)**
+
 1. **Propagation des événements** : fermer le dialog du panier au clic sur le fond, pas au clic dans la boîte. Puis PR + fusion.
 2. **ErrorBoundary** si le temps le permet (décision composant classe / bibliothèque, doc vérifiée avant).
 
@@ -3248,7 +3254,7 @@ _Source vérifiée : MDN, `showModal()` et `::backdrop`._
 
 ### 2. ErrorBoundary — ouvert
 
-- **Décision prise ensemble : `react-error-boundary`** (option A). La classe écrite à la main empilerait `class` / `this` / `extends` / `static`. Classes prévues avec le projet Library. *Sources : articles concordants + ancienne doc officielle ; page react.dev non lue directement.*
+- **Décision prise ensemble : `react-error-boundary`** (option A). La classe écrite à la main empilerait `class` / `this` / `extends` / `static`. Classes prévues avec le projet Library. _Sources : articles concordants + ancienne doc officielle ; page react.dev non lue directement._
 - **Attrapé / non attrapé** : rendu ✅ · `onClick` ❌ · code différé ❌ (b et c justes). Repère : erreur de rendu → ErrorBoundary · erreur d'action ou d'attente → `try` / `catch`.
 - 🔴 **Assertion `!` non comprise** : lue comme une garde. Deux `!` distingués (`!verre` JS = test · `verre!` TS = effacé), **sans succès, agacement**. Laissé de côté au profit de l'observation à l'écran.
 - **Exercice préparé seul** (`Exercice-ErrorBoundary.tsx`) : structure juste, ErrorBoundary autour de la carte seulement. 🔴 **`({ verre }: Verre | undefined)`** — annotation portée sur ce qui est extrait, **6ᵉ occurrence**.
@@ -3263,6 +3269,7 @@ _Source vérifiée : MDN, `showModal()` et `::backdrop`._
 **🆕 Notions ouvertes ce jour** : propagation · ErrorBoundary (`react-error-boundary`).
 
 **⚠️ Mes erreurs**
+
 1. **Consignes jugées « très mauvaises, de pire en pire »** par Frédéric. Celle de l'ErrorBoundary était longue et faisait écrire un code volontairement fautif sans le dire clairement. **Engagement : une consigne = livrable · résultat attendu à l'écran · tests. Rien d'autre.**
 2. Item 2 de révision sans dire quoi prédire précisément.
 3. Explication de l'assertion `!` reprise deux fois sans changer d'angle.
@@ -3274,6 +3281,7 @@ _Source vérifiée : MDN, `showModal()` et `::backdrop`._
 ---
 
 ### 🗺️ Avant Next.js — état
+
 1. Calculatrice `useReducer` + mémoïsation ✅
 2. Dark mode Shopping Cart + audit accessibilité ✅
 3. `@keyframes` sur Memory Card ✅
@@ -3283,6 +3291,7 @@ _Source vérifiée : MDN, `showModal()` et `::backdrop`._
 7. **Next.js**
 
 **⏭️ Prochaine étape**
+
 1. Confirmer : PR de la branche dialog · tests 1 et 2 de l'ErrorBoundary.
 2. **ErrorBoundary, partie 3** : bouton « Réessayer » (`resetErrorBoundary`), puis un ErrorBoundary dans le Shopping Cart.
 3. Reprise `<dialog>` + portails sur terrain neuf.
@@ -3299,10 +3308,12 @@ _Source vérifiée : MDN, `showModal()` et `::backdrop`._
 ---
 
 ### Révision éclair (2 items)
+
 - **Écrire — signature de composant** 🟢 : `({ client, onModifier }: { client: Client; onModifier: … })`. **L'annotation porte enfin sur ce qui arrive, du premier coup, après 6 occurrences.** Seul écart : `() => void` au lieu de `(nom: string) => void`.
 - **Écrire — tri sans mutation** 🟢 : `toSorted` + `localeCompare`. Nommage (`trier` = verbe → `triees`).
 
 ### 1. ErrorBoundary — fin du cycle
+
 - **`resetKeys`** : 1ᵉʳ jet `resetKeys={verre}` → tableau attendu, `[id]` (la source plutôt que la valeur déduite). Questions posées : pourquoi un tableau (plusieurs valeurs possibles, même raison que les dépendances d'un effet) · `{[id]}` = accolades JSX + crochets du tableau. 🟢
 - **`fallbackRender` + `resetErrorBoundary`** : structure juste, rattachée au motif `NavLink`. 🔴 **`onReset` sur un `<button>`** (événement de formulaire, échec silencieux, famille `onSubmit` sur un bouton) → `onClick`. Test « Réessayer replante tant que la cause est là » compris. 🟢
 - Points donnés sans exercice : placement par zone (pas un seul en haut) · dev / prod · `onError` + Sentry · `useErrorBoundary` (mentionné).
@@ -3312,9 +3323,11 @@ _Source vérifiée : MDN, `showModal()` et `::backdrop`._
 - **Neuf** : `Array.isArray` 🟡 (cours détaillé demandé : `JSON.parse` renvoie ce que le texte décrit ; `typeof` ne distingue pas tableau / objet / `null`) · `every` 🟡.
 
 ### 2. Reprise `<dialog>` — terrain neuf, sans squelette ✅
+
 Ref typée, `showModal()` / `close()`, `backdrop:`, fermeture au clic sur le fond en `&&`, bouton masqué après annulation. **6 tests passés dans Chrome.** Échap ne fonctionne pas dans l'**aperçu de VS Code**, qui intercepte la touche → repère : clavier et accessibilité se testent dans un vrai navigateur.
 
 ### 3. `===` vs `!==` dans le test du fond — enfin compris ✅
+
 Bloqué depuis S137. Deux explications par tableau n'avaient pas suffi. **Ce qui a débloqué** : sa lecture supposait le fond **en dehors** du dialog ; or **le fond appartient au dialog** (un clic dessus est rapporté comme un clic sur le dialog lui-même), tandis que la boîte est couverte d'enfants. Vérification proposée par `console.log(e.target)`. Repère annexe : `&&` / `if` → condition pour **agir** · early return → condition pour **partir**.
 
 ---
@@ -3322,6 +3335,7 @@ Bloqué depuis S137. Deux explications par tableau n'avaient pas suffi. **Ce qui
 **Niveaux** : annotation d'un paramètre déstructuré 🟢 (enfin) · type fonction avec paramètre 🟡 · `toSorted` / `localeCompare` 🟢 · `resetKeys` 🟢 · `fallbackRender` 🟢 · `onReset` vs `onClick` 🔴 → corrigé · placement d'un ErrorBoundary 🟢 · ce que protège un ErrorBoundary (composants vs code du parent) 🟡 · valider à l'entrée 🟢 (appliqué, compris) · `Array.isArray` / `every` 🟡 · **`<dialog>` 🟢 (sans squelette, terrain neuf)** · fermeture au clic sur le fond 🟢 · `target === currentTarget` sur un dialog 🟢 (compris) · state = donnée, pas phrase 🟡.
 
 **⚠️ Mes erreurs**
+
 1. **Extraction de `BandePanier` proposée trop vite**, en fin de créneau et sur un code non vu en entier → rejetée, retour en arrière. La validation à l'entrée était la solution la plus simple et la plus pro : elle aurait dû venir en premier.
 2. Explications de `===` / `!==` reprises deux fois sous le même angle avant de chercher où était le malentendu.
 
@@ -3332,6 +3346,7 @@ Bloqué depuis S137. Deux explications par tableau n'avaient pas suffi. **Ce qui
 ---
 
 ### 🗺️ Avant Next.js — état
+
 1. Calculatrice `useReducer` + mémoïsation ✅
 2. Dark mode Shopping Cart + audit accessibilité ✅
 3. `@keyframes` sur Memory Card ✅
@@ -3341,5 +3356,186 @@ Bloqué depuis S137. Deux explications par tableau n'avaient pas suffi. **Ce qui
 7. **Next.js**
 
 **⏭️ Prochaine étape**
+
 1. **Todo List (The Odin Project)** : énoncé à vérifier sur theodinproject.com avant de cadrer, en React + TS, sur branche.
 2. En ouverture : reprises propagation et ErrorBoundary (N+2).
+
+## Session 139 — Reprises propagation / ErrorBoundary + cadrage de la Todo List (mobile first) + question `class` / `this`
+
+**Durée** : ~3h (vendredi, 1h + 1h35 avec pause, puis 25 min de relecture de code en solo). Énergie bonne.
+
+**🎹 Raccourci** : `Alt+Maj+M` (Emmet : Remove Tag) — peu utilisé, reconduit.
+
+**Deux machines** : toujours sur le portable. Comparaison `node -v` / `npm -v` + adoption de `npm ci` → **dimanche**, au retour sur le fixe.
+
+**Ressenti en ouverture** : propagation / ErrorBoundary 5-6/10 → **sous-évalué** (les deux reprises 🟢).
+
+---
+
+### Révision éclair (2 items)
+
+- **Prédire — `!` assertion vs négation + `Array.isArray`** 🟢 : `false` / `false` / `"object"` justes. **Distinction des deux `!` expliquée seul** (assertion TS effacée à la compilation, négation JS exécutée). Bloqué en S137. Précision : le `!` retire `null` **et** `undefined`.
+- **Déboguer — vider l'état opposé dans `try` / `catch`** : 1ᵉʳ cas trouvé (`setErreur(null)`), cas inverse trouvé en une question → principe « repartir d'un état propre au début du calcul ». **Passé au vert sur décision de Frédéric.**
+
+### 1. Reprises (N+2) — 🟢 toutes les deux
+
+- **Propagation** : ordre bouton → article → section ✅ · `e.target === e.currentTarget &&` ✅. Précision : un clic dans la `section` hors article déclenche son propre handler.
+- **ErrorBoundary** (fiches clients, `mutuelle!`) : `key` sur l'ErrorBoundary (élément le plus extérieur du `.map()`) ✅ · `fallback` en `<li>` pour garder un `<ul>` valide ✅ · test sans ErrorBoundary (toute l'app démontée) ✅ · `!` = silence de TS, `TypeError` à l'exécution ✅.
+- **Props de `react-error-boundary` expliquées à sa demande** (autocomplétion) : `fallback` / `fallbackRender` / `FallbackComponent` (une seule des trois) · `onError` (suivi d'erreurs) · `resetKeys` (reset automatique quand une valeur change, **seulement en état d'erreur**) · **`onReset`** (réparer la cause avant de retenter ; utile surtout avec `FallbackComponent`) 🟡 expliqué, non pratiqué · `children` = la zone protégée. Snippets VS Code ≠ props.
+
+### 2. Tests, CI, CD, Sentry — questions de fond
+
+Trois moments différents, complémentaires : tests (avant) · CI (vérifs automatiques à chaque PR) · CD (mise en ligne automatique, Vercel) · Sentry (erreurs des vrais utilisateurs).
+**🎓 Décision** : **CI simple (GitHub Actions : lint + typecheck + tests) et Sentry en fin de Phase 2**, au déploiement du SaaS.
+
+### 3. Todo List — cadrage
+
+- **Énoncé vérifié sur theodinproject.com** : projet du module « Organiser son code JavaScript » (JS pur, factories/classes, webpack).
+- **🎓 Décision** : adaptation **React + TS** (synthèse du bloc React). Point 1 → **fonction factory** `creerTodo`, pas de classes · point 4 « séparer la logique du DOM » → reducer + fonctions pures · point 8 → `localStorage` validé (motif `lirePanier`). Pas de tests, pas de déploiement. `date-fns` ou `Date` natif : à décider ensemble au moment des dates (ressenti « moyen chaud »).
+- **Inspirations retenues** : Apheiro (React, design épuré) + Cambuchi (couleur par priorité, modale de confirmation).
+- **Fait** : page + `<Route>`. ⚠️ Travail commencé **sur `main`** → `git switch -c todo-list` proposé. **Branche créée ? Entrée d'accueil faite ? À demander.**
+- **Mise en page conçue par lui, mobile first** : un seul panneau visible sur mobile avec **glissement projets ↔ tâches**, deux colonnes à `md`. Remarques retenues : `<select>` redondant avec la colonne de projets · **projet par défaut (une tâche appartient toujours à un projet) ≠ vue « Toutes » (filtre)** · cocher / déplier / supprimer à prévoir · calendrier et couleurs en **bonus** (« Paramètre des couleurs » : question ouverte).
+- **Outils prévus, tous connus** : union `"projets" | "taches"` · panneaux toujours rendus + `translate-x` · `inert` sur le panneau caché · `md:grid` · Retour en `md:hidden` · `<dialog>` pour « Nouvelle tâche ».
+- **Mobile first — question de fond** : en Tailwind, le **code** est toujours mobile first (doc officielle vérifiée : classes sans préfixe = toutes tailles, `sm:` ≠ « mobile ») · la **conception** dépend du produit (outil métier souvent pensé ordinateur) · méthode pro : aperçu étroit (~375 px, mode appareil des DevTools), puis élargir jusqu'à ce que ça casse et ajouter le préfixe là. Composant par composant.
+
+### 4. `class` / `this` — question de Frédéric
+
+Croisés dans du vieux React (`extends Component`) et en lisant du code, sans comprendre → sentiment d'un **« gros manque »** et d'un frein au recrutement (lire du code de 5 ans).
+Recalibrage : `class` = ES6 (2015), pas du « JS classique » ; il lit déjà le reste du JS. Composants classes = React d'avant 2019, encore présents en entreprise.
+⚠️ Explication donnée en un bloc (classe JS + `this` + héritage + composant classe React) → **« je me sens perdu »**.
+**🎓 Décision** : **séance dédiée rapidement, avant Library** : savoir **lire** une classe JS (une idée à la fois, forme longue d'abord), puis lire un composant classe React par traduction (`this.state` ↔ `useState`, cycle de vie ↔ `useEffect`). Library reste pour l'**écrire**.
+
+---
+
+**Niveaux** : `!` assertion vs négation 🟢 · `Array.isArray` 🟢 · vider l'état opposé 🟢 (décision) · propagation 🟢 · `target` / `currentTarget` 🟢 · ErrorBoundary 🟢 (placement, `key`, `fallback`) · `onReset` 🟡 (expliqué) · tests / CI / CD / Sentry 🟢 (compris) · mobile first : code vs conception 🟢 · `class` / `this` 🔴 (jamais enseigné).
+
+**⚠️ Mes erreurs**
+1. **Classes et `this` expliqués d'un bloc** (quatre notions dans un message) → perdu. Récurrence du dosage.
+2. Squelette lu comme un écran de bureau alors qu'il était pensé mobile first.
+
+**🔄 Cycle de reprise** : propagation + ErrorBoundary → **N+5 ≈ S144**.
+
+**🔄 Rotation** : **entrent** — **`Map` et `Set`** (demande explicite) · **`FormData`** (oublié) · `onReset` vs `resetKeys`. **Sort** — vider l'état opposé dans `try` / `catch`. **À confirmer une fois** — `!` assertion vs négation. **Restent** — ErrorBoundary ne protège pas le code du parent · `onReset` (formulaire) vs `onClick` · `Array.isArray` / `every` · state = donnée, pas phrase · `::backdrop` appartient au dialog · `show()` vs `showModal()` · `npm ci` vs `npm install` · le reste de la liste S136.
+
+---
+
+### 🗺️ Avant Next.js — état
+1. Calculatrice `useReducer` + mémoïsation ✅
+2. Dark mode Shopping Cart + audit accessibilité ✅
+3. `@keyframes` sur Memory Card ✅
+4. Portails ✅ · `<dialog>` ✅ · propagation ✅ · ErrorBoundary ✅
+5. **Todo List (Odin)** 🔄 (cadrée, mise en page conçue) (+ `reduce` accumulateur objet, dates)
+6. **Séance `class` / `this` (lecture)** ⏳ — avancée à sa demande
+7. Créneaux courts : event loop · récursion ⏳
+8. **Next.js**
+
+**⏭️ Prochaine étape — demain (1h minimum, 2h si possible)**
+1. Vérifier : branche `todo-list` + entrée d'accueil.
+2. **Glissement des panneaux** (mobile ~375 px puis `md`), données en dur.
+3. **`types.ts`** : `Priorite`, `Todo`, `Projet`, `EtatTodo`, `ETAT_INITIAL` + la phrase « comment une tâche sait à quel projet elle appartient ».
+4. **Séance `class` / `this`** au prochain créneau frais (dimanche ou lundi).
+
+## Session 139 bis — Lecture solo : `this` et `class`
+
+**Durée** : 2h (samedi, en solo). Lecture seule (javascript.info, Grafikart, MDN), pas de code. Objectif : préparer le terrain de la séance dédiée. **Ressenti : tout reste obscur, « très abstrait ».** Notion classée **non vue** au registre (règle S94) : séance complète à faire ensemble.
+
+## Session 140 — Lecture solo « Objets : les bases » + séance `class` / `this` (étapes 1 à 4) + décision Library avancée
+
+**Durée** : ~4h (dimanche, PC fixe) : 1h30 de lecture solo le matin + ~2h30 avec Claude l'après-midi. Énergie bonne.
+
+**🎹 Raccourci** : `Alt+Maj+M` — non renseigné, reconduit.
+
+**Deux machines** : les versions du §5 (Node 24.15.0 / npm 11.12.1) sont celles du **fixe**. Portable à relever **mardi** (hypothèse : version plus ancienne, installé en premier). **`npm ci` adopté** dans le rituel, fonctionne. Rapport d'audit (12 « moderate ») lu et ignoré pour l'instant : jamais `npm audit fix` sur une seule machine (il réécrit le lock). Branches `main` et `todo-list` poussées depuis le portable, tirées sur le fixe ✅.
+
+---
+
+### 1. Lecture solo — javascript.info, « Objets : les bases » (page entière)
+
+Ressenti : **3/4 compris, 1/4 abstrait**. Questions traitées : `Symbol` (rare dans le code d'application, sert au langage et aux bibliothèques : `Symbol.iterator`, marquage des éléments React) · « primitive » = le nom de la famille copiée par valeur · conversion objet → primitive : à retenir pour ses effets (`"[object Object]"`, `date2 - date1` en millisecondes). Les deux en **basse priorité**.
+**Découverts, entrent en rotation** : `Object.assign` (ancêtre du spread, copie superficielle) · `structuredClone` (copie profonde native).
+**🎓 Objectif posé par Frédéric** : combler les trous du socle JS pour une compréhension plus stable. Démarche validée (lu = ouvert, pas acquis).
+
+### 2. Décision — où apprendre les classes
+
+**Déclencheur** : code GitHub d'Apheiro illisible pour lui (« presque démoralisé ») + conviction qu'un junior maintiendra du code ancien (comme `async`/`await` vs `.then`).
+**Idée de Frédéric** : faire la Todo List en composants classes. **Écartée d'un commun accord** : les hooks ne fonctionnent pas dans une classe (perte des cycles `useReducer` / Context / hooks personnalisés), on n'écrit plus de composants classes en entreprise, et trois difficultés empilées.
+**🎓 Décision** : Todo List en hooks · **Library (Odin) en JS pur avancée juste après la Todo List, avant Next.js** (au lieu de la fin de Phase 2) · **exercice de traduction composant classe → fonction + hooks** après la Library · bonus : une erreur personnalisée (`class ErreurDonnees extends Error`) dans la Todo List.
+
+### 3. Séance `class` / `this` — étapes 1 à 4 (fichier `.js` lancé avec `node`, hors TS sur sa décision)
+
+- **Étape 1 — méthode et `this`** 🟢 : 3/3 en prédiction, dont la méthode prêtée à un autre objet (règle « `this` = l'objet devant le point au moment de l'appel »). `estCher()` : `if` sans `else` → `undefined` au lieu de `false` → `return this.prix > 200`.
+- **Étape 2 — fonction constructeur et `new`** 🟢 : `Client` écrit seul et juste. Les trois temps de `new`, convention de la majuscule, « instance » = objet + lien vers son moule (`instanceof`). TS refuse `new` sur une fonction ordinaire, ce qui pousse vers `class`.
+- **Étape 3 — `class`** 🟢 : traduction de `Client` juste · classe `Verre` écrite seul (`constructor`, méthodes sans `function` ni virgule). Accroches : `};` après les méthodes · `remise` calculant le montant de la remise au lieu du prix remisé · **`return` oublié dans `prixRemise`** (2ᵉ branche silencieuse de la séance). Classe = sucre syntaxique sur la fonction constructeur, méthode écrite une fois et partagée, erreur claire sans `new`.
+- **Étape 4 — `this` perdu** 🟢 : B prédit en erreur ✅ (raison précisée : rien devant le point au moment de l'appel). Réparations : `() => cpt.ajouter` sans parenthèses, puis `bind(cpt.ajouter)` mal placé → **corrigés après indices** (`() => cpt.ajouter()` · `cpt.ajouter.bind(cpt)`). Lien fait avec `this.ajouter = this.ajouter.bind(this)` du vieux React.
+- **Outillage** : `node chemin/fichier.js` depuis la racine (`MODULE_NOT_FOUND` sinon) · **`node --watch`** pour relancer à chaque sauvegarde · flèche ↑.
+
+**Ressenti de fin** : « pas la pleine lumière, mais je distingue dans la pénombre ».
+
+---
+
+**Niveaux** : méthode + `this` 🟢 · fonction constructeur + `new` 🟢 · `class` / `constructor` / méthodes 🟢 (écrit seul) · instance / `instanceof` 🟢 · `this` perdu + flèche / `bind` 🟡 (réparé avec indices) · `extends` ❌ (étape 5) · `npm ci` 🟢 · lecture d'un rapport `npm audit` 🟡.
+
+**🆕 Notions ouvertes ce jour** : `class` · `constructor` · `this` (deux règles) · `new` · `bind`.
+
+**⚠️ Mes erreurs** : consigne « `node classes.js` » donnée sans préciser qu'elle suppose un fichier à la racine → `MODULE_NOT_FOUND`.
+
+**🔄 Cycle de reprise** : `class` / `this` → **N+2 ≈ S142**, puis la Library · propagation + ErrorBoundary → N+5 ≈ S144.
+
+**🔄 Rotation** : **entrent** — `Object.assign` / `structuredClone` · `this` = devant le point / `this` dans `new` · flèche vs `bind` · `return` oublié dans une méthode. **Restent** — `Map` / `Set` · `FormData` · `onReset` vs `resetKeys` · `!` assertion vs négation (à confirmer une fois) · ErrorBoundary ne protège pas le code du parent · `Array.isArray` / `every` · state = donnée, pas phrase · `::backdrop` appartient au dialog · `show()` vs `showModal()` · le reste de la liste S136.
+
+---
+
+### 🗺️ Avant Next.js — état
+1. Calculatrice `useReducer` + mémoïsation ✅
+2. Dark mode Shopping Cart + audit accessibilité ✅
+3. `@keyframes` sur Memory Card ✅
+4. Portails ✅ · `<dialog>` ✅ · propagation ✅ · ErrorBoundary ✅
+5. **Todo List (Odin)** 🔄 (cadrée, mise en page conçue) (+ `reduce` accumulateur objet, dates, erreur personnalisée)
+6. **`class` / `this`** 🔄 (étapes 1-4 ✅, `extends` ⏳)
+7. **Library (Odin), JS pur** ⏳ — avancée avant Next.js
+8. Traduction composant classe → hooks ⏳
+9. Créneaux courts : event loop · récursion ⏳
+10. **Next.js**
+
+**⏭️ Prochaine étape**
+1. **Étape 5 : `extends`** (+ `super`), avec l'erreur personnalisée comme cas réel.
+2. **Todo List** : glissement des panneaux (mobile ~375 px puis `md`) + `types.ts`.
+3. Mardi sur le portable : relever `node -v` / `npm -v`.
+
+### 📝 Edit post-S140 — Rotation consolidée (01/11)
+
+**Décision de Frédéric** : la rotation sert à **entretenir la mémoire dans le temps**, pas seulement à réparer des échecs. Une grande partie des notions y reste donc pour l'ancrage.
+**Sortis (connus, un oubli ponctuel n'est pas un manque de connaissance)** : `return` oublié / branche silencieuse · `return` seul sur sa ligne · `undefined` + nombre → `NaN` · `react` vs `react-dom` · `<Routes>` n'accepte que des `<Route>` · `.tsx` de composants n'exporte que des composants · `ring` vs `border`.
+**Correctif** : items tombés des listes depuis la S120 sans décision → **réintégrés**.
+
+**🔴 Priorité haute**
+- Tri des dépendances (`useEffect` / `useMemo` / `useCallback`)
+- Mémoïsation : gardien / fournisseur · `useMemo` rôle 1 / rôle 2 · objet littéral = nouvelle référence · un composant se rend en entier
+- `this` : devant le point / dans `new` · flèche vs `bind`
+- `Map` et `Set` (demande)
+- `FormData`
+- `Object.assign` / `structuredClone` (demande)
+- Reducer : sources de valeur (`etat` / `action` / constante) · état initial « en chargement » · annotation de `ETAT_INITIAL` · reducer pur · ordre `(état, action)`
+- Règle → formule (cas en tableau d'abord)
+
+**🟡 Priorité moyenne**
+- ErrorBoundary : ne protège pas le code du parent · `onReset` vs `resetKeys` · `onReset` sur un formulaire vs `onClick`
+- `!` assertion vs négation (à confirmer une fois) · `throw` / `try` / `catch` : place du `catch` (à confirmer une fois)
+- `<dialog>` : `show()` vs `showModal()` · `::backdrop` appartient au dialog · fond blanc par défaut · `m-auto` (preflight)
+- `Array.isArray` / `every` · state = donnée, pas phrase
+- TS : élargissement des littéraux / annotation de retour · shorthand vs `clé: valeur` · annotation d'un paramètre déstructuré (à confirmer une fois) · Context typé `null` + garde
+- `cn()` : paramètre rest, `ClassValue`, ordre `twMerge(clsx())`
+- `@keyframes` / `animate` (demande — cycle N+5 dépassé)
+- `setTimeout` planifie, ne bloque pas
+- Lazy initializer (le *pourquoi*) · `??` sur chaîne vide · template literal qui écrit `null` · précédence `&&` / `||`
+- `trim()` · `startsWith` · `contains` / `onFocus` / `onBlur` · setter dans `value` · objet par nom / paramètres par position · `useParams`
+
+**🟢 Priorité basse (entretien)**
+- Positionnement : `relative` / `absolute` / `inset-0` · `top-full`, `left-0`, `w-full`, décalages négatifs, `z-10` · `inset-y-0` · `overflow-y-auto` + `min-h-0`
+- Flex / grid : flex-grow / shrink / basis · `items` / `self` · `items` vs `justify-items` · `stretch` vs `items-start` en colonne · `mt-auto` + chaîne `flex-1` · `order`
+- Texte et image : `truncate` + `min-w-0` + `shrink-0` · `object-cover` · `tabular-nums` · hauteur fixe sur un texte responsive · `clamp()` + `vw`
+- Tailwind divers : `border-transparent` au survol · `inline-flex` · sélecteur d'attribut et pseudo-éléments natifs · préfixes `@theme` · propriété vs valeur arbitraire
+- CSS : `@layer base` vs hors étage · `@theme` vs `:root` · `:root` = `<html>` · `color-scheme` · CSS pur dans un `@keyframes` · deux durées dans la forme courte · `motion-safe:`
+- Accessibilité : `focus-visible` vs `focus` · `inert` · tests clavier hors de l'aperçu VS Code
+- Outils : peer dependency / `~` vs `^` · `npm ci` vs `npm install` · chemins `./` / `../` · lien relatif vs absolu · Git `restore` / `revert`
+- `.then` en écriture (fetch simple et `Promise.all`), entretien
