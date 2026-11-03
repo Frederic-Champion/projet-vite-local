@@ -59,7 +59,82 @@ const cpt = new Compteur();
 console.log(cpt.ajouter());
 
 const e = () => cpt.ajouter();
-console.log(e())
+console.log(e());
 
 const f = cpt.ajouter.bind(cpt);
 console.log(f());
+
+/* ----------------------------------------------------- */
+console.log("une ligne de séparation entre deux exercices")
+
+
+class Commande {
+  constructor(numero, client) {
+    this.numero = numero;
+    this.client = client;
+    this.articles = [];
+  }
+
+  ajouter(prix) {
+    this.articles.push(prix);
+  }
+  total() {
+    return this.articles.reduce((acc, prix) => acc + prix, 0);
+  }
+}
+
+const cmd = new Commande("C-042", "Martin");
+cmd.ajouter(120);
+cmd.ajouter(80);
+console.log(cmd.total()); // attendu : 200
+
+const bouton = { onClick: (prix) => cmd.ajouter(prix) };
+bouton.onClick(50);
+console.log(cmd.total());
+
+// découverte des class :
+
+class CommandeLentilles extends Commande {
+  constructor(numero, client, dureeMois) {
+    super(numero, client);
+    this.dureeMois = dureeMois;
+  }
+  prixMensuel() {
+    return this.total() / this.dureeMois
+  }
+}
+
+const cl = new CommandeLentilles("C-060", "Petit", 6);
+cl.ajouter(90);
+cl.ajouter(30);
+console.log(cl.total());        // attendu : 120
+console.log(cl.prixMensuel());  // attendu : 20
+
+/* ----------------------------------------------------- */
+
+class ErreurOrdonnance extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "Erreur Ordonnance";
+  }
+}
+
+function verifierSphere(sphere) {
+  if (sphere < -20 || sphere > 20) throw new ErreurOrdonnance(`Correction hors limite' : ${sphere}`);
+  else return sphere;
+}
+
+function tester(valeur) {
+  try {
+    console.log("OK :", verifierSphere(valeur));
+  } catch (e) {
+    if (e instanceof ErreurOrdonnance) {
+      console.log("Ordonnance invalide :", e.message);
+    } else {
+      console.log("Bug inattendu");
+    }
+  }
+}
+
+tester(-2.5);
+tester(35);

@@ -3539,3 +3539,71 @@ Ressenti : **3/4 compris, 1/4 abstrait**. Questions traitées : `Symbol` (rare d
 - Accessibilité : `focus-visible` vs `focus` · `inert` · tests clavier hors de l'aperçu VS Code
 - Outils : peer dependency / `~` vs `^` · `npm ci` vs `npm install` · chemins `./` / `../` · lien relatif vs absolu · Git `restore` / `revert`
 - `.then` en écriture (fetch simple et `Promise.all`), entretien
+
+## Session 141 — Reprise `class` / `this` + `extends` / `super` + erreur personnalisée
+
+**Durée** : ~2h (mardi, 1h05 le midi + ~55 min le soir). Énergie bonne. Portable.
+
+**🎹 Raccourci** : `Alt+Maj+M` (Emmet : Remove Tag) — pas encore utilisé, reconduit.
+
+**Deux machines** : versions **identiques** (Node 24.15.0 / npm 11.12.1). La piste « npm différent » pour le `package-lock.json` réécrit est écartée. Cause non identifiée, non bloquante : `npm ci` dans le rituel empêche le problème de revenir.
+
+---
+
+### Révision éclair (2 items)
+
+- **Écrire — dépendances d'un `useEffect`** 🔴 : `[statut]` seul. `numero` et `client` exclus parce que « fournis par le parent ». **Rechute sur la règle posée en S131** : l'origine d'une valeur ne compte pas, seulement si elle peut changer d'un rendu à l'autre. `CLE` exclue à raison. Réponse : `[numero, client.nom, statut]`.
+- **Prédire — `Set`** 🟢 4/4, **après 20 min de relecture de la page Map / Set** (oubliée). Pas une mesure à froid. Bon réflexe d'aller à la doc.
+
+### 1. Reprise `class` / `this` (N+1)
+
+- **Classe `Commande` écrite seule** 🟢 (`constructor`, `this.articles = []`, `push`, `reduce`). Question avant d'écrire : une propriété créée par le constructeur sans être un paramètre → expliquée, comprise.
+- **`this` perdu** : prédiction non faite (lancé directement, « consigne lue trop vite »). **Réparation par flèche juste, avec le paramètre transmis** `(prix) => cmd.ajouter(prix)` 🟢. Ce qu'il y a devant le point au moment de l'appel (`bouton`) : donné.
+- **`bind` oublié en deux jours** 🔴 → **petit cours demandé en ouverture de la prochaine séance**, puis à recroiser.
+- **Fonction rangée dans un objet** (`{ onClick: () => … }`) : « ça me perturbe, peu croisé ». Forme longue donnée + rattachement à ce qu'il utilise déjà (props fonction, `value` d'un Context, méthodes d'une classe). 🟡
+- Retouches : `return` inutile devant `push` · paramètres du `reduce` inversés (`(acc, prix)`). Corrigés.
+
+### 2. `extends` + `super` — notion neuve, ouverte
+
+- **`CommandeLentilles` juste du premier coup** 🟢 : `extends`, `super` avant `this`, propriété propre. **`this.total()` réutilisé spontanément** dans `prixMensuel()` au lieu de refaire le `reduce`.
+- Test `super` en commentaire : `ReferenceError` lu. Explication imprécise (« pas de chemin vers les données ») → précisé : **l'objet n'existe pas encore**, c'est le constructeur parent qui le fabrique. 🟡
+- Accent dans un nom de variable (`numéro`) : convention rappelée.
+
+### 3. Erreur personnalisée (`extends Error`)
+
+- Classe `ErreurOrdonnance` + `verifierSphere` + `try` / `catch` avec `instanceof`.
+- 🔴 **`??` au lieu de `||` entre deux comparaisons.** Réponse demandée et donnée. Confusion de fond : `??` lu comme « renvoie la droite quand la gauche est fausse », puis « `0` est une valeur qu'on veut garder ». Débloqué par **les deux usages de `||`** (valeur par défaut / « ou » entre deux conditions). Reformulation juste de sa part : « on compare `true` ou `false`, pas des valeurs ». Repère : comparaisons des deux côtés → `||`.
+- **Nom de classe différent entre la déclaration et le `throw`** (`ErrorOrdonnance` / `ErreurOrdonnance`) → `ReferenceError` attrapée et classée « Bug inattendu » : démonstration involontaire de l'intérêt de l'exercice.
+- **Questions de fond** : pourquoi trois textes ? → `this.name` est l'étiquette de l'erreur (affichée par le terminal quand personne ne l'attrape), les deux `console.log` sont les réactions du `catch` · que contient `Error` ? → MDN (préféré par lui), `Ctrl+clic` vers le fichier de types (« illisible »), inspection d'une instance.
+- **Test hors `try`** 🟢 : `name` affiché en tête, lecture de la pile (`stack`) jusqu'à la ligne d'origine, script arrêté (les `tester()` jamais exécutés).
+- `this.name` avec espace (`"Erreur Ordonnance"`) : convention du nom exact de la classe rappelée, non appliquée.
+
+---
+
+**Niveaux** : tri des dépendances 🔴 (rechute : props exclues) · `Set` 🟢 (après relecture) · `class` / `constructor` / méthodes 🟢 · `this` perdu + flèche 🟢 · `bind` 🔴 (oublié) · fonction rangée dans un objet 🟡 · `extends` / `super` 🟢 (juste du premier coup) · pourquoi `super` avant `this` 🟡 · `extends Error` + `name` 🟢 · `instanceof` pour trier les erreurs 🟢 · **`??` vs `||` entre deux conditions 🔴** · lecture d'une pile d'erreur 🟢.
+
+**🆕 Notions ouvertes ce jour** : `extends` · `super` · erreur personnalisée (`extends Error`, `this.name`).
+
+**⚠️ Mes erreurs** : consigne « `articles` qui démarre en tableau vide » sans préciser que ce n'était pas un paramètre → question nécessaire.
+
+**🔄 Cycle de reprise** : `class` / `this` / `extends` → **N+2 ≈ S143**, puis la Library · propagation + ErrorBoundary → N+5 ≈ S144.
+
+**🔄 Rotation** : **entrent** — `bind` (cours en ouverture, priorité) · `??` vs `||` : valeur par défaut / « ou » entre deux conditions (priorité) · fonction rangée dans un objet · `this.name` / `stack` d'une erreur. **Restent** — tri des dépendances (priorité haute, rechute) · `Map` / `Set` (à froid) · le reste de la liste consolidée post-S140.
+
+---
+
+### 🗺️ Avant Next.js — état
+1. Calculatrice `useReducer` + mémoïsation ✅
+2. Dark mode Shopping Cart + audit accessibilité ✅
+3. `@keyframes` sur Memory Card ✅
+4. Portails ✅ · `<dialog>` ✅ · propagation ✅ · ErrorBoundary ✅
+5. **Todo List (Odin)** 🔄 (cadrée, mise en page conçue) (+ `reduce` accumulateur objet, dates, erreur personnalisée)
+6. **`class` / `this`** 🔄 (étapes 1-5 ✅ + erreur personnalisée ✅ · `bind` à reprendre)
+7. **Library (Odin), JS pur** ⏳ — avant Next.js
+8. Traduction composant classe → hooks ⏳
+9. Créneaux courts : event loop · récursion ⏳
+10. **Next.js**
+
+**⏭️ Prochaine étape**
+1. **Petit cours `bind`** en ouverture, avec un exercice court.
+2. **Todo List** : glissement des panneaux (mobile ~375 px puis `md`) + `types.ts`.
