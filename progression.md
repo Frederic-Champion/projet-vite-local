@@ -527,3 +527,46 @@ _La liste de rotation consolidée post-S140 (01/11) a été remontée dans l'en-
 2. **Todo List** : glissement des panneaux (mobile ~375 px puis `md`) + `types.ts`.
 
 <!-- Les nouvelles entrées de session commencent ici -->
+
+## Session 142 — `bind` (cours + trois formes) + révisions de dettes chaudes
+
+**Durée** : 2h (mercredi) : 1h le midi (refonte des instructions + `progression.md`, autre conversation) + 1h le soir ensemble. Énergie bonne.
+
+**🎹 Raccourci** : `Alt+Maj+M` — non renseigné, reconduit.
+
+---
+
+### Révision éclair (2 items)
+
+- **Prédire — `Object.assign` / `structuredClone`** 🟢 3/3 : copie superficielle (objet imbriqué partagé) vs copie profonde.
+- **Écrire — `Map`** 🟢 code juste (`set` / `get` / `has` / `size` sans parenthèses), **mais après relecture de javascript.info** : pas une mesure à froid. **Demande de Frédéric : recroiser dans ~2 semaines** ou en contexte (Todo List).
+
+### 1. `bind` — rouvert
+
+- Cours : `bind` fabrique une **nouvelle fonction** au `this` collé, **n'appelle rien** · lecture en trois morceaux (fonction / `.bind` / objet) · forme longue en flèche · sens d'écriture (`cpt.ajouter.bind(cpt)`, piège S140).
+- **Prédiction juste avec la raison** 🟢 (rien devant le point au moment de l'appel → `TypeError`).
+- **Trois réparations écrites** : à l'appel avec `bind` 🟢 · en flèche 🟡 (`() => carte.ajouterPoints(10)` : valeur en dur, l'argument reçu est ignoré → `(n) => carte.ajouterPoints(n)`) · **dans le constructeur** 🟢, sur sa question « pas possible de réparer dans la classe ? » (motif du vieux React compris : la méthode reste écrite dans la classe, la copie collée est rangée sur l'objet).
+- Méthode déclarée en flèche dans la classe (champ de classe) : **nommée seulement**, gardée pour la Library.
+
+### 2. Révisions de dettes chaudes
+
+- **`??` vs `||`** 🟢 : prédiction `true` / `false` juste, bug identifié, corrigé, raison avec ses mots (`??` ne passe à droite que sur `null` / `undefined`).
+- **Tri des dépendances (`useMemo`)** 🟢 : `[prixVerre, quantite, remise]`, **props incluses** (rechute de S141 non reproduite), `TAUX_TVA` exclue à raison.
+- **`.then` en écriture (fetch simple)** 🟡 : réussi seul, **avec un effort long**. `.then` imbriquée dans la `.then` au lieu d'une chaîne plate · **`.catch` accroché à la chaîne intérieure** → n'attrape ni le `throw` de `!res.ok` ni la panne réseau · `async` inutile (aucun `await`). Image donnée : une erreur saute toutes les `.then` restantes jusqu'au `.catch` final.
+
+### 3. Décision — Todo List
+
+**`types.ts` en premier refusé par Frédéric** : impossible d'écrire des types sans savoir comment l'application fonctionnera. Objection fondée. **Démarche retenue : partir du fonctionnement** (actions de l'utilisateur, ce qui change à l'écran, où vit chaque donnée), les types en découlent.
+
+---
+
+**Niveaux** : `Object.assign` / `structuredClone` 🟢 · `Map` 🟡 (avec la doc) · `bind` 🟢 (trois formes, un passage) · flèche qui transmet l'argument 🟡 · `??` vs `||` 🟢 · tri des dépendances 🟢 (à confirmer à froid) · `.then` en écriture 🟡 (place du `.catch`, chaîne plate).
+
+**🔄 Cycle de reprise** : `bind` → N+2 ≈ S144 · `class` / `extends` → N+2 ≈ S143, puis la Library · `<dialog>` → N+5 ≈ S143 · propagation + ErrorBoundary → N+5 ≈ S144 · `@keyframes` → dépassé, à glisser.
+
+**🔄 Rotation** : **entre** — `.then` : place du `.catch` en bout de chaîne. **Restent en priorité haute** — `bind` (à froid) · tri des dépendances (à confirmer à froid) · `??` vs `||` (à confirmer une fois). **`Map` / `Set`** → dans ~2 semaines (≈ 18 novembre) ou en contexte. **Sortent** — `Object.assign` / `structuredClone` (à revoir plus tard).
+
+**⏭️ Prochaine étape — demain (2h)**
+1. **Todo List** : décrire le fonctionnement (actions, écrans, données), puis en tirer les types.
+2. Glissement des panneaux si le temps le permet.
+3. À glisser : `@keyframes` · reprise `class` / `extends`.
