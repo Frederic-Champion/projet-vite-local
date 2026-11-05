@@ -65,8 +65,7 @@ const f = cpt.ajouter.bind(cpt);
 console.log(f());
 
 /* ----------------------------------------------------- */
-console.log("une ligne de séparation entre deux exercices")
-
+console.log("une ligne de séparation entre deux exercices");
 
 class Commande {
   constructor(numero, client) {
@@ -100,15 +99,15 @@ class CommandeLentilles extends Commande {
     this.dureeMois = dureeMois;
   }
   prixMensuel() {
-    return this.total() / this.dureeMois
+    return this.total() / this.dureeMois;
   }
 }
 
 const cl = new CommandeLentilles("C-060", "Petit", 6);
 cl.ajouter(90);
 cl.ajouter(30);
-console.log(cl.total());        // attendu : 120
-console.log(cl.prixMensuel());  // attendu : 20
+console.log(cl.total()); // attendu : 120
+console.log(cl.prixMensuel()); // attendu : 20
 
 /* ----------------------------------------------------- */
 
@@ -138,3 +137,29 @@ function tester(valeur) {
 
 tester(-2.5);
 tester(35);
+
+/* ----------------------------------------------------- */
+
+class Equipement {
+  constructor(nom, prix) {
+    this.nom = nom;
+    this.prix = prix;
+  }
+  prixTTC() {
+    return this.prix * 1.2;
+  }
+}
+
+class EquipementSolaire extends Equipement {
+  constructor(nom, prix, indice) {
+    super(nom, prix);
+    this.indice = indice;
+  }
+  description() {
+    return `${this.nom} - cat. ${this.indice} - ${this.prixTTC()}€`;
+  }
+}
+
+const lunette = new EquipementSolaire("Aviator", 100, 3);
+console.log(lunette.description());
+console.log(lunette instanceof Equipement);
